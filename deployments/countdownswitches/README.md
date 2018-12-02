@@ -12,4 +12,4 @@ microservice
 
 * [switch controller generated from designer](../../controller/switch/main.py)
 * [switch event source](../../src/RPi/switch/main.py)
-* [mqtt proxy](../../src/RPi/proxy/main.py) - used to replicate some messages between local mqtt and the internet based thegame.folly.site mqtt server
+* [mqtt relay](../../src/RPi/mqtt/main.py) - used to replicate some messages between local mqtt and the internet based thegame.folly.site mqtt server

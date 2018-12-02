@@ -5,13 +5,13 @@
 RPi connected to:
 
 * Long range UHF RFID reader
-  * one SPARKFUN with external antenna
+  * one SPARKFUN with external antenna (works)
   * one serial reader with big antenna
-* powered speaker using PHAT-DAC
-* neopixel on rpi proto board to show 
+* powered speaker using PHAT-DAC (works)
+* neopixel on rpi proto board to show  (some code)
   * 4xspell strength bars (16 pixels) and
   * health bar (16 pixels)
-* mifare rfid reader
+* mifare rfid reader (works)
 * USB power
 
 
