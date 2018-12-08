@@ -1,7 +1,5 @@
 #!/usr/bin/python
 
-import paho.mqtt.client as mqtt #import the client1
-import paho.mqtt.publish as publish
 import time
 import sys
 import socket
@@ -62,11 +60,11 @@ def play():
 # on_message subscription functions
 def msg_play(topic, payload):
     try:
-        if mqtt.topic_matches_sub("all/neopixel/play", topic):
+        if mqtt.topic_matches_sub(hostmqtt, "all/neopixel/play", topic):
             # everyone
             #print("everyone plays "+payload)
             play()
-        elif mqtt.topic_matches_sub(myHostname+"/neopixel/play", topic):
+        elif mqtt.topic_matches_sub(hostmqtt, myHostname+"/neopixel/play", topic):
             #print(myHostname+" got "+payload+" SPARKLES!!")
             play()
     except:
