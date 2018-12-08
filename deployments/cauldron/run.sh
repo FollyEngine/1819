@@ -43,13 +43,14 @@ sleep 15
 ping -c 1 $MQTTHOST
 
 echo "Starting $WHOAMI"
+cd ./src/RPi/
 
 for pkg in $PACKAGES; do
 	# TODO: only the remote control and the neopixels need sudo (iirc)
-	sudo ./src/RPis/$pkg/main.py > $pkg-${DATE}.log 2>&1 &
+	sudo ./$pkg/main.py > $pkg-${DATE}.log 2>&1 &
 done
 
-python3 controller/main.py $CONFIGFILE > controller-${DATE}.log 2>&1 &
+./../../deployments/cauldron/main.py $CONFIGFILE > controller-${DATE}.log 2>&1 &
 
 echo "DONE"
 exit
