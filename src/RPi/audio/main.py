@@ -18,7 +18,7 @@ mqttHost = config.getValue("mqtthostname", "mqtt")
 myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 
-sounddir = config.getValue("sounddir", "/mnt/")
+sounddir = config.getValue("sounddir", "./audio/")
 testsound = config.getValue("testsound", "test.wav")
 
 # TODO: fix this...
