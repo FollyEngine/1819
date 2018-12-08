@@ -38,8 +38,8 @@ strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, 
 # Intialize the library (must be called once before other functions).
 strip.begin()
 
-
-# Define functions which animate LEDs in various ways.
+# can do things like:
+#  mosquitto_pub -h mqtt -t two/neopixel/play -m '{"operation": "theatrechase", "colour": "green"}'
 
 # Define functions which animate LEDs in various ways.
 def colorWipe(strip, color, wait_ms=50):
@@ -108,8 +108,8 @@ operations = {
 }
 colours = {
     'off': Color(0,0,0),
-    'red': Color(255,0,0),
-    'green': Color(0,255,0),
+    'green': Color(255,0,0),
+    'red': Color(0,255,0),
     'blue': Color(0,0,255)
 }
 ############
@@ -130,6 +130,7 @@ def play(payload = {}):
 
     colourname = get(payload, 'colour', 'off')
     colour = get(colours, colourname, colours['off'])
+    # TODO: maybe change to using HTML colours #000000 style?
     operation(strip, colour)
 
 
