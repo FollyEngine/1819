@@ -149,7 +149,8 @@ hostmqtt.subscribe("play", msg_play)
 hostmqtt.subscribeL("all", DEVICENAME, "play", msg_play)
 
 hostmqtt.status({"status": "listening"})
-play()
+play({'operation': 'colourwipe', 'colour': 'red'})
+play({'operation': 'colourwipe', 'colour': 'off'})
 
 try:
     hostmqtt.loop_forever()
