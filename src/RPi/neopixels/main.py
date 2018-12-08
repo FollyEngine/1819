@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 import paho.mqtt.client as mqtt #import the client1
 import paho.mqtt.publish as publish
@@ -64,10 +64,10 @@ def msg_play(topic, payload):
     try:
         if mqtt.topic_matches_sub("all/neopixel/play", topic):
             # everyone
-            print("everyone plays "+payload)
+            #print("everyone plays "+payload)
             play()
         elif mqtt.topic_matches_sub(myHostname+"/neopixel/play", topic):
-            print(myHostname+" got "+payload+" SPARKLES!!")
+            #print(myHostname+" got "+payload+" SPARKLES!!")
             play()
     except:
         return
