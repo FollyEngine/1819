@@ -26,7 +26,7 @@ hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 
 # uses https://github.com/jgarff/rpi_ws281x.git 
 # LED strip configuration:
-LED_COUNT      = 3      # Number of LED pixels.
+LED_COUNT      = 16      # Number of LED pixels.
 LED_PIN        = 21      # GPIO pin connected to the pixels (18 uses PWM!).
 #LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
@@ -62,11 +62,11 @@ def play():
 # on_message subscription functions
 def msg_play(topic, payload):
     try:
-        if mqtt.topic_matches_sub("follyengine/all/neopixel", message.topic):
+        if mqtt.topic_matches_sub("all/neopixel/play", topic):
             # everyone
             print("everyone plays "+payload)
             play()
-        elif mqtt.topic_matches_sub("follyengine/"+myHostname+"/neopixel", message.topic):
+        elif mqtt.topic_matches_sub(myHostname+"/neopixel/play", topic):
             print(myHostname+" got "+payload+" SPARKLES!!")
             play()
     except:
@@ -76,6 +76,7 @@ hostmqtt.subscribe("play", msg_play)
 hostmqtt.subscribeL("all", DEVICENAME, "play", msg_play)
 
 hostmqtt.status({"status": "listening"})
+play()
 
 try:
     hostmqtt.loop_forever()

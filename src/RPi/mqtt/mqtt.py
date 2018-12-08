@@ -82,7 +82,7 @@ class MQTT:
         return json.loads(raw)
 
     def on_connect(self, client, userdata, flags, rc):
-        print("Connection returned result: "+connack_string(rc))
+        print("Connection returned result: ")  #+self.client.connack_string(rc))
 
     #TODO: this happens when a message failed to be sent - need to resend it..
     def on_disconnect(self, innerclient, userdata,rc=0):
