@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import paho.mqtt.client as mqtt #import the client1
 import paho.mqtt.publish as publish
 import time
