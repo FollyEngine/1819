@@ -26,7 +26,9 @@ if [[ ¨$1¨ == ¨--setup¨ ]]; then
 	git pull
 
 	for pkg in $PACKAGES; do
-		sudo pip3 install --no-cache-dir -r ./src/RPi/$pkg/requirements.txt
+		if [[ -f "./src/RPi/$pkg/requirements.txt" ]]; then
+			sudo pip3 install --no-cache-dir -r ./src/RPi/$pkg/requirements.txt
+		fi
 	done
 
 	cat /proc/device-tree/model
