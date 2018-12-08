@@ -40,6 +40,8 @@ strip.begin()
 
 
 # Define functions which animate LEDs in various ways.
+
+# Define functions which animate LEDs in various ways.
 def colorWipe(strip, color, wait_ms=50):
     """Wipe color across display a pixel at a time."""
     for i in range(strip.numPixels()):
@@ -47,28 +49,100 @@ def colorWipe(strip, color, wait_ms=50):
         strip.show()
         time.sleep(wait_ms/1000.0)
 
+def theaterChase(strip, color, wait_ms=50, iterations=10):
+    """Movie theater light style chaser animation."""
+    for j in range(iterations):
+        for q in range(3):
+            for i in range(0, strip.numPixels(), 3):
+                strip.setPixelColor(i+q, color)
+            strip.show()
+            time.sleep(wait_ms/1000.0)
+            for i in range(0, strip.numPixels(), 3):
+                strip.setPixelColor(i+q, 0)
+
+def wheel(pos):
+    """Generate rainbow colors across 0-255 positions."""
+    if pos < 85:
+        return Color(pos * 3, 255 - pos * 3, 0)
+    elif pos < 170:
+        pos -= 85
+        return Color(255 - pos * 3, 0, pos * 3)
+    else:
+        pos -= 170
+        return Color(0, pos * 3, 255 - pos * 3)
+
+def rainbow(strip, wait_ms=20, iterations=1):
+    """Draw rainbow that fades across all pixels at once."""
+    for j in range(256*iterations):
+        for i in range(strip.numPixels()):
+            strip.setPixelColor(i, wheel((i+j) & 255))
+        strip.show()
+        time.sleep(wait_ms/1000.0)
+
+def rainbowCycle(strip, wait_ms=20, iterations=5):
+    """Draw rainbow that uniformly distributes itself across all pixels."""
+    for j in range(256*iterations):
+        for i in range(strip.numPixels()):
+            strip.setPixelColor(i, wheel((int(i * 256 / strip.numPixels()) + j) & 255))
+        strip.show()
+        time.sleep(wait_ms/1000.0)
+
+def theaterChaseRainbow(strip, wait_ms=50):
+    """Rainbow movie theater light style chaser animation."""
+    for j in range(256):
+        for q in range(3):
+            for i in range(0, strip.numPixels(), 3):
+                strip.setPixelColor(i+q, wheel((i+j) % 255))
+            strip.show()
+            time.sleep(wait_ms/1000.0)
+            for i in range(0, strip.numPixels(), 3):
+strip.setPixelColor(i+q, 0)
 ############
-def play():
-    print ('Color wipe animations.')
-    colorWipe(strip, Color(255, 0, 0))  # Red wipe
-    colorWipe(strip, Color(0, 255, 0))  # Blue wipe
-    colorWipe(strip, Color(0, 0, 255))  # Green wipe
-    colorWipe(strip, Color(0,0,0), 10)
+operations = {
+    #needs colour
+    'colourwipe': colorWipe,
+    'theatrechase': theaterChase,
+    #no colour option
+    'rainbow': rainbow,
+    'rainbow_cycle': rainbowCycle,
+}
+colours = {
+    'off': Color(0,0,0),
+    'red': Color(255,0,0),
+    'green': Color(0,255,0),
+    'blue': Color(0,0,255)
+}
+############
+def get(obj, name, default):
+    result = default
+    if name in obj:
+        result = obj[name]
+    return result
+
+
+def play(payload = {}):
+    operationname = get(payload, 'operation', 'rainbow')
+    operation = get(operations, operationname, operations['rainbow'])
+    print("playing %s" % operationname)
+    if operationname == 'rainbow' or operationname == 'rainbow_cycle':
+        operation(strip)
+        return
+
+    colourname = get(payload, 'colour', 'off')
+    colour = get(colours, colourname, colourname['off'])
+    operation(strip, colour)
 
 
 ########################################
 # on_message subscription functions
 def msg_play(topic, payload):
-    try:
-        if mqtt.MQTT.topic_matches_sub(hostmqtt, "all/neopixel/play", topic):
-            # everyone
-            #print("everyone plays "+payload)
-            play()
-        elif mqtt.MQTT.topic_matches_sub(hostmqtt, myHostname+"/neopixel/play", topic):
-            #print(myHostname+" got "+payload+" SPARKLES!!")
-            play()
-    except:
-        return
+    if mqtt.MQTT.topic_matches_sub(hostmqtt, "all/neopixel/play", topic):
+        # everyone
+        #print("everyone plays "+payload)
+        play(payload)
+    elif mqtt.MQTT.topic_matches_sub(hostmqtt, myHostname+"/neopixel/play", topic):
+        #print(myHostname+" got "+payload+" SPARKLES!!")
+        play(payload)
 
 hostmqtt.subscribe("play", msg_play)
 hostmqtt.subscribeL("all", DEVICENAME, "play", msg_play)
