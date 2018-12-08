@@ -60,11 +60,11 @@ def play():
 # on_message subscription functions
 def msg_play(topic, payload):
     try:
-        if mqtt.topic_matches_sub(hostmqtt, "all/neopixel/play", topic):
+        if mqtt.MQTT.topic_matches_sub(hostmqtt, "all/neopixel/play", topic):
             # everyone
             #print("everyone plays "+payload)
             play()
-        elif mqtt.topic_matches_sub(hostmqtt, myHostname+"/neopixel/play", topic):
+        elif mqtt.MQTT.topic_matches_sub(hostmqtt, myHostname+"/neopixel/play", topic):
             #print(myHostname+" got "+payload+" SPARKLES!!")
             play()
     except:
