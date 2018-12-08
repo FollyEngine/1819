@@ -129,7 +129,7 @@ def play(payload = {}):
         return
 
     colourname = get(payload, 'colour', 'off')
-    colour = get(colours, colourname, colourname['off'])
+    colour = get(colours, colourname, colours['off'])
     operation(strip, colour)
 
 
