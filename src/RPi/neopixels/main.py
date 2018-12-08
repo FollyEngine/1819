@@ -122,7 +122,7 @@ def get(obj, name, default):
 
 def play(payload = {}):
     operationname = get(payload, 'operation', 'colourwipe')
-    operation = get(operations, operationname, operations['rainbow'])
+    operation = get(operations, operationname, operations['colourwipe'])
     print("playing %s" % operationname)
     if operationname == 'rainbow' or operationname == 'rainbow_cycle':
         operation(strip)
