@@ -11,6 +11,19 @@ import time
 from neopixel import *
 import argparse
 
+# the config and mqtt modules are in a bad place atm :/
+import sys
+sys.path.append('./mqtt/')
+import config
+import mqtt
+
+DEVICENAME="neopixel"
+
+mqttHost = config.getValue("mqtthostname", "mqtt")
+myHostname = config.getValue("hostname", socket.gethostname())
+hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
+
+
 # uses https://github.com/jgarff/rpi_ws281x.git 
 # LED strip configuration:
 LED_COUNT      = 3      # Number of LED pixels.
@@ -36,26 +49,6 @@ def colorWipe(strip, color, wait_ms=50):
         strip.show()
         time.sleep(wait_ms/1000.0)
 
-
-#######
-# load config (extract to lib)
-configFile = "config.yml"
-if len(sys.argv) > 1:
-    configFile = sys.argv[1]
-
-with open(configFile, 'r') as ymlfile:
-    cfg = yaml.load(ymlfile)
-
-mqttHost = "mqtt"
-if "mqtthostname" in cfg and cfg["mqtthostname"] != "":
-    mqttHost = cfg["mqtthostname"]
-
-myHostname = socket.gethostname()
-if "hostname" in cfg and cfg["hostname"] != "":
-    myHostname = cfg["hostname"]
-# end load config
-
-
 ############
 def play():
     print ('Color wipe animations.')
@@ -65,15 +58,9 @@ def play():
     colorWipe(strip, Color(0,0,0), 10)
 
 
-############
-def on_message(client, userdata, message):
-    payload=str(message.payload.decode("utf-8"))
-    print("")
-    print("message received " ,payload)
-    print("message topic=",message.topic)
-    print("message qos=",message.qos)
-    print("message retain flag=",message.retain)
-
+########################################
+# on_message subscription functions
+def msg_play(topic, payload):
     try:
         if mqtt.topic_matches_sub("follyengine/all/neopixel", message.topic):
             # everyone
@@ -84,22 +71,15 @@ def on_message(client, userdata, message):
             play()
     except:
         return
-########################################
 
-client = mqtt.Client(myHostname+"_neopixels") #create new instance
-client.on_message=on_message #attach function to callback
+hostmqtt.subscribe("play", msg_play)
+hostmqtt.subscribeL("all", DEVICENAME, "play", msg_play)
 
-print("Connecting to MQTT at: %s" % mqttHost)
-client.connect(mqttHost) #connect to broker
-
-client.subscribe("follyengine/"+myHostname+"/neopixel")
-
-client.publish("status/"+myHostname+"/neopixel","STARTED")
-publish.single("follyengine/"+myHostname+"/neopixel", "test", hostname=mqttHost)
+hostmqtt.status({"status": "listening"})
 
 try:
-    client.loop_forever()
+    hostmqtt.loop_forever()
 except KeyboardInterrupt:
     print("exit")
 
-client.publish("status/"+myHostname+"/neopixel","STOPPED")
+hostmqtt.status({"status": "STOPPED"})

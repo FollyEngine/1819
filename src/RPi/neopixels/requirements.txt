@@ -1,3 +1,2 @@
 paho-mqtt
 pyyaml
-adafruit-circuitpython-neopixel
