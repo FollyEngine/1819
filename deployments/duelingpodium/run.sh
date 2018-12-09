@@ -29,6 +29,9 @@ if [[ ¨$1¨ == ¨--setup¨ ]]; then
 		if [[ -f "./src/RPi/$pkg/requirements.txt" ]]; then
 			sudo pip3 install --no-cache-dir -r ./src/RPi/$pkg/requirements.txt
 		fi
+		if [[ -f "./src/RPi/$pkg/setup.sh" ]]; then
+			./src/RPi/$pkg/setup.sh
+		fi
 	done
 
 	cat /proc/device-tree/model
