@@ -1,5 +1,8 @@
 #!/bin/bash
 
+
+sudo pip install --no-cache-dir -r ./src/RPi/neopixel/requirements.txt
+
 cd
 if [[ -d rpi_ws2810 ]]; then
 	cd rpi_ws281x
