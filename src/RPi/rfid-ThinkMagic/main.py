@@ -86,7 +86,11 @@ while True:
         #print(reader.read())
     except KeyboardInterrupt:
         print("exit")
-        reader.stop_reading()
         break
+    except Exception as ex:
+        traceback.print_exc()
+
+
+reader.stop_reading()
 
 hostmqtt.status({"status": "STOPPED"})
