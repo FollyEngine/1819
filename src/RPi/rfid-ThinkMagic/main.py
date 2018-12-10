@@ -33,7 +33,7 @@ lastRead = {}
 def rfidTagDataCallback(rfid):
     try:
         if rfid.epc.hex() in lastRead:
-            if datetime.timedelta.total_seconds(datetime.datetime.now()-lastRead[rfid.epc.hex()]) > (1):
+            if datetime.timedelta.total_seconds(datetime.datetime.now()-lastRead[rfid.epc.hex()]) < (1):
                 #lets only report each tag once a second
                 return
 
