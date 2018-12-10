@@ -45,6 +45,7 @@ def magic_cast(topic, payload):
         # no-one logged on to podium, so no magic happening
         return
     #TODO: add maths that changes the person's health
+    host, device, verb = topic.split('/')
     hostmqtt.publishL(host, 'audio', 'play', {
                     'sound': '/usr/share/scratch/Media/Sounds/Effects/Rattle.wav',
                     'tagid': payload['tag']
