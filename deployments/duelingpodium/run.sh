@@ -55,6 +55,8 @@ for pkg in $PACKAGES; do
 	sudo ./$pkg/main.py > $pkg-${DATE}.log 2>&1 &
 done
 
+# the podium is made of several bits
+./../../deployments/healthdisplay/main.py $CONFIGFILE > controller-${DATE}.log 2>&1 &
 ./../../deployments/duelingpodium/main.py $CONFIGFILE > controller-${DATE}.log 2>&1 &
 
 echo "DONE"
