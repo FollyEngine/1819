@@ -42,7 +42,12 @@ def reset_health(topic, payload):
 def test_msg(topic, payload):
     hostmqtt.publishL('all', 'neopixel', 'play', {
                     'operation': 'colorwipe',
-                    'colour': 'blue',
+                    'colour': 'red',
+                    'tagid': 'test'
+                })
+    hostmqtt.publishL('all', 'neopixel', 'play', {
+                    'operation': 'colorwipe',
+                    'colour': 'off',
                     'tagid': 'test'
                 })
 ########################################
@@ -55,8 +60,8 @@ def test_msg(topic, payload):
 # test signal
 hostmqtt.subscribeL("all", DEVICENAME, "test", test_msg)
 
-hostmqtt.subscribeL("health1", 'rfid-nfc', "scan", show_health)
-hostmqtt.subscribeL("health1", 'rfid-nfc', "removed", reset_health)
+hostmqtt.subscribeL(myHostname, 'rfid-nfc', "scan", show_health)
+hostmqtt.subscribeL(myHostname, 'rfid-nfc', "removed", reset_health)
 
 
 hostmqtt.status({"status": "listening"})
