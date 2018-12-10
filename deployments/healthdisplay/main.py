@@ -26,6 +26,7 @@ displaying = ''
 def show_health(topic, payload):
     host, device, verb = topic.split('/')
 
+    global displaying
     if displaying == payload['tag']:
         displaying = ''
         colour = 'off'
