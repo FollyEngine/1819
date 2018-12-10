@@ -111,7 +111,7 @@ def health(strip, color, count, wait_ms=50):
 ############
 operations = {
     # needs colour and count
-    'health': health
+    'health': health,
     #needs colour
     'colourwipe': colorWipe,
     'theatrechase': theaterChase,
