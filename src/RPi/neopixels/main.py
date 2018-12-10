@@ -49,6 +49,7 @@ def colorWipe(strip, color, wait_ms=50):
         strip.show()
         time.sleep(wait_ms/1000.0)
 
+
 def theaterChase(strip, color, wait_ms=50, iterations=10):
     """Movie theater light style chaser animation."""
     for j in range(iterations):
@@ -97,8 +98,20 @@ def theaterChaseRainbow(strip, wait_ms=50):
             time.sleep(wait_ms/1000.0)
             for i in range(0, strip.numPixels(), 3):
                 strip.setPixelColor(i+q, 0)
+
+def health(strip, color, count, wait_ms=50):
+    """Wipe color across display a pixel at a time."""
+    if count > strip.numPixels():
+        count = strip.numPixels()
+    for i in range(count):
+        strip.setPixelColor(i, color)
+        strip.show()
+        time.sleep(wait_ms/1000.0)
+
 ############
 operations = {
+    # needs colour and count
+    'health': health
     #needs colour
     'colourwipe': colorWipe,
     'theatrechase': theaterChase,
@@ -131,8 +144,12 @@ def play(payload = {}):
     colourname = get(payload, 'colour', 'off')
     colour = get(colours, colourname, colours['off'])
     # TODO: maybe change to using HTML colours #000000 style?
-    operation(strip, colour)
+    if operationname == 'colourwipe' or operationname == 'theatrechase':
+        operation(strip, colour)
+        return
 
+    count = get(payload, 'count', 16)
+    operation(strip, colour, count)
 
 ########################################
 # on_message subscription functions
