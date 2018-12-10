@@ -13,7 +13,7 @@ else
 fi
 
 
-apt-get install patch xsltproc gcc libreadline-dev python-dev python-setuptools
+sudo apt-get install patch xsltproc gcc libreadline-dev python-dev python-setuptools
 make
 sudo make install
 
