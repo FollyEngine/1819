@@ -23,6 +23,28 @@ hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 ########################################
 # on_message subscription functions
 displaying = ''
+health = 14
+def health_calc(host, colour, change = 0):
+    global health
+    if health < 0:
+        health = 15
+
+    if change < 0:
+        hostmqtt.publishL(host, 'neopixel', 'play', {
+                        'operation': 'health',
+                        'count': health,
+                        'colour': 'red',
+                        'tagid': payload['tag']
+                    })
+        health = health + change
+
+    hostmqtt.publishL(host, 'neopixel', 'play', {
+                    'operation': 'health',
+                    'count': health,
+                    'colour': colour,
+                    'tagid': payload['tag']
+                })
+
 def show_health(topic, payload):
     host, device, verb = topic.split('/')
 
@@ -34,11 +56,7 @@ def show_health(topic, payload):
         displaying = payload['tag']
         colour = 'blue'
 
-    hostmqtt.publishL(host, 'neopixel', 'play', {
-                    'operation': 'colorwipe',
-                    'colour': colour,
-                    'tagid': payload['tag']
-                })
+    health_calc(host, colour, 0)
 
 def magic_cast(topic, payload):
     if displaying == '':
@@ -50,6 +68,9 @@ def magic_cast(topic, payload):
                     'sound': '/usr/share/scratch/Media/Sounds/Effects/Rattle.wav',
                     'tagid': payload['tag']
                 })
+
+    health_calc(host, 'blue', -2)
+
 
 def test_msg(topic, payload):
     hostmqtt.publishL('all', 'neopixel', 'play', {
