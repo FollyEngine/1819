@@ -51,7 +51,7 @@ echo "Starting $WHOAMI"
 cd ./src/RPi/
 
 for pkg in $PACKAGES; do
-	# TODO: only the remote control and the neopixels need sudo (iirc)
+	# TODO: the remote control and the neopixels, rfid-mifare need sudo (iirc)
 	sudo ./$pkg/main.py > $pkg-${DATE}.log 2>&1 &
 done
 

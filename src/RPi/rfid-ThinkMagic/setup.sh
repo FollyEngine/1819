@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 
 sudo pip3 install --no-cache-dir -r ./src/RPi/rfid-ThinkMagic/requirements.txt
@@ -13,7 +13,7 @@ else
 fi
 
 
-sudo apt-get install patch xsltproc gcc libreadline-dev python-dev python-setuptools
+sudo apt-get install -yq patch xsltproc gcc libreadline-dev python-dev python-setuptools
 make
 sudo make install
 
