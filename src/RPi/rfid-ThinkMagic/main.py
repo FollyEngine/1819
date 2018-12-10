@@ -29,9 +29,15 @@ import mercury
 # end load config
 
 ########################################
-
+lastRead = {}
 def rfidTagDataCallback(rfid):
     try:
+        if rfid.epc.hex() in lastRead:
+            if datetime.timedelta.total_seconds(datetime.datetime.now()-lastRead[rfid.epc.hex()]) > (1):
+                #lets only report each tag once a second
+                return
+
+        lastRead[rfid.epc.hex()] = datetime.datetime.now()
         event = {
             'atr': rfid.epc_mem_data,
             'tag': rfid.epc.hex(),
@@ -41,10 +47,10 @@ def rfidTagDataCallback(rfid):
         hostmqtt.publish("scan", event)
 
         print("EPC: %s RSSI: %s\n" % (rfid.epc, rfid.rssi))
-        print("     epc_mem_data: %s" % rfid.epc_mem_data)
-        print("     tid_mem_data: %s" % rfid.tid_mem_data)
-        print("     user_mem_data: %s" % rfid.user_mem_data)
-        print("     reserved_mem_data: %s" % rfid.reserved_mem_data)
+        #print("     epc_mem_data: %s" % rfid.epc_mem_data)
+        #print("     tid_mem_data: %s" % rfid.tid_mem_data)
+        #print("     user_mem_data: %s" % rfid.user_mem_data)
+        #print("     reserved_mem_data: %s" % rfid.reserved_mem_data)
     except Exception as ex:
         traceback.print_exc()
 
