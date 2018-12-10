@@ -22,20 +22,20 @@ hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 
 ########################################
 # on_message subscription functions
-displaying = False
-display = {
-    True: 'blue',
-    False: 'off'
-}
+displaying = ''
 def show_health(topic, payload):
     host, device, verb = topic.split('/')
 
-    global displaying
-    displaying = not displaying
+    if displaying == payload['tag']:
+        displaying = ''
+        colour = 'off'
+    else:
+        displaying = payload['tag']
+        colour = 'blue'
 
     hostmqtt.publishL(host, 'neopixel', 'play', {
                     'operation': 'colorwipe',
-                    'colour': display[displaying],
+                    'colour': colour,
                     'tagid': payload['tag']
                 })
 
