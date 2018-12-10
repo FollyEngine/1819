@@ -1,2 +1,2 @@
-#pyscard
+pyscard
 paho-mqtt
