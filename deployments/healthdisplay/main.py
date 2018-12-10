@@ -22,20 +22,21 @@ hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 
 ########################################
 # on_message subscription functions
+displaying = False
+display = {
+    True: 'blue',
+    False: 'off'
+}
 def show_health(topic, payload):
     host, device, verb = topic.split('/')
-    hostmqtt.publishL(host, 'neopixel', 'play', {
-                    'operation': 'colorwipe',
-                    'colour': 'blue',
-                    'tagid': payload['atr']
-                })
 
-def reset_health(topic, payload):
-    host, device, verb = topic.split('/')
+    global displaying
+    displaying = not displaying
+
     hostmqtt.publishL(host, 'neopixel', 'play', {
                     'operation': 'colorwipe',
-                    'colour': 'off',
-                    'tagid': payload['atr']
+                    'colour': display[displaying],
+                    'tagid': payload['tag']
                 })
 
 
@@ -61,8 +62,6 @@ def test_msg(topic, payload):
 hostmqtt.subscribeL("all", DEVICENAME, "test", test_msg)
 
 hostmqtt.subscribeL(myHostname, 'rfid-nfc', "scan", show_health)
-hostmqtt.subscribeL(myHostname, 'rfid-nfc', "removed", reset_health)
-
 
 hostmqtt.status({"status": "listening"})
 
