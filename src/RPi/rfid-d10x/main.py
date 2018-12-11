@@ -46,6 +46,7 @@ def readreply(ser):
             return length, packet_type, data
     return "nothing"
 
+lastRead = {}
 def read_reply_real_time_inventory(ser):
     length, packet_type, data = readreply(ser_connection)
     if packet_type != 160:
@@ -63,6 +64,14 @@ def read_reply_real_time_inventory(ser):
     TagPC = hexData[2:4]
     EPC = hexData[4:-2]
     rssi = hexData[-2:]
+
+    if EPC in lastRead:
+        if datetime.timedelta.total_seconds(datetime.datetime.now()-lastRead[EPC]) < (1):
+            #lets only report each tag once a second
+            return
+    lastRead[EPC] = datetime.datetime.now()
+
+
     event = {
         #'data': "%x" % data,
         #'packet_type': packet_type,
