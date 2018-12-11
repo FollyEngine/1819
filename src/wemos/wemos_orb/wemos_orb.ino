@@ -96,6 +96,7 @@ void loop() {
   
     delay(1);
     initialised = mqtt.subscribe(mqtt.getHostname(), "orb", "twinkle");
+    initialised = mqtt.subscribe("all", "orb", "twinkle");
     Serial.printf("loop Subscription returned: %s\n", initialised ? "true" : "false");
     // esp8266-84f3eb3b74a6/button/pushed
     for (int i = 0; i < 2*LED_NUM; i++) {
@@ -106,12 +107,13 @@ void loop() {
     colour++;
   }
   if (on) {
-    for (int i = 0; i < 2*LED_NUM; i++) {
+    for (int i = 0; i < LED_NUM; i++) {
       pixie_dust(left_leds, colour);
       pixie_dust(right_leds, colour);
       delay(2);
     }
     colour++;
+    on = !on;
   }
 }
 
