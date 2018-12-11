@@ -45,9 +45,6 @@ def show_health(topic, payload):
     show_colours(host, colour)
 
 def cauldron_item(topic, payload):
-    if displaying == '':
-        # no-one logged on to podium, so no magic happening
-        return
     #TODO: add maths that changes the person's health
     host, device, verb = topic.split('/')
     hostmqtt.publishL(host, 'audio', 'play', {
