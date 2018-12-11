@@ -5,13 +5,13 @@
 ## RPi connected to:
 
 * Long range UHF RFID reader
-  * one SPARKFUN with external antenna (works)
-  * one serial reader with big antenna
-* powered speaker using PHAT-DAC (works)
+  * [x] one SPARKFUN with external antenna (works)
+  * [ ] one serial reader with big antenna
+* [ ] powered speaker using PHAT-DAC (works)
 * neopixel on rpi proto board to show  (some code)
-  * 4xspell strength bars (16 pixels) - this may move to an esp32/esp8266
-  * health bar (16 pixels)
-* mifare rfid reader (works)
+  * [ ] 4xspell strength bars (16 pixels) - this may move to an esp32/esp8266 - or to the healthcheck rpi)
+  * [x] health bar (16 pixels)
+* [x] mifare rfid reader (works)
 * USB power
 
 
@@ -30,12 +30,12 @@
 ## Microservices:
 
 * Long range UHF reader (one of...)
-  * [thinkmagic rfid event source](../../src/RPi/rfid-ThinkMagic/main.py)
-  * [serial rfid event source](../../src/RPi/rfid-serial/main.py)
-* [mifare rfid event source](../../src/RPi/rfid-mifare/main.py)
-* [audio player sink](../../src/RPi/audio/main.py)
-* [neopixel sink](../../src/RPi/neopixels/main.py) (not sure - this may running one per neopixel string with cfg?)
-* [podium controller generated from designer](../../controller/podium/main.py)
+  * [x] [thinkmagic rfid event source](../../src/RPi/rfid-ThinkMagic/main.py)
+  * [ ] [serial rfid event source](../../src/RPi/rfid-serial/main.py)
+* [x] [mifare rfid event source](../../src/RPi/rfid-mifare/main.py)
+* [x] [audio player sink](../../src/RPi/audio/main.py)
+* [x] [neopixel sink](../../src/RPi/neopixels/main.py) (not sure - this may running one per neopixel string with cfg?)
+* [ ] [podium controller generated from designer](../../controller/podium/main.py)
 
 
 ## initial testing controller:

@@ -6,7 +6,8 @@
 
 // GO READ https://www.tweaking4all.com/hardware/arduino/adruino-led-strip-effects/
 
-Mqtt mqtt = Mqtt("uhome", "WhatTheHe11", "mqtt", 1883);
+//Mqtt mqtt = Mqtt("ASUS", "MEGA SHED", "mqtt", 1883, "orb");
+Mqtt mqtt = Mqtt("uhome", "WhatTheHe11", "10.10.10.24", 1883, "orb");
 
 // constants won't change. They're used here to set pin numbers:
 // D3 is the LOLIN Wemos 1-Button Shield: https://wiki.wemos.cc/products:d1_mini_shields:1-button_shield
@@ -39,9 +40,6 @@ void setup() {
   Serial.begin(115200);
   Serial.printf("Started\n");
 
-  mqtt.setHostname("orb");
-  mqtt.setCallback(mqtt_callback_fn);
-  mqtt.setup();
 
   // initialize the LED pin as an output:
   pinMode(ledPin, OUTPUT);
@@ -56,6 +54,9 @@ void setup() {
   right_leds.setBrightness(BRIGHTNESS);
   right_leds.show();                //Set all pixels to "off"
   leds_set(right_leds, 0, 100, 0);
+
+  mqtt.setCallback(mqtt_callback_fn);
+  mqtt.setup();
 
 }
 
@@ -94,7 +95,7 @@ void loop() {
     digitalWrite(ledPin, HIGH);
   
     delay(1);
-    initialised = mqtt.subscribe("esp8266-84f3eb3b74a6", "button", "pushed");
+    initialised = mqtt.subscribe(mqtt.getHostname(), "orb", "twinkle");
     Serial.printf("loop Subscription returned: %s\n", initialised ? "true" : "false");
     // esp8266-84f3eb3b74a6/button/pushed
     for (int i = 0; i < 2*LED_NUM; i++) {
