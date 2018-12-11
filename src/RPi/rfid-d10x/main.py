@@ -267,20 +267,28 @@ with serial.Serial(
             writeCommand(ser_connection, publicAddress, cmd_real_time_inventory, 1, 0xff)
 
             while True:
-                if datetime.timedelta.total_seconds(datetime.datetime.now()-lastStatus) > (2*60):
-                    status(ser_connection)
-                    lastStatus = datetime.datetime.now()
+                try:
+                    if datetime.timedelta.total_seconds(datetime.datetime.now()-lastStatus) > (2*60):
+                        status(ser_connection)
+                        lastStatus = datetime.datetime.now()
 
-                length, packet_type, data = read_reply_real_time_inventory(ser_connection)
-                # note that there are at least 2 different replies
-                ## the response packet, and the tag info..
-                print("read : 0x%x" % data)
+                    length, packet_type, data = read_reply_real_time_inventory(ser_connection)
+                    # note that there are at least 2 different replies
+                    ## the response packet, and the tag info..
+                    print("read : 0x%x" % data)
 
-                # TODO: will get a 10 byte length response code after the timeout
-                # presumably, you then set go again...
-                if length == 10:
-                    print("------------------------------------- cmd_real_time_inventory")
-                    writeCommand(ser_connection, publicAddress, cmd_real_time_inventory, 1, 0xff)
+                    # TODO: will get a 10 byte length response code after the timeout
+                    # presumably, you then set go again...
+                    if length == 10:
+                        print("------------------------------------- cmd_real_time_inventory")
+                        writeCommand(ser_connection, publicAddress, cmd_real_time_inventory, 1, 0xff)
+                except Exception as ex:
+                    traceback.print_exc()
+                    print("Send Reset")
+                    #writeCommand(ser_connection, publicAddress, cmd_reset)
+                    writeReset(ser_connection, publicAddress, cmd_reset)
+                    sleep(1)
+
     except KeyboardInterrupt:
         print("exit")
         print("Send Reset")
