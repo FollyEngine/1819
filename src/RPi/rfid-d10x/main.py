@@ -3,6 +3,7 @@
 import serial
 from time import sleep
 import socket
+import traceback
 
 
 # for UHF RFID reader - the yellow one...
