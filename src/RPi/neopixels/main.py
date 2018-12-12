@@ -118,7 +118,7 @@ def magic_item(strip, payload):
     D = int(round(payload['D'] * strip.numPixels() / total))
     print("A: %d, B: %d, C: %d, D: %d" % (A, B, C, D))
     for i in range(A):
-        strip.setPixelColor(index, colours['green'])
+        strip.setPixelColor(index, colours['red'])
         index = index + 1
         strip.show()
         time.sleep(wait_ms/1000.0)
