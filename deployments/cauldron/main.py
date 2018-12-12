@@ -31,6 +31,18 @@ def show_colours(host, colour):
                         'tagid': payload['tag']
                     })
 
+def show_magic_colours(host, A, B, C, D):
+    if change < 0:
+        hostmqtt.publishL(host, 'neopixel', 'play', {
+                        'operation': 'magic_item',
+                        'A': A,
+                        'B': B,
+                        'C': C,
+                        'D': D,
+                        'tagid': payload['tag']
+                    })
+
+
 def show_health(topic, payload):
     host, device, verb = topic.split('/')
 
@@ -44,15 +56,68 @@ def show_health(topic, payload):
 
     show_colours(host, colour)
 
+wandTags = {
+    # the 4 tire tags
+    "3000e2000016630301560190f4bf": "",
+    "3000e200001673030216183059fe": "",
+    "3000e2000016730602271180a23f": "",
+    "3000e20000167303013123202a5a": ""
+}
+ingredients = {
+    "0": {'A': 0, 'B': 0, 'C': 1, 'D': 0},
+    "1": {'A': 5, 'B': 0, 'C': 0, 'D': 1},
+    "2": {'A': 0, 'B': 2, 'C': 4, 'D': 0},
+    "3": {'A': 3, 'B': 0, 'C': 0, 'D': 2},
+    "4": {'A': 0, 'B': 4, 'C': 7, 'D': 0},
+    "5": {'A': 1, 'B': 0, 'C': 0, 'D': 3},
+    "6": {'A': 0, 'B': 6, 'C': 9, 'D': 0},
+    "7": {'A': 7, 'B': 0, 'C': 0, 'D': 7},
+    "8": {'A': 0, 'B': 9, 'C': 3, 'D': 0},
+    "9": {'A': 5, 'B': 0, 'C': 0, 'D': 9},
+}
+index = 0
+A = 0   # Attack
+B = 0   # Buff
+C = 0   # Counter
+D = 0   # Debuff
+
 def cauldron_item(topic, payload):
+    global A, B, C, D, index
     #TODO: add maths that changes the person's health
     host, device, verb = topic.split('/')
-    hostmqtt.publishL(host, 'audio', 'play', {
-                    'sound': '/usr/share/scratch/Media/Sounds/Effects/Rattle.wav',
-                    'tagid': payload['tag']
-                })
 
-    show_colours(host, 'green')
+    if payload['tag'] in wandTags:
+        # loading the wand / orb / item with the current magic
+        hostmqtt.publishL("all", 'magic', 'set', {
+                        'tagid': payload['tag'],
+                        'A': A,
+                        'B': B,
+                        'C': C,
+                        'D': D
+                    })
+        A = 0
+        B = 0
+        C = 0
+        D = 0
+        show_colours(host, 'off')
+        hostmqtt.publishL(host, 'audio', 'play', {
+                        'sound': '/usr/share/scratch/Media/Sounds/Effects/Pop.wav',
+                        'tagid': payload['tag']
+                    })
+    else:
+        i = "%d" % index
+        A = A + ingredients[i]
+        B = B + ingredients[i]
+        C = C + ingredients[i]
+        D = D + ingredients[i]
+        index = index + 1
+        if index > 9:
+            index = 0
+        hostmqtt.publishL(host, 'audio', 'play', {
+                        'sound': '/usr/share/scratch/Media/Sounds/Effects/Rattle.wav',
+                        'tagid': payload['tag']
+                    })
+        show_magic_colours(host, A, B, C, D)
 
 def test_msg(topic, payload):
     hostmqtt.publishL('all', 'neopixel', 'play', {

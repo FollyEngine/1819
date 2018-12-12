@@ -108,8 +108,33 @@ def health(strip, color, count, wait_ms=50):
         strip.show()
         time.sleep(wait_ms/1000.0)
 
+def magic_item(strip, payload):
+    index = 0
+    for i in range(payload['A']):
+        strip.setPixelColor(index, colours['green'])
+        index = index + 1
+        strip.show()
+        time.sleep(wait_ms/1000.0)
+    for i in range(payload['B']):
+        strip.setPixelColor(index, colours['green'])
+        index = index + 1
+        strip.show()
+        time.sleep(wait_ms/1000.0)
+    for i in range(payload['C']):
+        strip.setPixelColor(index, colours['blue'])
+        index = index + 1
+        strip.show()
+        time.sleep(wait_ms/1000.0)
+    for i in range(payload['D']):
+        strip.setPixelColor(index, colours['yello'])
+        index = index + 1
+        strip.show()
+        time.sleep(wait_ms/1000.0)
+
 ############
 operations = {
+    # custom = has A, B, C, D
+    'magic_item': magic_item,
     # needs colour and count
     'health': health,
     #needs colour
@@ -123,7 +148,8 @@ colours = {
     'off': Color(0,0,0),
     'green': Color(255,0,0),
     'red': Color(0,255,0),
-    'blue': Color(0,0,255)
+    'blue': Color(0,0,255),
+    'yellow': Color(255,255,0)
 }
 ############
 def get(obj, name, default):
@@ -137,6 +163,11 @@ def play(payload = {}):
     operationname = get(payload, 'operation', 'colourwipe')
     operation = get(operations, operationname, operations['colourwipe'])
     print("playing %s" % operationname)
+
+    if operationname == 'magic_item':
+        operation(strip, payload)
+        return
+
     if operationname == 'rainbow' or operationname == 'rainbow_cycle':
         operation(strip)
         return

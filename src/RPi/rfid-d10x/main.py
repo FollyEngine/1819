@@ -45,9 +45,9 @@ def readreply(ser):
             print("READ: address = %s data == %s" % (format(address, '#04x'), format(data, '#04x')))
 
             return length, packet_type, data
-    return "nothing"
+    return 0, 0, "nothing"
 
-lastRead = {}
+lastPublished = {}
 def read_reply_real_time_inventory(ser):
     length, packet_type, data = readreply(ser_connection)
     if packet_type != 160:
@@ -66,23 +66,31 @@ def read_reply_real_time_inventory(ser):
     EPC = hexData[4:-2]
     rssi = hexData[-2:]
 
-    if EPC in lastRead:
-        if datetime.timedelta.total_seconds(datetime.datetime.now()-lastRead[EPC]) < (1):
+    publish = True
+    if EPC in lastPublished:
+        if datetime.timedelta.total_seconds(datetime.datetime.now()-lastPublished[EPC]) < (1):
             #lets only report each tag once a second
-            return
-    lastRead[EPC] = datetime.datetime.now()
+            publish = False
+    
+    # not real tag reads
+    if EPC == "0000000000":
+        publish = False
+    if TagPC == "00":
+        publish = False
 
+    if publish == True:
+        event = {
+            #'data': "%x" % data,
+            #'packet_type': packet_type,
+            "FreqAnt": FreqAnt,
+            "TagPC": TagPC,
+            "EPC": EPC,
+            "RSSI": rssi,
+            'event': 'inserted'
+        }
+        hostmqtt.publish("scan", event)
+        lastRead[EPC] = datetime.datetime.now()
 
-    event = {
-        #'data': "%x" % data,
-        #'packet_type': packet_type,
-        "FreqAnt": FreqAnt,
-        "TagPC": TagPC,
-        "EPC": EPC,
-        "RSSI": rssi,
-        'event': 'inserted'
-    }
-    hostmqtt.publish("scan", event)
     return length, packet_type, data
 
 
@@ -133,8 +141,9 @@ def writeCommand(ser, address, cmd, data_len=0, data=0x00):
     crc = (1 << 8) - sum(bytearray([0xA0, 0x03, address, cmd])) & 0xff
     print("crc: 0x%02x" % crc)
     packet[length+1] = crc
-    print(packet)
+    print("packet %s" %packet)
     ser.write(packet)
+    print("after ser.write")
 
 cmd_reset = 0x70
 cmd_set_uart_baudrate = 0x71
@@ -172,23 +181,34 @@ cmd_set_impinj_fast_tid = 0x8C #Set impinj FastTID function.  #(Without saving t
 cmd_set_and_save_impinj_fast_tid = 0x8D #Set impinj FastTID function.  #(Save to FLASH)
 cmd_get_impinj_fast_tid = 0x8E #Get current FastTID setting.
 
+version = ""
+power = ""
+region = ""
 ########################################
 def status(ser_connection):
-
+    global version, power, region
     # get version
-    writeCommand(ser_connection, publicAddress, cmd_get_firmware_version)
-    l, t, v = readreply(ser_connection)
+    if version == "":
+        print("get version")
+        writeCommand(ser_connection, publicAddress, cmd_get_firmware_version)
+        l, t, version = readreply(ser_connection)
+
     # get the current antenna power
-    writeCommand(ser_connection, publicAddress, cmd_get_output_power)
-    p = readreply(ser_connection)  # 4 bytes - range 0 to 0x21 in dBm
+    if power == "":
+        print("get power")
+        writeCommand(ser_connection, publicAddress, cmd_get_output_power)
+        power = readreply(ser_connection)  # 4 bytes - range 0 to 0x21 in dBm
+
     # get the frequency region
-    writeCommand(ser_connection, publicAddress, cmd_get_frequency_region)
-    region = readreply(ser_connection) # can be 3 bytes if region based, or 7 bytes if user defined.
+    if region == "":
+        print("get region")
+        writeCommand(ser_connection, publicAddress, cmd_get_frequency_region)
+        region = readreply(ser_connection) # can be 3 bytes if region based, or 7 bytes if user defined.
 
 
     hostmqtt.status({
-        "version": v,
-        "power": p,
+        "version": version,
+        "power": power,
         "model": "desktop uhf rfid (D-10X)",
         "region": region,
         "status": "listening"})
@@ -261,6 +281,13 @@ with serial.Serial(
             # rf_link_profile = readreply(ser_connection)
             # print(rf_link_profile)   # 1 byte
 
+            # set buzzer off
+            # print("set beeper_mode == 0x00")
+            # writeCommand(ser_connection, publicAddress, cmd_set_beeper_mode, 4, 0x00)
+            # buzzer_off_status = readreply(ser_connection)
+            # print(buzzer_off_status)   # 1 byte
+
+
             lastStatus = datetime.datetime.now()
             status(ser_connection)
 
@@ -281,14 +308,15 @@ with serial.Serial(
                     # TODO: will get a 10 byte length response code after the timeout
                     # presumably, you then set go again...
                     if length == 10:
-                        print("------------------------------------- cmd_real_time_inventory")
-                        writeCommand(ser_connection, publicAddress, cmd_real_time_inventory, 1, 0xff)
+                        thereisnofunction()
                 except Exception as ex:
                     traceback.print_exc()
                     print("Send Reset")
                     #writeCommand(ser_connection, publicAddress, cmd_reset)
                     writeReset(ser_connection, publicAddress, cmd_reset)
                     sleep(1)
+                    print("------------------------------------- cmd_real_time_inventory")
+                    writeCommand(ser_connection, publicAddress, cmd_real_time_inventory, 1, 0xff)
 
     except KeyboardInterrupt:
         print("exit")
