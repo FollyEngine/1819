@@ -32,15 +32,14 @@ def show_colours(host, colour):
                     })
 
 def show_magic_colours(host, A, B, C, D):
-    if change < 0:
-        hostmqtt.publishL(host, 'neopixel', 'play', {
-                        'operation': 'magic_item',
-                        'A': A,
-                        'B': B,
-                        'C': C,
-                        'D': D,
-                        'tagid': payload['tag']
-                    })
+    hostmqtt.publishL(host, 'neopixel', 'play', {
+                    'operation': 'magic_item',
+                    'A': A,
+                    'B': B,
+                    'C': C,
+                    'D': D,
+                    'tagid': payload['tag']
+                })
 
 
 def show_health(topic, payload):
