@@ -2,7 +2,10 @@
 
 ** how many, and where
 
-not sure - how do we identify a person... MiFare RFID?
+Identify a person... MiFare RFID?
+
+The one I've given James as a single white neopixel stack.
+I hope to build a different one with 4 stacks, and the desktop UHF reader
 
 * RPi
 * miFare USB reader
@@ -13,6 +16,6 @@ not sure - how do we identify a person... MiFare RFID?
 
 Microservices:
 
-* [mifare rfid event source](../../src/RPi/rfid-mifare/main.py)
-* [neopixel sink](../../src/RPi/neopixels/main.py)
+* [x] [mifare rfid event source](../../src/RPi/rfid-mifare/main.py)
+* [x] [neopixel sink](../../src/RPi/neopixels/main.py)
 * [health controller generated from designer](../../controller/health/main.py)
