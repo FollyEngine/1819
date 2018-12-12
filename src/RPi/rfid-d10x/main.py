@@ -84,8 +84,8 @@ def read_reply_real_time_inventory(ser):
             #'packet_type': packet_type,
             "FreqAnt": FreqAnt,
             "TagPC": TagPC,
-            "EPC": EPC,
-            "RSSI": rssi,
+            "tag": EPC,
+            "rssi": rssi,
             'event': 'inserted'
         }
         hostmqtt.publish("scan", event)
