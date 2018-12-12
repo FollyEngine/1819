@@ -111,22 +111,28 @@ def health(strip, color, count, wait_ms=50):
 def magic_item(strip, payload):
     wait_ms = 0
     index = 0
-    for i in range(payload['A']):
+    total = payload['A'] + payload['B'] + payload['C'] + payload['D']
+    A = int(round(payload['A'] * strip.numPixels() / total))
+    B = int(round(payload['B'] * strip.numPixels() / total))
+    C = int(round(payload['C'] * strip.numPixels() / total))
+    D = int(round(payload['D'] * strip.numPixels() / total))
+    print("A: %d, B: %d, C: %d, D: %d" % (A, B, C, D))
+    for i in range(A):
         strip.setPixelColor(index, colours['green'])
         index = index + 1
         strip.show()
         time.sleep(wait_ms/1000.0)
-    for i in range(payload['B']):
+    for i in range(B):
         strip.setPixelColor(index, colours['green'])
         index = index + 1
         strip.show()
         time.sleep(wait_ms/1000.0)
-    for i in range(payload['C']):
+    for i in range(C):
         strip.setPixelColor(index, colours['blue'])
         index = index + 1
         strip.show()
         time.sleep(wait_ms/1000.0)
-    for i in range(payload['D']):
+    for i in range(D):
         strip.setPixelColor(index, colours['yellow'])
         index = index + 1
         strip.show()
