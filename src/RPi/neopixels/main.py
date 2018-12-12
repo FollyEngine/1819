@@ -109,6 +109,7 @@ def health(strip, color, count, wait_ms=50):
         time.sleep(wait_ms/1000.0)
 
 def magic_item(strip, payload):
+    wait_ms = 0
     index = 0
     for i in range(payload['A']):
         strip.setPixelColor(index, colours['green'])
