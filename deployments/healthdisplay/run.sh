@@ -27,6 +27,7 @@ if [[ ¨$1¨ == ¨--setup¨ ]]; then
 
 	for pkg in $PACKAGES; do
 		if [[ -f "./src/RPi/$pkg/requirements.txt" ]]; then
+			sudo pip install --no-cache-dir -r ./src/RPi/$pkg/requirements.txt
 			sudo pip3 install --no-cache-dir -r ./src/RPi/$pkg/requirements.txt
 		fi
 		if [[ -f "./src/RPi/$pkg/setup.sh" ]]; then

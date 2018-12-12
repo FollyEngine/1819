@@ -153,6 +153,7 @@ operations = {
 }
 colours = {
     'off': Color(0,0,0),
+    'white': Color(180,180,180),
     'green': Color(255,0,0),
     'red': Color(0,255,0),
     'blue': Color(0,0,255),

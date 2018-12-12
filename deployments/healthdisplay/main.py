@@ -32,7 +32,7 @@ def show_health(topic, payload):
         colour = 'off'
     else:
         displaying = payload['tag']
-        colour = 'blue'
+        colour = 'white'
 
     hostmqtt.publishL(host, 'neopixel', 'play', {
                     'operation': 'colorwipe',

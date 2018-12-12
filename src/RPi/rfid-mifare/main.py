@@ -1,4 +1,5 @@
-#!//usr/bin/python3
+#!//usr/bin/python
+# python3 crashes randomly - python2 worked for the entire convicts run
 
 from __future__ import print_function
 from time import sleep
