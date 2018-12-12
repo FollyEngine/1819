@@ -106,10 +106,10 @@ def cauldron_item(topic, payload):
                     })
     else:
         i = "%d" % index
-        A = A + ingredients[i]
-        B = B + ingredients[i]
-        C = C + ingredients[i]
-        D = D + ingredients[i]
+        A = A + ingredients[i]['A']
+        B = B + ingredients[i]['B']
+        C = C + ingredients[i]['C']
+        D = D + ingredients[i]['D']
         index = index + 1
         if index > 9:
             index = 0
