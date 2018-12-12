@@ -89,7 +89,7 @@ def read_reply_real_time_inventory(ser):
             'event': 'inserted'
         }
         hostmqtt.publish("scan", event)
-        lastRead[EPC] = datetime.datetime.now()
+        lastPublished[EPC] = datetime.datetime.now()
 
     return length, packet_type, data
 
