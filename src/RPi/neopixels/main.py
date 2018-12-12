@@ -126,7 +126,7 @@ def magic_item(strip, payload):
         strip.show()
         time.sleep(wait_ms/1000.0)
     for i in range(payload['D']):
-        strip.setPixelColor(index, colours['yello'])
+        strip.setPixelColor(index, colours['yellow'])
         index = index + 1
         strip.show()
         time.sleep(wait_ms/1000.0)
