@@ -24,12 +24,10 @@ hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 # on_message subscription functions
 displaying = ''
 def show_colours(host, colour):
-    if change < 0:
-        hostmqtt.publishL(host, 'neopixel', 'play', {
-                        'operation': 'colourwipe',
-                        'colour': colour,
-                        'tagid': payload['tag']
-                    })
+    hostmqtt.publishL(host, 'neopixel', 'play', {
+                    'operation': 'colourwipe',
+                    'colour': colour
+                })
 
 def show_magic_colours(host, A, B, C, D):
     hostmqtt.publishL(host, 'neopixel', 'play', {
@@ -37,8 +35,7 @@ def show_magic_colours(host, A, B, C, D):
                     'A': A,
                     'B': B,
                     'C': C,
-                    'D': D,
-                    'tagid': payload['tag']
+                    'D': D
                 })
 
 
