@@ -7,12 +7,17 @@ The bigger the threshold, the more sensible is the touch
 
 Mqtt mqtt = Mqtt("ASUS", "MEGA SHED", "192.168.4.1", 1883, "podiumbuttons");
 
+// BUILD as WEMOS LOLIN32 - see http://esp32village.blogspot.com/2018/04/esp32.html
+// OR
+// BUILD as "ESP32 Dev Module", using 115200 baud and DOUT Flash mode, see https://github.com/LilyGO/ESP32-MINI-32-V2.0
+
 int threshold = 40;
 bool touch0detected = false;
 bool touch1detected = false;
 bool touch2detected = false;
 bool touch3detected = false;
 bool touch4detected = false;
+bool touch5detected = false;
 
 void gotTouch0(){
  touch0detected = true;
@@ -31,6 +36,9 @@ void gotTouch3(){
 void gotTouch4(){
  touch4detected = true;
 }
+void gotTouch5(){
+ touch5detected = true;
+}
 
 void setup() {
   Serial.begin(115200);
@@ -39,10 +47,11 @@ void setup() {
   
   Serial.println("ESP32 Touch Interrupt Test");
   touchAttachInterrupt(T0, gotTouch0, threshold);
-//  touchAttachInterrupt(T1, gotTouch1, threshold); // Attached to the reset button, so won't work as capacitive
+//  touchAttachInterrupt(T1, gotTouch1, threshold); // Attached to the reset button (on the LOLIN32), so won't work as capacitive
   touchAttachInterrupt(T2, gotTouch2, threshold);
   touchAttachInterrupt(T3, gotTouch3, threshold);
   touchAttachInterrupt(T4, gotTouch4, threshold);
+  touchAttachInterrupt(T5, gotTouch5, threshold);
 }
 
 void loop(){
@@ -79,6 +88,12 @@ void loop(){
     touch4detected = false;
     Serial.printf("Touch 4 (pin %d) detected\n", T4);
     root["pin"] = 4;
+    mqtt.publish("podiumbuttons", "touch", root);
+  }
+  if(touch5detected){
+    touch5detected = false;
+    Serial.printf("Touch 5 (pin %d) detected\n", T5);
+    root["pin"] = 5;
     mqtt.publish("podiumbuttons", "touch", root);
   }
   
