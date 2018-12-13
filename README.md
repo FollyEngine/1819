@@ -62,7 +62,15 @@ echo "interface wlan0
      nohook wpa_supplicant" >> /etc/dhcpcd.conf
 service dhcpcd restart
 mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
-echo "interface=wlan0      # Use the require wireless interface - usually wlan0
+echo "domain-needed
+no-resolv
+no-hosts
+domain=local
+local=/local/
+expand-hosts
+dhcp-option=15,local
+dhcp-option=119,local
+interface=wlan0      # Use the require wireless interface - usually wlan0
   dhcp-range=192.168.4.2,192.168.4.20,255.255.255.0,24h" >> /etc/dnsmasq.conf
 echo 'interface=wlan0
 driver=nl80211
