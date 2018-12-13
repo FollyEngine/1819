@@ -6,8 +6,9 @@
 
 // GO READ https://www.tweaking4all.com/hardware/arduino/adruino-led-strip-effects/
 
-//Mqtt mqtt = Mqtt("ASUS", "MEGA SHED", "mqtt", 1883, "orb");
-Mqtt mqtt = Mqtt("uhome", "WhatTheHe11", "10.10.10.24", 1883, "orb");
+//BUILD with "LOLIN(WEMOS) D1 R2 & mini"
+//Mqtt mqtt = Mqtt("ASUS", "MEGA SHED", "mqtt.local", 1883, "orb");
+Mqtt mqtt = Mqtt("uhome", "WhatTheHe11", "mqtt.local", 1883, "orb");
 
 // constants won't change. They're used here to set pin numbers:
 // D3 is the LOLIN Wemos 1-Button Shield: https://wiki.wemos.cc/products:d1_mini_shields:1-button_shield
@@ -82,7 +83,6 @@ void loop() {
   } else {
     pinMode(ledPin, LOW);
   }
-
 
   if (colour > 4) {
     colour = 0;
