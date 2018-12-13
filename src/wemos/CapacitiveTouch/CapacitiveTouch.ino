@@ -18,6 +18,8 @@ bool touch2detected = false;
 bool touch3detected = false;
 bool touch4detected = false;
 bool touch5detected = false;
+bool touch6detected = false;
+bool touch7detected = false;
 
 void gotTouch0(){
  touch0detected = true;
@@ -40,6 +42,13 @@ void gotTouch5(){
  touch5detected = true;
 }
 
+void gotTouch6(){
+ touch6detected = true;
+}
+void gotTouch7(){
+ touch7detected = true;
+}
+
 void setup() {
   Serial.begin(115200);
   mqtt.setup();
@@ -48,10 +57,12 @@ void setup() {
   Serial.println("ESP32 Touch Interrupt Test");
   touchAttachInterrupt(T0, gotTouch0, threshold);
 //  touchAttachInterrupt(T1, gotTouch1, threshold); // Attached to the reset button (on the LOLIN32), so won't work as capacitive
-  touchAttachInterrupt(T2, gotTouch2, threshold);
+  touchAttachInterrupt(T2, gotTouch2, threshold);   // Touch 2 doesn't work on the TTGO ESP32
   touchAttachInterrupt(T3, gotTouch3, threshold);
   touchAttachInterrupt(T4, gotTouch4, threshold);
   touchAttachInterrupt(T5, gotTouch5, threshold);
+  touchAttachInterrupt(T6, gotTouch6, threshold);
+  touchAttachInterrupt(T7, gotTouch7, threshold);
 }
 
 void loop(){
@@ -94,6 +105,18 @@ void loop(){
     touch5detected = false;
     Serial.printf("Touch 5 (pin %d) detected\n", T5);
     root["pin"] = 5;
+    mqtt.publish("podiumbuttons", "touch", root);
+  }
+  if(touch6detected){
+    touch6detected = false;
+    Serial.printf("Touch 6 (pin %d) detected\n", T6);
+    root["pin"] = 6;
+    mqtt.publish("podiumbuttons", "touch", root);
+  }
+  if(touch7detected){
+    touch7detected = false;
+    Serial.printf("Touch 7 (pin %d) detected\n", T7);
+    root["pin"] = 7;
     mqtt.publish("podiumbuttons", "touch", root);
   }
   
