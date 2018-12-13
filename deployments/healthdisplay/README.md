@@ -1,6 +1,6 @@
 # health display
 
-** how many, and where
+Probably only making one - not a simple prop
 
 Identify a person... MiFare RFID?
 

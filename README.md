@@ -41,6 +41,12 @@ network={
 }
 ```
 
+apt-get everything:
+
+```
+apt-get install -yq openssh-server git mosquitto mosquitto-clients dnsmasq hostapd 
+```
+
 
 on the mqtt server, `apt-get install mosquitto mosquitto-clients`
 

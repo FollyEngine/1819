@@ -8,5 +8,5 @@ set up in the control center, talking to our WIFI router there to everything tha
 * node red
 * maybe running the designer
 * the main controller
-* elasticsearch for logging
+* loki? for logging
 * prometheus for monitoring
