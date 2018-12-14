@@ -72,14 +72,16 @@ class MQTT:
         self.set_on_message(self.on_message)
         print("Connecting to MQTT as %s at: %s" % (clientname, self.mqtthostname))
         self.client.connect(self.mqtthostname, self.port)
-        self.client.loop_start()
 
     def set_on_message(self, on_message):
         self.client.on_message=on_message #attach function to callback
 
     def loop_forever(self):
-        #self.client.loop_forever()
-        return
+        self.client.loop_forever()
+
+    def loop_start(self):
+        self.client.loop_start()
+
 
     def topic_matches_sub(self, sub, topic):
         return mqttclient.topic_matches_sub(sub, topic)

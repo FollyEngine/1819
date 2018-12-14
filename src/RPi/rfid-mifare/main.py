@@ -37,6 +37,7 @@ GETUID = [0xFF, 0xCA, 0x00, 0x00, 0x00]
 mqttHost = config.getValue("mqtthostname", "mqtt.local")
 myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, "rfid-nfc")
+hostmqtt.loop_start()   # use the background thread
 
 # a simple card observer that prints inserted/removed cards
 class PrintObserver(CardObserver):
@@ -106,7 +107,8 @@ if __name__ == '__main__':
         except CardRequestTimeoutException:
             print("retry:")
             sleep(1)
-           
+        except Exception as ex:
+            traceback.print_exc()
         except KeyboardInterrupt:
             print("exit")
             break

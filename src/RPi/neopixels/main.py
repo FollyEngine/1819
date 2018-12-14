@@ -20,7 +20,7 @@ DEVICENAME="neopixel"
 mqttHost = config.getValue("mqtthostname", "mqtt")
 myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
-
+hostmqtt.loop_start()   # use the background thread
 
 # uses https://github.com/jgarff/rpi_ws281x.git 
 # LED strip configuration:
@@ -200,9 +200,13 @@ def msg_play(topic, payload):
     elif mqtt.MQTT.topic_matches_sub(hostmqtt, myHostname+"/neopixel/play", topic):
         #print(myHostname+" got "+payload+" SPARKLES!!")
         play(payload)
+def msg_test(topic, payload):
+    play({'operation': 'colourwipe', 'colour': 'yellow'})
+
 
 hostmqtt.subscribe("play", msg_play)
 hostmqtt.subscribeL("all", DEVICENAME, "play", msg_play)
+hostmqtt.subscribeL("all", DEVICENAME, "test", msg_test)
 
 hostmqtt.status({"status": "listening"})
 play({'operation': 'colourwipe', 'colour': 'red'})
@@ -211,6 +215,8 @@ play({'operation': 'colourwipe', 'colour': 'off'})
 try:
     while True:
         time.sleep(1)
+except Exception as ex:
+    traceback.print_exc()
 except KeyboardInterrupt:
     print("exit")
 

@@ -144,8 +144,9 @@ hostmqtt.subscribeL(myHostname, 'yellow-rfid', "scan", cauldron_item)
 hostmqtt.status({"status": "listening"})
 
 try:
-    while True:
-        sleep(1)
+    hostmqtt.loop_forever()
+except Exception as ex:
+    traceback.print_exc()
 except KeyboardInterrupt:
     print("exit")
 

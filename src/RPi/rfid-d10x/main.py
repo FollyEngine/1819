@@ -20,6 +20,7 @@ import datetime
 mqttHost = config.getValue("mqtthostname", "mqtt")
 myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, "yellow-rfid")
+hostmqtt.loop_start()   # use the background thread
 
 ########################################
 
@@ -317,7 +318,8 @@ with serial.Serial(
                     sleep(1)
                     print("------------------------------------- cmd_real_time_inventory")
                     writeCommand(ser_connection, publicAddress, cmd_real_time_inventory, 1, 0xff)
-
+    except Exception as ex:
+        traceback.print_exc()
     except KeyboardInterrupt:
         print("exit")
         print("Send Reset")
