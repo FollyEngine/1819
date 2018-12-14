@@ -18,7 +18,7 @@ import mqtt
 
 DEVICENAME="podium"
 
-mqttHost = config.getValue("mqtthostname", "mqtt")
+mqttHost = config.getValue("mqtthostname", "mqtt.local")
 myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 
@@ -99,11 +99,11 @@ hostmqtt.subscribeL(myHostname, 'ThingMagic', "scan", magic_cast)
 
 hostmqtt.status({"status": "listening"})
 
-try:
-    hostmqtt.loop_forever()
-except Exception as ex:
-    traceback.print_exc()
-except KeyboardInterrupt:
-    print("exit")
+#try:
+hostmqtt.loop_forever()
+#except Exception as ex:
+#    traceback.print_exc()
+#except KeyboardInterrupt:
+#    print("exit")
 
 hostmqtt.status({"status": "STOPPED"})

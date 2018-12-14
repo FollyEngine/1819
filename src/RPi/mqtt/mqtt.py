@@ -14,6 +14,7 @@ class MQTT:
         self.devicename = devicename
         self.username = username
         self.password = password
+        self.background_loop = False
         self.sub = {}
         self.connect()
 
@@ -21,7 +22,8 @@ class MQTT:
         obj['device'] = self.devicename
         obj['time'] = datetime.datetime.now().isoformat()
         mqinfo = self.client.publish("%s/%s/%s" % (self.myhostname, self.devicename, 'status'), payload=json.dumps(obj), retain=True)
-        mqinfo.wait_for_publish()
+        if self.background_loop:
+            mqinfo.wait_for_publish()
 
     # used to publish messages to other devices directly, or to `all`
     def publishL(self, host, device, verb, obj):
@@ -42,7 +44,8 @@ class MQTT:
             print("Retain: %s" % verb)
             retain = True
         mqinfo = self.client.publish(verb, json.dumps(obj), retain=retain)
-        mqinfo.wait_for_publish()
+        if self.background_loop:
+            mqinfo.wait_for_publish()
 
     def subscribeL(self, host, device, verb, function=""):
         sub_topic = "%s/%s/%s" % (host, device, verb)
@@ -57,8 +60,8 @@ class MQTT:
     ############################## internal
     def publishStringRaw(self, host, device, verb, message):
         mqinfo = self.client.publish("%s/%s/%s" % (host, device, verb), message)
-        mqinfo.wait_for_publish()
-
+        if self.background_loop:
+            mqinfo.wait_for_publish()
 
     def connect(self):
         #TODO: can we ask what clients are connected and detect collisions?
@@ -81,6 +84,7 @@ class MQTT:
 
     def loop_start(self):
         self.client.loop_start()
+        self.background_loop = True
 
 
     def topic_matches_sub(self, sub, topic):
@@ -97,7 +101,8 @@ class MQTT:
         print("DisConnected result code "+str(rc))
         self.client.reconnect()
         mqinfo = self.client.publish("status", {"status": "reconnecting"})
-        mqinfo.wait_for_publish()
+        if self.background_loop:
+            mqinfo.wait_for_publish()
 
 #class Object(object):
 #    pass
