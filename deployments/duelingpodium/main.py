@@ -33,16 +33,14 @@ def health_calc(host, colour, change = 0):
         hostmqtt.publishL(host, 'neopixel', 'play', {
                         'operation': 'health',
                         'count': health,
-                        'colour': 'red',
-                        'tagid': payload['tag']
+                        'colour': 'red'
                     })
         health = health + change
 
     hostmqtt.publishL(host, 'neopixel', 'play', {
                     'operation': 'health',
                     'count': health,
-                    'colour': colour,
-                    'tagid': payload['tag']
+                    'colour': colour
                 })
 
 def show_health(topic, payload):
