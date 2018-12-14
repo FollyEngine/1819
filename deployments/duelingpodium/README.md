@@ -7,9 +7,8 @@
 * Long range UHF RFID reader
   * [x] one SPARKFUN with external antenna (works)
   * [ ] one serial reader with big antenna
-* [ ] powered speaker using PHAT-DAC (works)
+* [x] powered speaker using PHAT-DAC (works)
 * neopixel on rpi proto board to show  (some code)
-  * [ ] 4xspell strength bars (16 pixels) - this may move to an esp32/esp8266 - or to the healthcheck rpi)
   * [x] health bar (16 pixels)
 * [x] mifare rfid reader (works)
 * USB power
@@ -17,12 +16,11 @@
 
 ## ESP32
 * touch sensors - 3 or 4 selectors
-* neopixels for lighting the buttons
 * [touch arduino sketch](../src/wemos/wemos_button/wemos_button.ino)
 * USB power
 
 ## shaker controller
-* i'm not sure - I think I have 2 esp8266 ir controller boards
+* wemos mini boards with ir control...
 * [ir relay arduino sketch](../src/wemos/wemos_ir/wemos_ir.ino)
 * USB power
 

@@ -209,7 +209,8 @@ play({'operation': 'colourwipe', 'colour': 'red'})
 play({'operation': 'colourwipe', 'colour': 'off'})
 
 try:
-    hostmqtt.loop_forever()
+    while True:
+        time.sleep(1)
 except KeyboardInterrupt:
     print("exit")
 

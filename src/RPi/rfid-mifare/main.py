@@ -34,7 +34,7 @@ import mqtt
 
 GETUID = [0xFF, 0xCA, 0x00, 0x00, 0x00]
 
-mqttHost = config.getValue("mqtthostname", "mqtt")
+mqttHost = config.getValue("mqtthostname", "mqtt.local")
 myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, "rfid-nfc")
 

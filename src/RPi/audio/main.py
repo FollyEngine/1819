@@ -98,7 +98,8 @@ hostmqtt.status({"status": "listening"})
 play(testsound)
 
 try:
-    hostmqtt.loop_forever()
+    while True:
+        time.sleep(1)
 except KeyboardInterrupt:
     print("exit")
 

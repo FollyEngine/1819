@@ -13,6 +13,7 @@ import sys
 sys.path.append('./mqtt/')
 import config
 import mqtt
+from time import sleep
 
 DEVICENAME="cauldron"
 
@@ -143,7 +144,8 @@ hostmqtt.subscribeL(myHostname, 'yellow-rfid', "scan", cauldron_item)
 hostmqtt.status({"status": "listening"})
 
 try:
-    hostmqtt.loop_forever()
+    while True:
+        sleep(1)
 except KeyboardInterrupt:
     print("exit")
 

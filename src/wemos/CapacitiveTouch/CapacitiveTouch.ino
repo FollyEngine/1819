@@ -12,41 +12,33 @@ Mqtt mqtt = Mqtt("ASUS", "MEGA SHED", "192.168.4.1", 1883, "podiumbuttons");
 // BUILD as "ESP32 Dev Module", using 115200 baud and DOUT Flash mode, see https://github.com/LilyGO/ESP32-MINI-32-V2.0
 
 int threshold = 40;
-bool touch0detected = false;
-bool touch1detected = false;
-bool touch2detected = false;
-bool touch3detected = false;
-bool touch4detected = false;
-bool touch5detected = false;
-bool touch6detected = false;
-bool touch7detected = false;
+bool current[8] = {false,false,false,false,false,false,false,false};
+bool last[8] = {false,false,false,false,false,false,false,false};
+bool touchState[8] = {false,false,false,false,false,false,false,false};
 
 void gotTouch0(){
- touch0detected = true;
+ current[0] = true;
 }
-
 void gotTouch1(){
- touch1detected = true;
+ current[1] = true;
 }
-
 void gotTouch2(){
- touch2detected = true;
+ current[2] = true;
 }
 void gotTouch3(){
- touch4detected = true;
+ current[3] = true;
 }
 void gotTouch4(){
- touch4detected = true;
+ current[4] = true;
 }
 void gotTouch5(){
- touch5detected = true;
+ current[5] = true;
 }
-
 void gotTouch6(){
- touch6detected = true;
+ current[6] = true;
 }
 void gotTouch7(){
- touch7detected = true;
+ current[7] = true;
 }
 
 void setup() {
@@ -68,59 +60,30 @@ void setup() {
 void loop(){
   StaticJsonBuffer<200> jsonBuffer;
   JsonObject& root = jsonBuffer.createObject();
+  char name[16];
 
   mqtt.loop();
 
-  if(touch0detected){
-    touch0detected = false;
-    Serial.printf("Touch 0 (pin %d) detected\n", T0);
-    root["pin"] = 0;
-    mqtt.publish("podiumbuttons", "touch", root);
+  bool stateChange = false;
+  for (int i=0; i<8; i++) {
+    if (current[i] == last[i] && last[i] != touchState[i]) {
+      // need to report this as a state change.
+      stateChange = true;
+      touchState[i] = current[i];
+      Serial.printf("Touch %d detected\n", i);
+      snprintf(name, 16, "touch%d", i);
+      root[name] = touchState[i];
+    }
+
+    // prepare for next loop
+    last[i] = current[i];
+    current[i] = false;
   }
-  if(touch1detected){
-    touch1detected = false;
-    Serial.printf("Touch 1 (pin %d) detected\n", T1);
-    root["pin"] = 1;
-    mqtt.publish("podiumbuttons", "touch", root);
-  }
-  if(touch2detected){
-    touch2detected = false;
-    Serial.printf("Touch 2 (pin %d) detected\n", T2);
-    root["pin"] = 2;
-    mqtt.publish("podiumbuttons", "touch", root);
-  }
-  if(touch3detected){
-    touch3detected = false;
-    Serial.printf("Touch 3 (pin %d) detected\n", T3);
-    root["pin"] = 3;
-    mqtt.publish("podiumbuttons", "touch", root);
-  }
-  if(touch4detected){
-    touch4detected = false;
-    Serial.printf("Touch 4 (pin %d) detected\n", T4);
-    root["pin"] = 4;
-    mqtt.publish("podiumbuttons", "touch", root);
-  }
-  if(touch5detected){
-    touch5detected = false;
-    Serial.printf("Touch 5 (pin %d) detected\n", T5);
-    root["pin"] = 5;
-    mqtt.publish("podiumbuttons", "touch", root);
-  }
-  if(touch6detected){
-    touch6detected = false;
-    Serial.printf("Touch 6 (pin %d) detected\n", T6);
-    root["pin"] = 6;
-    mqtt.publish("podiumbuttons", "touch", root);
-  }
-  if(touch7detected){
-    touch7detected = false;
-    Serial.printf("Touch 7 (pin %d) detected\n", T7);
-    root["pin"] = 7;
-    mqtt.publish("podiumbuttons", "touch", root);
+  if (stateChange) {
+      mqtt.publish("podiumbuttons", "touch", root);
   }
   
   
-  Serial.printf("w %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n", touchRead(T0), touchRead(T1), touchRead(T2), touchRead(T3), touchRead(T4), touchRead(T5), touchRead(T6), touchRead(T7), touchRead(T8), touchRead(T9));  // get value using T0
-  delay(1000);
+  //Serial.printf("w %d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n", touchRead(T0), touchRead(T1), touchRead(T2), touchRead(T3), touchRead(T4), touchRead(T5), touchRead(T6), touchRead(T7), touchRead(T8), touchRead(T9));  // get value using T0
+  delay(50);
 }

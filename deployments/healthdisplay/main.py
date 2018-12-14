@@ -13,6 +13,7 @@ import sys
 sys.path.append('./mqtt/')
 import config
 import mqtt
+from time import sleep
 
 DEVICENAME="healthcontroller"
 
@@ -67,7 +68,8 @@ hostmqtt.subscribeL(myHostname, 'rfid-nfc', "scan", show_health)
 hostmqtt.status({"status": "listening"})
 
 try:
-    hostmqtt.loop_forever()
+    while True:
+        sleep(1)
 except KeyboardInterrupt:
     print("exit")
 

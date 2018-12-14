@@ -6,6 +6,7 @@ import time
 import sys
 import socket
 import traceback
+from time import sleep
 
 allMuted = False
 repeats = {}
@@ -66,7 +67,8 @@ mastermqtt.subscribeL("+", "+", "+", relay_message_from_master)
 hostmqtt.status({"status": "listening"})
 
 try:
-    hostmqtt.loop_forever()
+    while True:
+        sleep(1)
 except KeyboardInterrupt:
     print("exit")
 

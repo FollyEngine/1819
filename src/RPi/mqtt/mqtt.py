@@ -20,7 +20,8 @@ class MQTT:
     def status(self, obj):
         obj['device'] = self.devicename
         obj['time'] = datetime.datetime.now().isoformat()
-        self.client.publish("%s/%s/%s" % (self.myhostname, self.devicename, 'status'), payload=json.dumps(obj), retain=True)
+        mqinfo = self.client.publish("%s/%s/%s" % (self.myhostname, self.devicename, 'status'), payload=json.dumps(obj), retain=True)
+        mqinfo.wait_for_publish()
 
     # used to publish messages to other devices directly, or to `all`
     def publishL(self, host, device, verb, obj):
@@ -40,7 +41,8 @@ class MQTT:
         if self.topic_matches_sub("+/+/status", verb):
             print("Retain: %s" % verb)
             retain = True
-        self.client.publish(verb, json.dumps(obj), retain=retain)
+        mqinfo = self.client.publish(verb, json.dumps(obj), retain=retain)
+        mqinfo.wait_for_publish()
 
     def subscribeL(self, host, device, verb, function=""):
         sub_topic = "%s/%s/%s" % (host, device, verb)
@@ -54,7 +56,9 @@ class MQTT:
 
     ############################## internal
     def publishStringRaw(self, host, device, verb, message):
-        self.client.publish("%s/%s/%s" % (host, device, verb), message)
+        mqinfo = self.client.publish("%s/%s/%s" % (host, device, verb), message)
+        mqinfo.wait_for_publish()
+
 
     def connect(self):
         #TODO: can we ask what clients are connected and detect collisions?
@@ -68,12 +72,14 @@ class MQTT:
         self.set_on_message(self.on_message)
         print("Connecting to MQTT as %s at: %s" % (clientname, self.mqtthostname))
         self.client.connect(self.mqtthostname, self.port)
+        self.client.loop_start()
 
     def set_on_message(self, on_message):
         self.client.on_message=on_message #attach function to callback
 
     def loop_forever(self):
-        self.client.loop_forever()
+        #self.client.loop_forever()
+        return
 
     def topic_matches_sub(self, sub, topic):
         return mqttclient.topic_matches_sub(sub, topic)
@@ -88,7 +94,8 @@ class MQTT:
     def on_disconnect(self, innerclient, userdata,rc=0):
         print("DisConnected result code "+str(rc))
         self.client.reconnect()
-        self.client.publish("status", {"status": "reconnecting"})
+        mqinfo = self.client.publish("status", {"status": "reconnecting"})
+        mqinfo.wait_for_publish()
 
 #class Object(object):
 #    pass

@@ -100,7 +100,8 @@ hostmqtt.subscribeL(myHostname, 'ThingMagic', "scan", magic_cast)
 hostmqtt.status({"status": "listening"})
 
 try:
-    hostmqtt.loop_forever()
+    while True:
+        time.sleep(1)
 except KeyboardInterrupt:
     print("exit")
 
