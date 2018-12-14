@@ -100,6 +100,8 @@ hostmqtt.status({"status": "listening"})
 try:
     while True:
         time.sleep(1)
+except Exception as ex:
+    traceback.print_exc()
 except KeyboardInterrupt:
     print("exit")
 
