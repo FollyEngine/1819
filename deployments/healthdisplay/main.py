@@ -7,6 +7,7 @@ import socket
 import yaml
 import time
 import argparse
+import traceback
 
 # the config and mqtt modules are in a bad place atm :/
 import sys
@@ -43,6 +44,7 @@ def show_health(topic, payload):
 
 
 def test_msg(topic, payload):
+    #print("Running test_msg")
     hostmqtt.publishL('all', 'neopixel', 'play', {
                     'operation': 'colorwipe',
                     'colour': 'red',
