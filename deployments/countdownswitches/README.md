@@ -2,10 +2,10 @@
 
 remote from the dualing center, so
 
-* RPi
-* USB power
-* USB mobile data - telstra usb stick (needs testing)
-* switch connected to RPi proto board
+* [x] RPi
+* [x] USB power
+* [x] USB mobile data - telstra usb stick
+* [ ] switch connected to RPi proto board
 
 
 microservice
