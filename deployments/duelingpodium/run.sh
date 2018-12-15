@@ -52,7 +52,11 @@ cd ./src/RPi/
 
 for pkg in $PACKAGES; do
 	# TODO: the remote control and the neopixels, rfid-mifare need sudo (iirc)
-	sudo ./$pkg/main.py > $pkg-${DATE}.log 2>&1 &
+	if [[ "$pkg" == "rfid-ThinkMagic" ]]; then
+		./while.sh sudo ./$pkg/main.py > $pkg-${DATE}.log 2>&1 &
+	else
+		sudo ./$pkg/main.py > $pkg-${DATE}.log 2>&1 &
+	fi
 done
 
 ./../../deployments/duelingpodium/main.py $CONFIGFILE > controller-${DATE}.log 2>&1 &
