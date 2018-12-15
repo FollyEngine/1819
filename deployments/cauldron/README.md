@@ -2,10 +2,10 @@
 
 RPi connected to:
 
-* Yellow D10x UHF rfid reader
-* powered speaker using PHAT-DAC
-* string of neopixels - connected to RPi protoboard
-* USB power
+* [x] Yellow D10x UHF rfid reader
+* [x] powered speaker using PHAT-DAC
+* [x] string of neopixels - connected to RPi protoboard
+* [x] USB power
 
 
 Microservices:
