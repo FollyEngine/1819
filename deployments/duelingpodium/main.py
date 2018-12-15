@@ -25,7 +25,7 @@ hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 ########################################
 # on_message subscription functions
 displaying = ''
-health = 14
+health = 10
 def health_calc(host, colour, change = 0):
     global health
     if health < 0:
@@ -39,11 +39,18 @@ def health_calc(host, colour, change = 0):
                     })
         health = health + change
 
-    hostmqtt.publishL(host, 'neopixel', 'play', {
-                    'operation': 'health',
-                    'count': health,
-                    'colour': colour
-                })
+    if colour == "off":
+        hostmqtt.publishL(host, 'neopixel', 'play', {
+                        'operation': 'health',
+                        'count': 15,
+                        'colour': colour
+                    })
+    else:
+        hostmqtt.publishL(host, 'neopixel', 'play', {
+                        'operation': 'health',
+                        'count': health,
+                        'colour': colour
+                    })
 
 def show_health(topic, payload):
     host, device, verb = topic.split('/')
