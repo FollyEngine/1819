@@ -17,7 +17,7 @@ DEVICENAME="audio"
 mqttHost = config.getValue("mqtthostname", "mqtt")
 myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
-hostmqtt.loop_start()   # use the background thread
+#hostmqtt.loop_start()   # use the background thread
 
 sounddir = config.getValue("sounddir", "./audio/")
 testsound = config.getValue("testsound", "test.wav")
@@ -99,8 +99,9 @@ hostmqtt.status({"status": "listening"})
 play(testsound)
 
 try:
-    while True:
-        time.sleep(1)
+    #while True:
+    #    time.sleep(1)
+    hostmqtt.loop_forever()
 except Exception as ex:
     traceback.print_exc()
 except KeyboardInterrupt:
