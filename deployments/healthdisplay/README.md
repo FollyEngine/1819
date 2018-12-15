@@ -1,16 +1,12 @@
 # health display
 
-Probably only making one - not a simple prop
+One only
 
-Identify a person... MiFare RFID?
 
-The one I've given James as a single white neopixel stack.
-I hope to build a different one with 4 stacks, and the desktop UHF reader
-
-* RPi
-* miFare USB reader
-* proto board connected to a number of noepixel displays
-* USB power
+* [x] RPi
+* [x] miFare USB reader to ID the magic item.
+* [ ] proto board connected to 4 16 pixel noepixel displays
+* [x] USB power
 
 
 
