@@ -224,7 +224,7 @@ publicAddress = 0x01
 #The baud rate can be set to 38400bps or 115200bps. The default baud rate is 115200bps
 baudrate = 115200    # 38400 or 115200
 with serial.Serial(
-            '/dev/ttyUSB0', 
+            '/dev/ttyUSB1', 
             timeout=None, 
             baudrate=baudrate, 
             bytesize=serial.EIGHTBITS, 
@@ -252,6 +252,13 @@ with serial.Serial(
     #        writeCommand(ser_connection, publicAddress, cmd_get_work_antenna)
     #        a = readreply(ser_connection)
     #        print(a)   # one byte
+
+            #print("set cmd_set_output_power")
+            # set the current antenna power
+            #writeCommand(ser_connection, publicAddress, cmd_set_output_power, 1, 0x17)
+            #writeCommand(ser_connection, publicAddress, cmd_set_temporary_output_power, 1, 0x17)
+            #p = readreply(ser_connection)
+            #print(p)   # 4 bytes - range 0 to 0x21 in dBm
 
             print("get cmd_get_output_power")
             # get the current antenna power

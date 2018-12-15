@@ -2,6 +2,7 @@
 
 
 sudo pip install --no-cache-dir -r ./src/RPi/neopixel/requirements.txt
+sudo pip3 install --no-cache-dir -r ./src/RPi/neopixel/requirements.txt
 
 cd
 if [[ -d rpi_ws2810 ]]; then
@@ -17,7 +18,10 @@ sudo apt-get install scons
 scons
 
 cd python
-sudo apt-get install python3-dev swig
+sudo apt-get install python3-dev swig python-dev
+python ./setup.py build
+sudo python ./setup.py install
+
 python3 ./setup.py build
 sudo python3 ./setup.py install
 
