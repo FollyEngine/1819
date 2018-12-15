@@ -100,7 +100,8 @@ class MQTT:
     def on_disconnect(self, innerclient, userdata,rc=0):
         print("DisConnected result code "+str(rc))
         self.client.reconnect()
-        mqinfo = self.client.publish("status", {"status": "reconnecting"})
+        obj =  {"status": "reconnecting"}
+        mqinfo = self.client.publish("%s/%s/%s" % (self.myhostname, self.devicename, 'status'), payload=json.dumps(obj), retain=True)
         if self.background_loop:
             mqinfo.wait_for_publish()
 
