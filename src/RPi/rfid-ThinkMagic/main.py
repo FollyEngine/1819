@@ -1,4 +1,7 @@
-#!//usr/bin/python
+#!/usr/bin/python3
+# python 2 gets a seg fault after one read, python 3 reads a few times...
+# need to figure out an alternative
+
 
 import paho.mqtt.client as mqtt #import the client1
 import paho.mqtt.publish as publish
@@ -42,7 +45,7 @@ def rfidTagDataCallback(rfid):
         lastRead[rfid.epc] = datetime.datetime.now()
         event = {
             'atr': rfid.epc_mem_data,
-            'tag': rfid.epc,
+            'tag': str(rfid.epc),
             'rssi': rfid.rssi,
             'event': 'inserted'
         }
