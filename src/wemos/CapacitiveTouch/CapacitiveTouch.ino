@@ -5,7 +5,7 @@ The bigger the threshold, the more sensible is the touch
 
 #include "mqtt.h"
 
-Mqtt mqtt = Mqtt("ASUS", "MEGA SHED", "192.168.4.1", 1883, "podiumbuttons");
+Mqtt mqtt = Mqtt("ASUS", "MEGA SHED", "10.10.11.2", 1883, "podiumbuttons");
 
 // BUILD as WEMOS LOLIN32 - see http://esp32village.blogspot.com/2018/04/esp32.html
 // OR
