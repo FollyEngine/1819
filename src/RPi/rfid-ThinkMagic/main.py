@@ -33,15 +33,16 @@ import mercury
 lastRead = {}
 def rfidTagDataCallback(rfid):
     try:
-        if rfid.epc.hex() in lastRead:
-            if datetime.timedelta.total_seconds(datetime.datetime.now()-lastRead[rfid.epc.hex()]) < (1):
+        #if rfid.epc.hex() in lastRead:
+        if rfid.epc in lastRead:
+            if datetime.timedelta.total_seconds(datetime.datetime.now()-lastRead[rfid.epc]) < (1):
                 #lets only report each tag once a second
                 return
 
-        lastRead[rfid.epc.hex()] = datetime.datetime.now()
+        lastRead[rfid.epc] = datetime.datetime.now()
         event = {
             'atr': rfid.epc_mem_data,
-            'tag': rfid.epc.hex(),
+            'tag': rfid.epc,
             'rssi': rfid.rssi,
             'event': 'inserted'
         }
