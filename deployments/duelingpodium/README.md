@@ -11,18 +11,18 @@
 * neopixel on rpi proto board to show  (some code)
   * [x] health bar (16 pixels)
 * [x] mifare rfid reader (works)
-* USB power
+* [x] USB power
 
 
 ## ESP32
-* touch sensors - 3 or 4 selectors
-* [touch arduino sketch](../src/wemos/wemos_button/wemos_button.ino)
-* USB power
+* [x] touch sensors - 5 selectors
+* [x] [touch arduino sketch](../src/wemos/wemos_button/wemos_button.ino)
+* [x] USB power
 
 ## shaker controller
-* wemos mini boards with ir control...
-* [ir relay arduino sketch](../src/wemos/wemos_ir/wemos_ir.ino)
-* USB power
+* [ ] wemos mini boards with ir control...
+* [ ] [ir relay arduino sketch](../src/wemos/wemos_ir/wemos_ir.ino)
+* [x] USB power
 
 
 ## Microservices:
