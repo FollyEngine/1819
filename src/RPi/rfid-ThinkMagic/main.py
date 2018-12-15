@@ -22,6 +22,7 @@ import datetime
 mqttHost = config.getValue("mqtthostname", "mqtt")
 myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, "ThingMagic")
+hostmqtt.loop_start()
 
 # see https://github.com/gotthardp/python-mercuryapi
 import mercury
