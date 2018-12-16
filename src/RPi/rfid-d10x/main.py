@@ -323,10 +323,12 @@ with serial.Serial(
 
                     # expire read tags if they havn't been heard from in 2 seconds
                     global lastTimeRead
-                    for EPC in lastTimeRead.keys():
+                    lastKeys = lastTimeRead.keys()
+                    for EPC in lastKeys:
                         if datetime.timedelta.total_seconds(now-lastTimeRead[EPC]) >= (2):
                             # TODO: send a remove message?
                             del lastTimeRead[EPC]
+                            sendRemoved(EPC)
 
                     length, packet_type, data = read_reply_real_time_inventory(ser_connection)
                     # note that there are at least 2 different replies
