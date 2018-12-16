@@ -73,6 +73,7 @@ def read_reply_real_time_inventory(ser):
 #        if datetime.timedelta.total_seconds(datetime.datetime.now()-lastTimeRead[EPC]) < (1):
 #            #lets only report each tag once a second
 #            publish = False
+    # TODO: should filter these to not include the 00000000700000 type id's
     lastTimeRead[EPC] = datetime.datetime.now()
     
     # not real tag reads
