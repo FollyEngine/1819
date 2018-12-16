@@ -96,7 +96,17 @@ def read_reply_real_time_inventory(ser):
 
     return length, packet_type, data
 
-
+def sendRemoved(EPC):
+    event = {
+        #'data': "%x" % data,
+        #'packet_type': packet_type,
+        #"FreqAnt": FreqAnt,
+        #"TagPC": TagPC,
+        "tag": EPC,
+        #"rssi": rssi,
+        'event': 'removed'
+    }
+    hostmqtt.publish("removed", event)
 
 def CheckSum(uBuff, uBuffLen):
     s=bytearray(1)
@@ -313,7 +323,7 @@ with serial.Serial(
 
                     # expire read tags if they havn't been heard from in 2 seconds
                     global lastTimeRead
-                    for EPC in lastTimeRead:
+                    for EPC in lastTimeRead.keys():
                         if datetime.timedelta.total_seconds(now-lastTimeRead[EPC]) >= (2):
                             # TODO: send a remove message?
                             del lastTimeRead[EPC]
