@@ -69,9 +69,10 @@ def read_reply_real_time_inventory(ser):
 
     publish = True
     if EPC in lastPublished:
-        if datetime.timedelta.total_seconds(datetime.datetime.now()-lastPublished[EPC]) < (1):
-            #lets only report each tag once a second
-            publish = False
+        publish = False # only sed the message once - see expire in the main loop
+#        if datetime.timedelta.total_seconds(datetime.datetime.now()-lastPublished[EPC]) < (1):
+#            #lets only report each tag once a second
+#            publish = False
     
     # not real tag reads
     if EPC == "0000000000":
@@ -304,9 +305,17 @@ with serial.Serial(
 
             while True:
                 try:
-                    if datetime.timedelta.total_seconds(datetime.datetime.now()-lastStatus) > (2*60):
+                    now = datetime.datetime.now()
+                    if datetime.timedelta.total_seconds(now-lastStatus) > (2*60):
                         status(ser_connection)
-                        lastStatus = datetime.datetime.now()
+                        lastStatus = now
+
+                    # expire read tags if they havn't been heard from in 2 seconds
+                    global lastPublished
+                    for EPC in lastPublished:
+                        if datetime.timedelta.total_seconds(now-lastPublished[EPC]) >= (2):
+                            # TODO: send a remove message?
+                            del lastPublished[EPC]
 
                     length, packet_type, data = read_reply_real_time_inventory(ser_connection)
                     # note that there are at least 2 different replies
