@@ -48,7 +48,7 @@ def readreply(ser):
             return length, packet_type, data
     return 0, 0, "nothing"
 
-lastPublished = {}
+lastTimeRead = {}
 def read_reply_real_time_inventory(ser):
     length, packet_type, data = readreply(ser_connection)
     if packet_type != 160:
@@ -68,11 +68,12 @@ def read_reply_real_time_inventory(ser):
     rssi = hexData[-2:]
 
     publish = True
-    if EPC in lastPublished:
+    if EPC in lastTimeRead:
         publish = False # only sed the message once - see expire in the main loop
-#        if datetime.timedelta.total_seconds(datetime.datetime.now()-lastPublished[EPC]) < (1):
+#        if datetime.timedelta.total_seconds(datetime.datetime.now()-lastTimeRead[EPC]) < (1):
 #            #lets only report each tag once a second
 #            publish = False
+    lastTimeRead[EPC] = datetime.datetime.now()
     
     # not real tag reads
     if EPC == "0000000000":
@@ -91,7 +92,7 @@ def read_reply_real_time_inventory(ser):
             'event': 'inserted'
         }
         hostmqtt.publish("scan", event)
-        lastPublished[EPC] = datetime.datetime.now()
+#        lastTimeRead[EPC] = datetime.datetime.now()
 
     return length, packet_type, data
 
@@ -311,11 +312,11 @@ with serial.Serial(
                         lastStatus = now
 
                     # expire read tags if they havn't been heard from in 2 seconds
-                    global lastPublished
-                    for EPC in lastPublished:
-                        if datetime.timedelta.total_seconds(now-lastPublished[EPC]) >= (2):
+                    global lastTimeRead
+                    for EPC in lastTimeRead:
+                        if datetime.timedelta.total_seconds(now-lastTimeRead[EPC]) >= (2):
                             # TODO: send a remove message?
-                            del lastPublished[EPC]
+                            del lastTimeRead[EPC]
 
                     length, packet_type, data = read_reply_real_time_inventory(ser_connection)
                     # note that there are at least 2 different replies
