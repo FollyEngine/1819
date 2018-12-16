@@ -225,7 +225,7 @@ publicAddress = 0x01
 #The baud rate can be set to 38400bps or 115200bps. The default baud rate is 115200bps
 baudrate = 115200    # 38400 or 115200
 with serial.Serial(
-            '/dev/ttyUSB1', 
+            '/dev/ttyUSB0', 
             timeout=None, 
             baudrate=baudrate, 
             bytesize=serial.EIGHTBITS, 
