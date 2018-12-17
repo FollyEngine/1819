@@ -45,10 +45,10 @@ if LED_PIN in {13, 19, 41, 45, 53}:
 # Create NeoPixel object with appropriate configuration.
 strips = {}
 #strips["up"] = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
-strips["up"] = Adafruit_NeoPixel(LED_COUNT, 13, LED_FREQ_HZ, 1, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
-strips["down"] = Adafruit_NeoPixel(LED_COUNT, 18, LED_FREQ_HZ, 0, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
-strips["left"] = Adafruit_NeoPixel(LED_COUNT, 19, LED_FREQ_HZ, 1, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
-strips["right"] = Adafruit_NeoPixel(LED_COUNT, 21, LED_FREQ_HZ, 0, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
+strips["up"] = Adafruit_NeoPixel(LED_COUNT, 13, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, 1)
+strips["down"] = Adafruit_NeoPixel(LED_COUNT, 18, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, 0)
+strips["left"] = Adafruit_NeoPixel(LED_COUNT, 19, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, 1)
+strips["right"] = Adafruit_NeoPixel(LED_COUNT, 21, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, 0)
 strips["up"].begin()
 strips["down"].begin()
 strips["left"].begin()
