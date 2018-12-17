@@ -17,15 +17,17 @@ import mqtt
 
 DEVICENAME="neopixel"
 
-mqttHost = config.getValue("mqtthostname", "mqtt")
+mqttHost = config.getValue("mqtthostname", "mqtt.local")
 myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 hostmqtt.loop_start()   # use the background thread
 
-# uses https://github.com/jgarff/rpi_ws281x.git 
+# uses https://github.com/jgarff/rpi_ws281x
 # LED strip configuration:
 LED_COUNT      = 16      # Number of LED pixels.
-LED_PIN        = 12      # GPIO pin connected to the pixels (18 uses PWM!).
+LED_PIN        = 19      # GPIO pin connected to the pixels (18 uses PWM!).
+# when _not_ using the pHAT DAC, you can use all sorts of pins :)
+# GPIO12, GPIO18, GPIO21, and GPIO19 on DMA 1
 #LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
 LED_DMA        = 10      # DMA channel to use for generating signal (try 10)
