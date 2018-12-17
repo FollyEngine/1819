@@ -25,7 +25,7 @@ hostmqtt.loop_start()   # use the background thread
 # uses https://github.com/jgarff/rpi_ws281x
 # LED strip configuration:
 LED_COUNT      = 16      # Number of LED pixels.
-LED_PIN        = 19      # GPIO pin connected to the pixels (18 uses PWM!).
+LED_PIN        = 12      # GPIO pin connected to the pixels (18 uses PWM!).
 # when _not_ using the pHAT DAC, you can use all sorts of pins :)
 # GPIO12, GPIO18, GPIO21, and GPIO19 on DMA 1
 #LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
@@ -34,6 +34,13 @@ LED_DMA        = 10      # DMA channel to use for generating signal (try 10)
 LED_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
 LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
 LED_CHANNEL    = 0       # set to '1' for GPIOs 13, 19, 41, 45 or 53
+if LED_PIN in {13, 19, 41, 45, 53}:
+    LED_CHANNEL = 1
+
+# Bizzareness when using 4 separate neopixel arrays:
+# solder to GPIOs 12, 18, 19, 21: the driving 12 or 18 lights up both arrays both times, and 13, which is not connected also drives one
+# solder to GPIOs 13, 18, 19, 21: driving 19 will light up 2 of the arrays, but driving 13, 18, 21 and 12 gets the 4 different arrays
+
 
 # Create NeoPixel object with appropriate configuration.
 strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
