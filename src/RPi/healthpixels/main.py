@@ -15,7 +15,7 @@ sys.path.append('./mqtt/')
 import config
 import mqtt
 
-DEVICENAME="neopixel"
+DEVICENAME="healthpixels"
 
 mqttHost = config.getValue("mqtthostname", "mqtt.local")
 myHostname = config.getValue("hostname", socket.gethostname())
@@ -27,7 +27,7 @@ hostmqtt.loop_start()   # use the background thread
 LED_COUNT      = 16      # Number of LED pixels.
 LED_PIN        = 12      # GPIO pin connected to the pixels (18 uses PWM!).
 # when _not_ using the pHAT DAC, you can use all sorts of pins :)
-# GPIO12, GPIO18, GPIO21, and GPIO19 on DMA 1
+# GPIO13, GPIO18, GPIO21, and GPIO19
 #LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
 LED_DMA        = 10      # DMA channel to use for generating signal (try 10)
@@ -43,12 +43,19 @@ if LED_PIN in {13, 19, 41, 45, 53}:
 
 
 # Create NeoPixel object with appropriate configuration.
-strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
-# Intialize the library (must be called once before other functions).
-strip.begin()
+strips = {}
+#strips["up"] = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
+strips["up"] = Adafruit_NeoPixel(LED_COUNT, 13, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, 1)
+strips["down"] = Adafruit_NeoPixel(LED_COUNT, 18, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, 0)
+strips["left"] = Adafruit_NeoPixel(LED_COUNT, 19, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, 1)
+strips["right"] = Adafruit_NeoPixel(LED_COUNT, 21, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, 0)
+strips["up"].begin()
+strips["down"].begin()
+strips["left"].begin()
+strips["right"].begin()
 
 # can do things like:
-#  mosquitto_pub -h mqtt -t two/neopixel/play -m '{"operation": "theatrechase", "colour": "green"}'
+#  mosquitto_pub -h mqtt -t two/DEVICENAME/play -m '{"operation": "theatrechase", "colour": "green"}'
 
 # Define functions which animate LEDs in various ways.
 def colorWipe(strip, color, wait_ms=50):
@@ -177,6 +184,9 @@ def get(obj, name, default):
 
 
 def play(payload = {}):
+    direction = get(payload, 'direction', 'up')
+    strip = get(strips, direction, strips['up'])
+
     operationname = get(payload, 'operation', 'colourwipe')
     operation = get(operations, operationname, operations['colourwipe'])
     print("playing %s" % operationname)
@@ -202,13 +212,14 @@ def play(payload = {}):
 ########################################
 # on_message subscription functions
 def msg_play(topic, payload):
-    if mqtt.MQTT.topic_matches_sub(hostmqtt, "all/neopixel/play", topic):
+    if mqtt.MQTT.topic_matches_sub(hostmqtt, "all/"+DEVICENAME+"/play", topic):
         # everyone
         #print("everyone plays "+payload)
         play(payload)
-    elif mqtt.MQTT.topic_matches_sub(hostmqtt, myHostname+"/neopixel/play", topic):
+    elif mqtt.MQTT.topic_matches_sub(hostmqtt, myHostname+"/"+DEVICENAME+"/play", topic):
         #print(myHostname+" got "+payload+" SPARKLES!!")
         play(payload)
+
 def msg_test(topic, payload):
     play({'operation': 'colourwipe', 'colour': 'yellow'})
 
@@ -218,8 +229,17 @@ hostmqtt.subscribeL("all", DEVICENAME, "play", msg_play)
 hostmqtt.subscribeL("all", DEVICENAME, "test", msg_test)
 
 hostmqtt.status({"status": "listening"})
-play({'operation': 'colourwipe', 'colour': 'red'})
-play({'operation': 'colourwipe', 'colour': 'off'})
+play({'operation': 'colourwipe', 'colour': 'red', 'direction': 'up'})
+play({'operation': 'colourwipe', 'colour': 'off', 'direction': 'up'})
+
+play({'operation': 'colourwipe', 'colour': 'green', 'direction': 'left', 'count': 5})
+play({'operation': 'colourwipe', 'colour': 'off', 'direction': 'left'})
+
+play({'operation': 'colourwipe', 'colour': 'blue', 'direction': 'down', 'count': 10})
+play({'operation': 'colourwipe', 'colour': 'off', 'direction': 'down'})
+
+play({'operation': 'colourwipe', 'colour': 'white', 'direction': 'right'})
+play({'operation': 'colourwipe', 'colour': 'off', 'direction': 'right'})
 
 try:
     while True:
