@@ -14,7 +14,7 @@ import mqtt
 
 DEVICENAME="audio"
 
-mqttHost = config.getValue("mqtthostname", "mqtt")
+mqttHost = config.getValue("mqtthostname", "mqtt.local")
 myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 #hostmqtt.loop_start()   # use the background thread

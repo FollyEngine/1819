@@ -27,7 +27,8 @@ https://tronixlabs.com.au/arduino/boards/wireless/wemos-lolin-d1-mini-arduino-co
 * Open Boards Manager from Tools > Board menu and install esp8266 platform (and don't forget to select your ESP8266 board from Tools > Board menu after installation).  The latest beta didn't support linux so i installed the latest stable, 2.4.2
 
 As it says in the code comments, BUILD with "LOLIN(WEMOS) D1 R2 & mini"
-
+All it does at the moment is twinkle.  Make it twinkly by broadcasting a message like
+mosquitto_pub -h "mqtt" -t "all/orb/twinkle" -m "twinkle"
 
 
 ------------------------------------------------------------

@@ -2,8 +2,8 @@
 
 # run / setup for the Dueling podium RPi
 WHOAMI=$(hostname)
-PACKAGES="mqtt healthdisplay rfid-mifare"
-MQTTHOST="mqtt"
+PACKAGES="mqtt healthpixels rfid-mifare"
+MQTTHOST="mqtt.local"
 CONFIGFILE=
 
 
@@ -45,8 +45,12 @@ if [[ ¨$1¨ == ¨--setup¨ ]]; then
 	exit
 fi
 
-sleep 15
-ping -c 1 $MQTTHOST
+for i in $(seq 1 25); do 
+	sleep 1
+	if [[ $(ping -c 1 "$MQTTHOST") ]]; then 
+		break
+	fi
+done
 
 echo "Starting $WHOAMI"
 cd ./src/RPi/

@@ -24,7 +24,7 @@ hostmqtt.loop_start()   # use the background thread
 
 # uses https://github.com/jgarff/rpi_ws281x
 # LED strip configuration:
-LED_COUNT      = 16      # Number of LED pixels.
+LED_COUNT      = 32      # Number of LED pixels.
 LED_PIN        = 12      # GPIO pin connected to the pixels (18 uses PWM!).
 # when _not_ using the pHAT DAC, you can use all sorts of pins :)
 # GPIO13, GPIO18, GPIO21, and GPIO19
@@ -45,14 +45,12 @@ if LED_PIN in {13, 19, 41, 45, 53}:
 # Create NeoPixel object with appropriate configuration.
 strips = {}
 #strips["up"] = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
-strips["up"] = Adafruit_NeoPixel(LED_COUNT, 13, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, 1)
-strips["down"] = Adafruit_NeoPixel(LED_COUNT, 18, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, 0)
-strips["left"] = Adafruit_NeoPixel(LED_COUNT, 19, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, 1)
-strips["right"] = Adafruit_NeoPixel(LED_COUNT, 21, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, 0)
-strips["up"].begin()
-strips["down"].begin()
-strips["left"].begin()
-strips["right"].begin()
+
+# driving 12 gets me
+one = Adafruit_NeoPixel(LED_COUNT, 18, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, 0)
+two = Adafruit_NeoPixel(LED_COUNT, 21, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, 0)
+one.begin()
+two.begin()
 
 # can do things like:
 #  mosquitto_pub -h mqtt -t two/DEVICENAME/play -m '{"operation": "theatrechase", "colour": "green"}'
@@ -124,49 +122,7 @@ def health(strip, color, count, wait_ms=50):
         strip.show()
         time.sleep(wait_ms/1000.0)
 
-def magic_item(strip, payload):
-    wait_ms = 0
-    index = 0
-    total = payload['A'] + payload['B'] + payload['C'] + payload['D']
-    A = int(round(payload['A'] * strip.numPixels() / total))
-    B = int(round(payload['B'] * strip.numPixels() / total))
-    C = int(round(payload['C'] * strip.numPixels() / total))
-    D = int(round(payload['D'] * strip.numPixels() / total))
-    print("A: %d, B: %d, C: %d, D: %d" % (A, B, C, D))
-    for i in range(A):
-        strip.setPixelColor(index, colours['red'])
-        index = index + 1
-        strip.show()
-        time.sleep(wait_ms/1000.0)
-    for i in range(B):
-        strip.setPixelColor(index, colours['green'])
-        index = index + 1
-        strip.show()
-        time.sleep(wait_ms/1000.0)
-    for i in range(C):
-        strip.setPixelColor(index, colours['blue'])
-        index = index + 1
-        strip.show()
-        time.sleep(wait_ms/1000.0)
-    for i in range(D):
-        strip.setPixelColor(index, colours['yellow'])
-        index = index + 1
-        strip.show()
-        time.sleep(wait_ms/1000.0)
-
 ############
-operations = {
-    # custom = has A, B, C, D
-    'magic_item': magic_item,
-    # needs colour and count
-    'health': health,
-    #needs colour
-    'colourwipe': colorWipe,
-    'theatrechase': theaterChase,
-    #no colour option
-    'rainbow': rainbow,
-    'rainbow_cycle': rainbowCycle,
-}
 colours = {
     'off': Color(0,0,0),
     'white': Color(180,180,180),
@@ -182,10 +138,68 @@ def get(obj, name, default):
         result = obj[name]
     return result
 
+##############
 
+def magic_item(strip, payload):
+    length = 16
+
+    #TODO: should default the 4 values
+    #do one (A, B first)
+    index = 0
+    blank = length - payload['A']
+    for i in range(blank):
+        one.setPixelColor(index, colours['off'])
+        index = index + 1
+    for i in range(payload['A']):
+        one.setPixelColor(index, colours['red'])
+        index = index + 1
+    blank = length - payload['B']
+    for i in range(payload['B']):
+        one.setPixelColor(index, colours['blue'])
+        index = index + 1
+    for i in range(blank):
+        one.setPixelColor(index, colours['off'])
+        index = index + 1
+
+    #do two (C, D first)
+    index = 0
+    blank = length - payload['C']
+    for i in range(blank):
+        two.setPixelColor(index, colours['off'])
+        index = index + 1
+    for i in range(payload['C']):
+        two.setPixelColor(index, colours['yellow'])
+        index = index + 1
+    blank = length - payload['D']
+    for i in range(payload['D']):
+        two.setPixelColor(index, colours['white'])
+        index = index + 1
+    for i in range(blank):
+        two.setPixelColor(index, colours['off'])
+        index = index + 1
+
+    one.show()
+    two.show()
+
+##############
+operations = {
+    # custom = has A, B, C, D
+    'magic_item': magic_item,
+    # needs colour and count
+    'health': health,
+    #needs colour
+    'colourwipe': colorWipe,
+    'theatrechase': theaterChase,
+    #no colour option
+    'rainbow': rainbow,
+    'rainbow_cycle': rainbowCycle,
+}
+###############
 def play(payload = {}):
-    direction = get(payload, 'direction', 'up')
-    strip = get(strips, direction, strips['up'])
+    direction = get(payload, 'direction', 'one')
+    strip = one
+    if direction == "two":
+        strip = two
 
     operationname = get(payload, 'operation', 'colourwipe')
     operation = get(operations, operationname, operations['colourwipe'])
@@ -229,17 +243,13 @@ hostmqtt.subscribeL("all", DEVICENAME, "play", msg_play)
 hostmqtt.subscribeL("all", DEVICENAME, "test", msg_test)
 
 hostmqtt.status({"status": "listening"})
-play({'operation': 'colourwipe', 'colour': 'red', 'direction': 'up'})
-play({'operation': 'colourwipe', 'colour': 'off', 'direction': 'up'})
 
-play({'operation': 'colourwipe', 'colour': 'green', 'direction': 'left', 'count': 5})
-play({'operation': 'colourwipe', 'colour': 'off', 'direction': 'left'})
 
-play({'operation': 'colourwipe', 'colour': 'blue', 'direction': 'down', 'count': 10})
-play({'operation': 'colourwipe', 'colour': 'off', 'direction': 'down'})
+play({'operation': 'magic_item', "A": 7, "B": 3, "C": 9, "D": 10})
 
-play({'operation': 'colourwipe', 'colour': 'white', 'direction': 'right'})
-play({'operation': 'colourwipe', 'colour': 'off', 'direction': 'right'})
+time.sleep(3)
+
+play({'operation': 'magic_item', "A": 0, "B": 0, "C": 0, "D": 0})
 
 try:
     while True:

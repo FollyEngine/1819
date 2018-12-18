@@ -2,8 +2,8 @@
 
 # run / setup for the Cauldron RPi
 WHOAMI="cauldron"
-PACKAGES="audio mqtt neopixels rfid-d10x"
-MQTTHOST="mqtt"
+PACKAGES="audio mqtt neopixels rfid-ThinkMagic"
+MQTTHOST="mqtt.local"
 CONFIGFILE=
 
 
@@ -44,8 +44,12 @@ if [[ ¨$1¨ == ¨--setup¨ ]]; then
 	exit
 fi
 
-sleep 15
-ping -c 1 $MQTTHOST
+for i in $(seq 1 25); do 
+	sleep 1
+	if [[ $(ping -c 1 "$MQTTHOST") ]]; then 
+		break
+	fi
+done
 
 echo "Starting $WHOAMI"
 cd ./src/RPi/

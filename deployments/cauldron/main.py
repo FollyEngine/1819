@@ -140,7 +140,7 @@ def test_msg(topic, payload):
 hostmqtt.subscribeL("all", DEVICENAME, "test", test_msg)
 
 # cauldron/yellow-rfid/scan {"RSSI": "3b", "time": "2018-12-11T14:18:07.385460", "event": "inserted", "TagPC": "20", "device": "yellow-rfid", "EPC": "3000e200001606180258170069a0", "FreqAnt": "89"}
-hostmqtt.subscribeL(myHostname, 'yellow-rfid', "scan", cauldron_item)
+hostmqtt.subscribeL(myHostname, 'ThingMagic', "scan", cauldron_item)
 
 
 hostmqtt.status({"status": "listening"})

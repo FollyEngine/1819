@@ -21,7 +21,19 @@ DEVICENAME="healthcontroller"
 mqttHost = config.getValue("mqtthostname", "mqtt")
 myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
-
+########################################
+def getHealth(tag, payload):
+    payload['A'] = 0
+    payload['B'] = 0
+    payload['C'] = 0
+    payload['D'] = 0
+    if tag != "":
+        # lookup
+        payload['A'] = 3
+        payload['B'] = 6
+        payload['C'] = 9
+        payload['D'] = 1
+    return payload
 ########################################
 # on_message subscription functions
 displaying = ''
@@ -31,26 +43,22 @@ def show_health(topic, payload):
     global displaying
     if displaying == payload['tag']:
         displaying = ''
-        colour = 'off'
     else:
         displaying = payload['tag']
-        colour = 'white'
 
-    hostmqtt.publishL(host, 'neopixel', 'play', {
-                    'operation': 'colorwipe',
-                    'colour': colour,
-                    'tagid': payload['tag']
-                })
-
+    #play({'operation': 'magic_item', "A": 7, "B": 3, "C": 9, "D": 10})
+    payload["operation"] = "magic_item"
+    payload = getHealth(displaying, payload)
+    hostmqtt.publishL(host, 'healthpixels', 'play', payload)
 
 def test_msg(topic, payload):
     #print("Running test_msg")
-    hostmqtt.publishL('all', 'neopixel', 'play', {
+    hostmqtt.publishL('all', 'healthpixels', 'play', {
                     'operation': 'colorwipe',
                     'colour': 'red',
                     'tagid': 'test'
                 })
-    hostmqtt.publishL('all', 'neopixel', 'play', {
+    hostmqtt.publishL('all', 'healthpixels', 'play', {
                     'operation': 'colorwipe',
                     'colour': 'off',
                     'tagid': 'test'
