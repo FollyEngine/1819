@@ -33,6 +33,7 @@ def getHealth(tag, payload):
         payload['B'] = 6
         payload['C'] = 9
         payload['D'] = 1
+    return payload
 ########################################
 # on_message subscription functions
 displaying = ''
