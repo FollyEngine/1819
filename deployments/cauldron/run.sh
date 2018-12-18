@@ -2,7 +2,7 @@
 
 # run / setup for the Cauldron RPi
 WHOAMI="cauldron"
-PACKAGES="audio mqtt neopixels rfid-d10x"
+PACKAGES="audio mqtt neopixels rfid-ThinkMagic"
 MQTTHOST="mqtt.local"
 CONFIGFILE=
 

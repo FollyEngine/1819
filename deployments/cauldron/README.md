@@ -2,7 +2,8 @@
 
 RPi connected to:
 
-* [x] Yellow D10x UHF rfid reader
+
+* [x] one SPARKFUN with external antenna
 * [x] powered speaker using PHAT-DAC
 * [x] string of neopixels - connected to RPi protoboard
 * [x] USB power
