@@ -11,7 +11,7 @@ RPi connected to:
 
 Microservices:
 
-* [x] [d10x rfid event source](../../src/RPi/rfid-d10x/main.py)
+* [x] [thinkmagic rfid event source](../../src/RPi/rfid-ThinkMagic/main.py)
 * [x] [audio player sink](../../src/RPi/audio/main.py)
 * [x] [neopixel sink](../../src/RPi/neopixels/main.py)
 * [ ] [cauldron controller generated from designer](../../controller/cauldron/main.py)

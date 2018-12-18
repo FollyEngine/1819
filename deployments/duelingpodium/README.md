@@ -25,9 +25,7 @@
 
 ## Microservices:
 
-* Long range UHF reader (one of...)
-  * [x] [thinkmagic rfid event source](../../src/RPi/rfid-ThinkMagic/main.py)
-  * [ ] [serial rfid event source](../../src/RPi/rfid-serial/main.py)
+* [x] [d10x rfid event source](../../src/RPi/rfid-d10x/main.py)
 * [x] [mifare rfid event source](../../src/RPi/rfid-mifare/main.py)
 * [x] [audio player sink](../../src/RPi/audio/main.py)
 * [x] [neopixel sink](../../src/RPi/neopixels/main.py) (not sure - this may running one per neopixel string with cfg?)
