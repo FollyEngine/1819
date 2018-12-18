@@ -1,4 +1,7 @@
 #!/usr/bin/python3
+#Copied from DuelingPodium main.py 18/12/28,
+# removed lines 95&97 related to the broadcasting of the show health and cast spell functions
+# changed DEVICENAME to switch1. No other changes 
 
 import time
 import sys

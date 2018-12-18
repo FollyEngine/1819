@@ -493,4 +493,1445 @@ Connection returned result:
 DisConnected result code 1
 Connection returned result: 
 DisConnected result code 1
-Connection returned result: ode 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+on_message esp8266-84f3eb3b85a4/orb/status
+topic_matches_sub(+/+/+, esp8266-84f3eb3b85a4/orb/status)
+match
+<function relay_message_to_master at 0x76448db0>
+HHRAW: esp8266-84f3eb3b85a4/orb/status: {"status":"listening","device":"orb","time":"2018-12-18T22:32:35"}
+DECODED: esp8266-84f3eb3b85a4/orb/status: {'time': '2018-12-18T22:32:35', 'device': 'orb', 'status': 'listening'}
+Relaying to master: esp8266-84f3eb3b85a4/orb/status, {'time': '2018-12-18T22:32:35', 'relay_from': 'switch1', 'device': 'orb', 'status': 'listening'}
+Retain: esp8266-84f3eb3b85a4/orb/status
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1ion returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+on_message all/orb/twinkle
+topic_matches_sub(+/+/+, all/orb/twinkle)
+match
+<function relay_message_to_master at 0x76448db0>
+HHRAW: all/orb/twinkle: twinkle
+exception:
+Connection returned result: 
+DisConnected result code 1
+on_message all/orb/twinkle
+topic_matches_sub(+/+/+, all/orb/twinkle)
+match
+<function relay_message_to_master at 0x76448db0>
+HHRAW: all/orb/twinkle: twinkle
+exception:
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+on_message all/orb/twinkle
+topic_matches_sub(+/+/+, all/orb/twinkle)
+match
+<function relay_message_to_master at 0x76448db0>
+HHRAW: all/orb/twinkle: twinkle
+exception:
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+on_message esp8266-84f3eb3b85a4/orb/status
+topic_matches_sub(+/+/+, esp8266-84f3eb3b85a4/orb/status)
+match
+<function relay_message_to_master at 0x76448db0>
+HHRAW: esp8266-84f3eb3b85a4/orb/status: {"status":"listening","device":"orb","time":"2018-12-18T22:59:57"}
+DECODED: esp8266-84f3eb3b85a4/orb/status: {'time': '2018-12-18T22:59:57', 'device': 'orb', 'status': 'listening'}
+Relaying to master: esp8266-84f3eb3b85a4/orb/status, {'time': '2018-12-18T22:59:57', 'relay_from': 'switch1', 'device': 'orb', 'status': 'listening'}
+Retain: esp8266-84f3eb3b85a4/orb/status
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+on_message all/orb/twinkle
+topic_matches_sub(+/+/+, all/orb/twinkle)
+match
+<function relay_message_to_master at 0x76448db0>
+HHRAW: all/orb/twinkle: twinkle
+exception:
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+on_message all/orb/twinkle
+topic_matches_sub(+/+/+, all/orb/twinkle)
+match
+<function relay_message_to_master at 0x76448db0>
+HHRAW: all/orb/twinkle: twinkle
+exception:
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+on_message all/orb/twinkle
+topic_matches_sub(+/+/+, all/orb/twinkle)
+match
+<function relay_message_to_master at 0x76448db0>
+HHRAW: all/orb/twinkle: twinkle
+exception:
+Connection returned result: 
+DisConnected result code 1
+Connection returned result: 
+DisConnected result code 1
+on_message all/orb/twinkle
+topic_matches_sub(+/+/+, all/orb/twinkle)
+match
+<function relay_message_to_master at 0x76448db0>
