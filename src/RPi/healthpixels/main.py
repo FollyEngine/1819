@@ -142,6 +142,8 @@ def get(obj, name, default):
 
 def magic_item(strip, payload):
     length = 16
+
+    #TODO: should default the 4 values
     #do one (A, B first)
     index = 0
     blank = length - payload['A']
