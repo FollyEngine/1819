@@ -1,16 +1,9 @@
 # Arduino IDE setup
-## Board is
-BN: Unknown board
-VID: 1A86
-PID: 7523
-SN: Upload any sketch to obtain it
 
 ## IDE installation
 * Download arduino IDe from https://www.arduino.cc/en/Main/Donate (donate five dollars)
 * Install the ESP32 module from https://randomnerdtutorials.com/installing-the-esp32-board-in-arduino-ide-mac-and-linux-instructions/
 * Add yourself to the dialout group `sudo usermod -a -G dialout $USER` (or just edit /etc/group)
-..* try endless other things until you can select a port from the tools dropdown
-* The boards we have use ESP32 Dev Module
 
 ## Compiling wemos_orb
 * copy mqtt and dependencies to wemos_orb folder
@@ -23,9 +16,22 @@ SN: Upload any sketch to obtain it
 * Download arduinojson from https://github.com/bblanchon/ArduinoJson/archive/master.zip then install it with Sketch | Include library | Add zip library
 
 Now wemos_orb should have no dependency errors, just compile errors.
-Fix the compile errors, then:
+Fix the compile errors, then upload
 
- 
+### Board is
+VID: 1A86
+PID: 7523
+https://tronixlabs.com.au/arduino/boards/wireless/wemos-lolin-d1-mini-arduino-compatible-esp8266-wifi-australia/
+* Start Arduino and open Preferences window.
+* Enter http://arduino.esp8266.com/stable/package_esp8266com_index.json into Additional Board Manager URLs field. You can add multiple URLs, separating them with commas.
+* Open Boards Manager from Tools > Board menu and install esp8266 platform (and don't forget to select your ESP8266 board from Tools > Board menu after installation).  The latest beta didn't support linux so i installed the latest stable, 2.4.2
+
+As it says in the code comments, BUILD with "LOLIN(WEMOS) D1 R2 & mini"
+
+
+
+------------------------------------------------------------
+
 ## Compiling CapacitiveTouch
 * copy mqtt.h to wemos_orb folder
 ..* `cp ../esp32village/mqtt/mqtt.h src/wemos/CapacitiveTouch/`
@@ -35,54 +41,31 @@ Fix the compile errors, then:
 ..* Time by Michael Margolis
 ..* NTPCLientLib by German Martin
 * Download arduinojson from https://github.com/bblanchon/ArduinoJson/archive/master.zip then install it with Sketch | Include library | Add zip library
+
  
 Now CapacitiveTouch should have no dependency errors, just compile errors.
-Fix the compile errors, then:
+Fix the compile errors, then upload
+
+### Board is
+BN: Unknown board
+VID: 1A86
+PID: 7523
+* The boards we have use ESP32 Dev Module.  Add to preferences https://dl.espressif.com/dl/package_esp32_index.json
+As it says in the comments at the top of CapacitiveTouch, BUILD as "ESP32 Dev Module", using 115200 baud and DOUT Flash mode, see https://github.com/LilyGO/ESP32-MINI-32-V2.0
 * 
 
-------------------
-FLASH MODE DOUT : 80MHz : 921600
-esptool.py v2.3.1
-Connecting......
-Chip is ESP32D0WDQ6 (revision (unknown 0xa))
-Features: WiFi, BT, Dual Core, VRef calibration in efuse
-Uploading stub...
-Running stub...
-Stub running...
-Changing baud rate to 921600
-Changed.
-Configuring flash size...
+------------------------------------------------------------
+## Podium sensors
 
-A fatal error occurred: Invalid head of packet ('\xa6')
-A fatal error occurred: Invalid head of packet ('\xa6')
+mosquitto_sub -h mqtt -t + -t +/podiumbuttons/+ -v 
 
----
-DOUT : 40MHz : 921600
-same but \xe0
----
-QIO : 40MHz : 921600
-same
----
-DIO : 16Mb  : 921600
+|| battle amulet     |function | touch number ||
+| flower             | boost   | touch0       |
+| diamond stone      | attack  | touch7       |
+| brass shell        | counter | touch5       |
+| multifaceted stone | debuff  | touch3       |
+| black wire         |   -     | touch6       |
 
-Configuring flash size...
+if you touch on or off two things at the same time the json includes both in the same report looks like 
+{"touch6":true,"touch7":true","device"....}
 
-A fatal error occurred: Timed out waiting for packet content
-A fatal error occurred: Timed out waiting for packet content
----
-DIO : 32Mb : 921600 : debug level info
-
-esptool.py v2.3.1
-Connecting.....
-Chip is ESP32D0WDQ6 (revision (unknown 0xa))
-Features: WiFi, BT, Dual Core, VRef calibration in efuse
-Uploading stub...
-Running stub...
-Stub running...
-Changing baud rate to 921600
-Changed.
-Configuring flash size...
-
-A fatal error occurred: Invalid head of packet ('\xc6')
-A fatal error occurred: Invalid head of packet ('\xc6')
----
