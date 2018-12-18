@@ -101,7 +101,7 @@ def test_msg(topic, payload):
 hostmqtt.subscribeL("all", DEVICENAME, "test", test_msg)
 hostmqtt.subscribeL(myHostname, 'rfid-nfc', "scan", show_health)
 
-hostmqtt.subscribeL(myHostname, 'ThingMagic', "scan", magic_cast)
+hostmqtt.subscribeL(myHostname, 'yellow-rfid', "scan", magic_cast)
 
 
 hostmqtt.status({"status": "listening"})
