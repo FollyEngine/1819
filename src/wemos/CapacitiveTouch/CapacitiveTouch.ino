@@ -1,11 +1,19 @@
 /*
-This is un example howto use Touch Intrrerupts
-The bigger the threshold, the more sensible is the touch
+Using Touch Intrrerupts from wires attached to magical objects
+The bigger the threshold, the more sensible is the touch (see int threshold)
+
+when a wire is touched, it emits an mqtt message on mqtt topid esp32-XXXXXXXXXX/XXXXpodium/touch
+with json contents like {"touch7":true,"device":"silverpodium","time":"2018-12-17T23:05:13"}
+
 */
 
 #include "mqtt.h"
 
-Mqtt mqtt = Mqtt("ASUS", "MEGA SHED", "10.10.11.2", 1883, "podiumbuttons");
+// One podium is gold, the other is silver.  uncomment the podium you're updating here
+char podiumName[] = "goldpodium";
+// char podiumName[] = "silverpodium";
+
+Mqtt mqtt = Mqtt("ASUS", "MEGA SHED", "10.10.11.2", 1883, podiumName);
 
 // BUILD as WEMOS LOLIN32 - see http://esp32village.blogspot.com/2018/04/esp32.html
 // OR
@@ -80,7 +88,7 @@ void loop(){
     current[i] = false;
   }
   if (stateChange) {
-      mqtt.publish("podiumbuttons", "touch", root);
+      mqtt.publish(podiumName, "touch", root);
   }
   
   
