@@ -3,7 +3,7 @@
 # run / setup for the Dueling podium RPi
 WHOAMI=$(hostname)
 PACKAGES="audio mqtt neopixels rfid-ThinkMagic rfid-mifare"
-MQTTHOST="mqtt"
+MQTTHOST="mqtt.local"
 CONFIGFILE=
 
 

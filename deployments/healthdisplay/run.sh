@@ -2,8 +2,8 @@
 
 # run / setup for the Dueling podium RPi
 WHOAMI=$(hostname)
-PACKAGES="mqtt healthdisplay rfid-mifare"
-MQTTHOST="mqtt"
+PACKAGES="mqtt healthpixels rfid-mifare"
+MQTTHOST="mqtt.local"
 CONFIGFILE=
 
 
