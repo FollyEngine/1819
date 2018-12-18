@@ -145,34 +145,34 @@ def magic_item(strip, payload):
     #do one (A, B first)
     index = 0
     blank = length - payload['A']
-    for i in blank:
+    for i in range(blank):
         one.setPixelColor(index, colours['off'])
         index = index + 1
-    for i in payload['A']:
+    for i in range(payload['A']):
         one.setPixelColor(index, colours['red'])
         index = index + 1
     blank = length - payload['B']
-    for i in payload['B']:
+    for i in range(payload['B']):
         one.setPixelColor(index, colours['blue'])
         index = index + 1
-    for i in blank:
+    for i in range(blank):
         one.setPixelColor(index, colours['off'])
         index = index + 1
 
     #do two (C, D first)
     index = 0
     blank = length - payload['C']
-    for i in blank:
+    for i in range(blank):
         two.setPixelColor(index, colours['off'])
         index = index + 1
-    for i in payload['C']:
+    for i in range(payload['C']):
         two.setPixelColor(index, colours['yellow'])
         index = index + 1
     blank = length - payload['D']
-    for i in payload['D']:
+    for i in range(payload['D']):
         two.setPixelColor(index, colours['white'])
         index = index + 1
-    for i in blank:
+    for i in range(blank):
         two.setPixelColor(index, colours['off'])
         index = index + 1
 
