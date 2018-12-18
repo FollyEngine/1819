@@ -123,18 +123,6 @@ def health(strip, color, count, wait_ms=50):
         time.sleep(wait_ms/1000.0)
 
 ############
-operations = {
-    # custom = has A, B, C, D
-    'magic_item': magic_item,
-    # needs colour and count
-    'health': health,
-    #needs colour
-    'colourwipe': colorWipe,
-    'theatrechase': theaterChase,
-    #no colour option
-    'rainbow': rainbow,
-    'rainbow_cycle': rainbowCycle,
-}
 colours = {
     'off': Color(0,0,0),
     'white': Color(180,180,180),
@@ -192,7 +180,19 @@ def magic_item(strip, payload):
     two.show()
 
 ##############
-
+operations = {
+    # custom = has A, B, C, D
+    'magic_item': magic_item,
+    # needs colour and count
+    'health': health,
+    #needs colour
+    'colourwipe': colorWipe,
+    'theatrechase': theaterChase,
+    #no colour option
+    'rainbow': rainbow,
+    'rainbow_cycle': rainbowCycle,
+}
+###############
 def play(payload = {}):
     direction = get(payload, 'direction', 'one')
     strip = one
