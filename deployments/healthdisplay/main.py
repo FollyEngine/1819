@@ -43,7 +43,7 @@ def show_health(topic, payload):
     global displaying
     if verb == 'removed':
         displaying = ''
-    else if displaying == payload['tag']:
+    elif displaying == payload['tag']:
         displaying = ''
     else:
         displaying = payload['tag']
