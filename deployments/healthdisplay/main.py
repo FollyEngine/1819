@@ -41,7 +41,9 @@ def show_health(topic, payload):
     host, device, verb = topic.split('/')
 
     global displaying
-    if displaying == payload['tag']:
+    if verb == 'removed':
+        displaying = ''
+    else if displaying == payload['tag']:
         displaying = ''
     else:
         displaying = payload['tag']
@@ -74,6 +76,7 @@ def test_msg(topic, payload):
 hostmqtt.subscribeL("all", DEVICENAME, "test", test_msg)
 
 hostmqtt.subscribeL(myHostname, 'rfid-nfc', "scan", show_health)
+hostmqtt.subscribeL(myHostname, 'rfid-nfc', "removed", show_health)
 
 hostmqtt.status({"status": "listening"})
 
