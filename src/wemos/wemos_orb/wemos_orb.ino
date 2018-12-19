@@ -4,15 +4,19 @@
 
 #include <Adafruit_NeoPixel.h>
 
+char orbName[] = "orb1";
+
+// Listen to mqtt messages and change LEDs in response.  Test with a message like
+// mosquitto_pub -h "mqtt" -t "all/orbX/twinkle" -m "twinkle"
 // GO READ https://www.tweaking4all.com/hardware/arduino/adruino-led-strip-effects/
 
 //BUILD with "LOLIN(WEMOS) D1 R2 & mini"
-//Mqtt mqtt = Mqtt("ASUS", "MEGA SHED", "mqtt.local", 1883, "orb");
-Mqtt mqtt = Mqtt("uhome", "WhatTheHe11", "mqtt.local", 1883, "orb");
+Mqtt mqtt = Mqtt("ASUS", "MEGA SHED", "mqtt.local", 1883, orbName);
+// Mqtt mqtt = Mqtt("uhome", "WhatTheHe11", "mqtt.local", 1883, orbName);
 
 // constants won't change. They're used here to set pin numbers:
 // D3 is the LOLIN Wemos 1-Button Shield: https://wiki.wemos.cc/products:d1_mini_shields:1-button_shield
-const int ledPin =  LED_BUILTIN;      // the number of the LED pin
+const int ledPin =  1;      // the number of the LED pin
 
 // D4 is the default pin for the 6 LED RBG shield
 // https://wiki.wemos.cc/products:d1_mini_shields:rgb_led_shield
@@ -34,7 +38,9 @@ void mqtt_callback_fn(const char* topic, byte* payload, unsigned int length) {
 }
 
 // TODO: set brightness and colour set from mqtt payload
-#define BRIGHTNESS 140
+#define BRIGHTNESS 140   // 140 is reasonably bright
+boolean initialised = false;
+int colour = 0;
 
 void setup() {
   //while (!Serial);
@@ -48,30 +54,42 @@ void setup() {
   
   left_leds.begin(); // This initializes the NeoPixel library.
   left_leds.setBrightness(BRIGHTNESS);
-  left_leds.show();                //Set all pixels to "off"
-  leds_set(left_leds, 100, 100, 0);
+  left_leds.show();                // turn on all pixels
   
   right_leds.begin(); // This initializes the NeoPixel library.
   right_leds.setBrightness(BRIGHTNESS);
-  right_leds.show();                //Set all pixels to "off"
-  leds_set(right_leds, 0, 100, 0);
+  right_leds.show();                // turn on all pixels
 
   mqtt.setCallback(mqtt_callback_fn);
   mqtt.setup();
 
 }
 
+// this function sets all the pixels in a group to the same colour
 void leds_set(Adafruit_NeoPixel &leds, uint8 R, uint8 G, uint8 B) {
-  for (int i = 0; i < LED_NUM; i++) {
-    leds.setPixelColor(i, leds.Color(R, G, B));
+  for(uint16_t i=0; i<LED_NUM; i++) {
+    leds.setPixelColor(i, R, G, B);    
     leds.show();
     //delay(50);
   }
 }
 
-boolean initialised = false;
-int colour = 0;
 
+
+// from https://learn.adafruit.com/sparkle-skirt/code-battery
+// Here is where you can put in your favorite colors that will appear!
+// just add new {nnn, nnn, nnn}, lines.
+uint8_t myFavoriteColors[][3] = {
+       {255,   222,  30},   // Pixie GOLD
+       {50, 255, 255},    // Alchemy BLUE
+       {255, 100, 0},     // Animal Orange 
+       {242,    90, 255},   // Garden PINK
+       {0,    255, 40},   // Tinker GREEN
+     };
+// don't edit the line below
+#define FAVCOLORS sizeof(myFavoriteColors) / 3
+int dim = 20;
+int moredim = 50;
 
 void loop() {
   StaticJsonBuffer<200> jsonBuffer;
@@ -95,8 +113,8 @@ void loop() {
     digitalWrite(ledPin, HIGH);
   
     delay(1);
-    initialised = mqtt.subscribe(mqtt.getHostname(), "orb", "twinkle");
-    initialised = mqtt.subscribe("all", "orb", "twinkle");
+    initialised = mqtt.subscribe(mqtt.getHostname(), orbName, "twinkle");
+    initialised = mqtt.subscribe("all", orbName, "twinkle");
     Serial.printf("loop Subscription returned: %s\n", initialised ? "true" : "false");
     // esp8266-84f3eb3b74a6/button/pushed
     for (int i = 0; i < 2*LED_NUM; i++) {
@@ -107,65 +125,61 @@ void loop() {
     colour++;
   }
   if (on) {
+    JsonObject& root = jsonBuffer.createObject();
+    root["orbstatus"]="twinkling";
+    mqtt.publish(orbName, "status", root);
+
+    left_leds.setBrightness(BRIGHTNESS); // you have to set a colour after you do this or it won't work
+    left_leds.show();
+
+    // turn LEDs on to the current colour
+    uint8 red = myFavoriteColors[colour][0];
+    uint8 green = myFavoriteColors[colour][1];
+    uint8 blue = myFavoriteColors[colour][2]; 
+    leds_set(left_leds, red/moredim, green/moredim, blue/moredim);
+    leds_set(right_leds, red/moredim, green/moredim, blue/moredim);
+
+    // sparkle each led once (but in random order, so some of them might sparkle twice and some not at all)      
     for (int i = 0; i < LED_NUM; i++) {
       pixie_dust(left_leds, colour);
       pixie_dust(right_leds, colour);
       delay(2);
     }
+    // turn leds off and go back to waiting state
     colour++;
     on = !on;
+    leds_set(left_leds, 0,0,0);
+    leds_set(right_leds, 0,0,0);
+
+    root["orbstatus"]="not twinkling";
+    mqtt.publish(orbName, "status", root);
+
   }
+  
+
 }
 
 
 // from https://learn.adafruit.com/neopixel-pixie-dust-bag/arduino-code
-    #define DELAY_MILLIS 10  // delay between blinks, smaller numbers are faster 
+    #define DELAY_MILLIS 10  // how long each light stays bright for, smaller numbers are faster 
     #define DELAY_MULT 8     // Randomization multiplier on the delay speed of the effect
-    #define BRIGHT 100        // Brightness of the pixels, max is 255
      
     bool oldState = HIGH; //sets the initial variable for counting touch sensor button pushes
      
     void pixie_dust(Adafruit_NeoPixel &leds, int showColor) {
-      int RColor = 100; //color (0-255) values to be set by cylcing touch switch, initially GOLD
-      int GColor = 0 ;
-      int BColor = 0 ;
-      
-           if (showColor==0) {//Garden PINK
-             RColor = 242;
-             GColor = 90;
-             BColor = 255; 
-           }
-           if (showColor==1) {//Pixie GOLD
-             RColor = 255;
-             GColor = 222;
-             BColor = 30; 
-           }
-           if (showColor==2) {//Alchemy BLUE
-             RColor = 50;
-             GColor = 255;
-             BColor = 255; 
-           }
-           if (showColor==3) {//Animal ORANGE
-             RColor = 255;
-             GColor = 100;
-             BColor = 0; 
-           }
-           if (showColor==4) {//Tinker GREEN
-             RColor = 0;
-             GColor = 255;
-             BColor = 40; 
-           }
-      
+      //color (0-255) values to be set by cycling touch switch, initially GOLD
+      uint8 red = myFavoriteColors[colour][0];
+      uint8 green = myFavoriteColors[colour][1];
+      uint8 blue = myFavoriteColors[colour][2]; 
+                
       //sparkling
       int p = random(LED_NUM); //select a random pixel
-      leds.setPixelColor(p,RColor,GColor,BColor); //color value comes from cycling state of momentary switch
+      leds.setPixelColor(p,red,green,blue); //color value comes from cycling state of momentary switch
       leds.show();
       delay(DELAY_MILLIS * random(DELAY_MULT) ); //delay value randomized to up to DELAY_MULT times longer
-      int dim = 20;
-      leds.setPixelColor(p, RColor/dim, GColor/dim, BColor/dim); //set to a dimmed version of the state color
+      leds.setPixelColor(p, red/dim, green/dim, blue/dim); //set to a dimmed version of the state color
       leds.show();
-      int moredim = 50;
-      leds.setPixelColor(p+1, RColor/moredim, GColor/moredim, BColor/moredim); //set a neighbor pixel to an even dimmer value
+      leds.setPixelColor(p+1, red/moredim, green/moredim, blue/moredim); //set a neighbor pixel to an even dimmer value
       leds.show();
       
 //      //button check to cycle through color value sets
@@ -189,25 +203,31 @@ void loop() {
 
 
 
-// from https://learn.adafruit.com/sparkle-skirt/code-battery
-// Here is where you can put in your favorite colors that will appear!
-// just add new {nnn, nnn, nnn}, lines. They will be picked out randomly
-//                                  R   G   B
-uint8_t myFavoriteColors[][3] = {
-                               //  {146,   0, 146},   // purple
-                               //  {146,   0,  0},   // red 
-                               //  {146,   146,  146},   // white 
-                               //  {255,   215,  0},   // lemon yellow? 
-                                 {255,   222,  30},   // Pixie GOLD
-                               //  {50, 255, 255},    // Alchemy BLUE
-                                 {255, 100, 0},     // Animal Orange 
-                               //  {0,    0, 146},   // blue
-                               };
-// don't edit the line below
-#define FAVCOLORS sizeof(myFavoriteColors) / 3
+
+// Fadeout... starts at bright white and fades to almost zero
+void fadeout(Adafruit_NeoPixel &leds) {  
+  // swap these two loops to spin around the LEDs
+  for(uint16_t fade=255; fade>0; fade=fade-17) {
+      for(uint16_t i=0; i<LED_NUM; i++) {
+        // now we will 'fade' it in steps
+          
+          leds.setPixelColor(i, leds.Color(fade,fade,fade));
+      } 
+      leds.show();
+      delay(5); // milliseconds
+  }
+  // now make sure they're all set to 0
+  for(uint16_t i=0; i<LED_NUM; i++) {
+    leds.setPixelColor(i, leds.Color(0,0,0));
+  }
+  leds.show();
+
+}
+
 
 // first number is 'wait' delay, shorter num == shorter twinkle
 // second number is how many neopixels to simultaneously light up
+// THIS FUNCTION IS NOT USED AND PROBABLY DOESN'T WORK
 void flashRandom(Adafruit_NeoPixel &leds, int wait, uint8_t howmany) {
  
   for(uint16_t i=0; i<howmany; i++) {
