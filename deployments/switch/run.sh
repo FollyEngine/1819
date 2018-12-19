@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 
-# run / setup for the Dueling podium RPi
+# run / setup for the switch1  RPi (for progress bar)
 WHOAMI=$(hostname)
 PACKAGES="mqtt switch"
 MQTTHOST="localhost"
