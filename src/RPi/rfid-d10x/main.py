@@ -22,19 +22,21 @@ myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, "yellow-rfid")
 hostmqtt.loop_start()   # use the background thread
 
+global lastTimeRead
+lastTimeRead = {}
 ########################################
 
 def readreply(ser):
     p = ser.read(1)
     # assert(packet_type == 0xA0)
     packet_type = int.from_bytes(p, byteorder="big")
-    print(packet_type)
+    #print(packet_type)
     if packet_type != 0:
-        print("type == %s" % format(packet_type, '#04x'))
+        #print("type == %s" % format(packet_type, '#04x'))
 
         l = ser.read(1)
         length = int.from_bytes(l, byteorder="big")
-        print("length == %u (0x%x)" % (length, length))
+        #print("length == %u (0x%x)" % (length, length))
 
         if length > 0:
             a = ser.read(1)
@@ -43,12 +45,11 @@ def readreply(ser):
             address = int.from_bytes(a, byteorder="big")
             data = int.from_bytes(d, byteorder="big")
             crc = int.from_bytes(c, byteorder="big")
-            print("READ: address = %s data == %s" % (format(address, '#04x'), format(data, '#04x')))
+            #print("READ: address = %s data == %s" % (format(address, '#04x'), format(data, '#04x')))
 
             return length, packet_type, data
     return 0, 0, "nothing"
 
-lastTimeRead = {}
 def read_reply_real_time_inventory(ser):
     length, packet_type, data = readreply(ser_connection)
     if packet_type != 160:
@@ -69,18 +70,17 @@ def read_reply_real_time_inventory(ser):
 
     publish = True
     if EPC in lastTimeRead:
-        publish = False # only sed the message once - see expire in the main loop
-#        if datetime.timedelta.total_seconds(datetime.datetime.now()-lastTimeRead[EPC]) < (1):
-#            #lets only report each tag once a second
-#            publish = False
-    # TODO: should filter these to not include the 00000000700000 type id's
-    lastTimeRead[EPC] = datetime.datetime.now()
-    
+        if lastTimeRead[EPC] != 0:
+            publish = False # only send the message once - see expire in the main loop
+
     # not real tag reads
     if EPC == "0000000000":
-        publish = False
-    if TagPC == "00":
-        publish = False
+        return length, packet_type, data
+    elif TagPC == "00":
+        return length, packet_type, data
+
+    # TODO: should filter these to not include the 00000000700000 type id's
+    lastTimeRead[EPC] = datetime.datetime.now()
 
     if publish == True:
         event = {
@@ -93,11 +93,10 @@ def read_reply_real_time_inventory(ser):
             'event': 'inserted'
         }
         hostmqtt.publish("scan", event)
-#        lastTimeRead[EPC] = datetime.datetime.now()
 
     return length, packet_type, data
 
-def sendRemoved(EPC):
+def sendRemoved(EPC, diff):
     event = {
         #'data': "%x" % data,
         #'packet_type': packet_type,
@@ -105,7 +104,8 @@ def sendRemoved(EPC):
         #"TagPC": TagPC,
         "tag": EPC,
         #"rssi": rssi,
-        'event': 'removed'
+        'event': 'removed',
+        'duration': diff
     }
     hostmqtt.publish("removed", event)
 
@@ -238,7 +238,7 @@ publicAddress = 0x01
 baudrate = 115200    # 38400 or 115200
 with serial.Serial(
             '/dev/ttyUSB0', 
-            timeout=None, 
+            timeout=0.001,
             baudrate=baudrate, 
             bytesize=serial.EIGHTBITS, 
             parity=serial.PARITY_NONE, 
@@ -318,23 +318,26 @@ with serial.Serial(
             while True:
                 try:
                     now = datetime.datetime.now()
-                    if datetime.timedelta.total_seconds(now-lastStatus) > (2*60):
+                    diff = now-lastStatus
+                    if diff.seconds > (2*60):
                         status(ser_connection)
                         lastStatus = now
 
                     # expire read tags if they havn't been heard from in 2 seconds
-                    global lastTimeRead
                     lastKeys = lastTimeRead.keys()
                     for EPC in lastKeys:
-                        if datetime.timedelta.total_seconds(now-lastTimeRead[EPC]) >= (2):
-                            # TODO: send a remove message?
-                            del lastTimeRead[EPC]
-                            sendRemoved(EPC)
+                        if lastTimeRead[EPC] != 0:
+                            diff = now-lastTimeRead[EPC]
+                            print("%s : %d microseconds" % (EPC, diff.microseconds))
+                            if diff.microseconds > 100000:
+                                lastTimeRead[EPC] = 0
+                                sendRemoved(EPC, diff.microseconds)
 
                     length, packet_type, data = read_reply_real_time_inventory(ser_connection)
                     # note that there are at least 2 different replies
                     ## the response packet, and the tag info..
-                    print("read : 0x%x" % data)
+                    if length > 0:
+                        print("read %d bytes: 0x%x" % (length, data))
 
                     # TODO: will get a 10 byte length response code after the timeout
                     # presumably, you then set go again...
