@@ -74,7 +74,9 @@ def read_reply_real_time_inventory(ser):
             publish = False # only send the message once - see expire in the main loop
 
     # not real tag reads
-    if EPC == "0000000000":
+    if EPC == "":
+        return length, packet_type, data
+    elif EPC == "0000000000":
         return length, packet_type, data
     elif TagPC == "00":
         return length, packet_type, data
@@ -329,7 +331,7 @@ with serial.Serial(
                         if lastTimeRead[EPC] != 0:
                             diff = now-lastTimeRead[EPC]
                             print("%s : %d microseconds" % (EPC, diff.microseconds))
-                            if diff.microseconds > 100000:
+                            if diff.microseconds > 200000:
                                 lastTimeRead[EPC] = 0
                                 sendRemoved(EPC, diff.microseconds)
 
