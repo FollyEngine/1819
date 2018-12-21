@@ -4,7 +4,7 @@
 
 #include <Adafruit_NeoPixel.h>
 
-char orbName[] = "orb1";
+char orbName[] = "orb4";
 
 // Listen to mqtt messages and change LEDs in response.  Test with a message like
 // mosquitto_pub -h "mqtt" -t "all/orbX/twinkle" -m "twinkle"
@@ -31,10 +31,21 @@ Adafruit_NeoPixel left_leds = Adafruit_NeoPixel(LED_NUM, D5, NEO_GRB + NEO_KHZ80
 Adafruit_NeoPixel right_leds = Adafruit_NeoPixel(LED_NUM, D6, NEO_GRB + NEO_KHZ800);
 
 boolean on = false;
+boolean changed = false;
 void mqtt_callback_fn(const char* topic, byte* payload, unsigned int length) {
   Serial.printf("Callback: %s\n", topic);
+  // we've received a message.  reset the LEDs as appropriate
+  changed=true;
+  // if topic=twinkle set ON
+  if (true) {
+    on = true; 
+  } 
+  // if topic=stop unset ON
+  if (false) {
+    on = false; 
+  } 
 
-  on = ! on;  
+
 }
 
 // TODO: set brightness and colour set from mqtt payload
@@ -92,19 +103,10 @@ int dim = 20;
 int moredim = 50;
 
 void loop() {
+// IDEA : should the orb do a tiny twinkle every few minutes just to let us know it's alive?  
   StaticJsonBuffer<200> jsonBuffer;
   JsonObject& root = jsonBuffer.createObject();
   mqtt.loop();
-
-  if (on) {
-    pinMode(ledPin, HIGH);
-  } else {
-    pinMode(ledPin, LOW);
-  }
-
-  if (colour > 4) {
-    colour = 0;
-  }
 
   if (!initialised) {
     //leds_set(left_leds, 0, 0, 0);
@@ -122,41 +124,47 @@ void loop() {
       pixie_dust(right_leds, colour);
       delay(1);
     }
-    colour++;
+  }
+  if (changed) {
+    if (on) {
+      // rotate colours, turn LEDs on but dim
+      root["orbstatus"]="twinkling";
+      mqtt.publish(orbName, "status", root);
+      pinMode(ledPin, HIGH);
+    
+      colour++;
+      if (colour > FAVCOLORS) {
+        colour = 0;
+      }
+  
+      // turn LEDs on to the current colour
+      uint8 red = myFavoriteColors[colour][0];
+      uint8 green = myFavoriteColors[colour][1];
+      uint8 blue = myFavoriteColors[colour][2]; 
+      leds_set(left_leds, red/moredim, green/moredim, blue/moredim);
+      leds_set(right_leds, red/moredim, green/moredim, blue/moredim);
+    }
+    if (!on) {
+      // turn leds off and go back to waiting state
+      root["orbstatus"]="not twinkling";
+      mqtt.publish(orbName, "status", root);
+  
+      pinMode(ledPin, LOW);
+  
+      leds_set(left_leds, 0,0,0);
+      leds_set(right_leds, 0,0,0);
+    }
+    changed = false;    
   }
   if (on) {
-    JsonObject& root = jsonBuffer.createObject();
-    root["orbstatus"]="twinkling";
-    mqtt.publish(orbName, "status", root);
-
-    left_leds.setBrightness(BRIGHTNESS); // you have to set a colour after you do this or it won't work
-    left_leds.show();
-
-    // turn LEDs on to the current colour
-    uint8 red = myFavoriteColors[colour][0];
-    uint8 green = myFavoriteColors[colour][1];
-    uint8 blue = myFavoriteColors[colour][2]; 
-    leds_set(left_leds, red/moredim, green/moredim, blue/moredim);
-    leds_set(right_leds, red/moredim, green/moredim, blue/moredim);
-
     // sparkle each led once (but in random order, so some of them might sparkle twice and some not at all)      
+// TODO actually just choose a random LED and sparkle it, since this loop now repeats every time
     for (int i = 0; i < LED_NUM; i++) {
       pixie_dust(left_leds, colour);
       pixie_dust(right_leds, colour);
       delay(2);
     }
-    // turn leds off and go back to waiting state
-    colour++;
-    on = !on;
-    leds_set(left_leds, 0,0,0);
-    leds_set(right_leds, 0,0,0);
-
-    root["orbstatus"]="not twinkling";
-    mqtt.publish(orbName, "status", root);
-
   }
-  
-
 }
 
 
