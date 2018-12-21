@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+# should be run from the RPi directory (which contains ./mqtt/ and ./database/) like `python update.py`
+
 from peewee import *
 from playhouse.shortcuts import model_to_dict, dict_to_model
 import json
