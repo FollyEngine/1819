@@ -20,7 +20,7 @@ if [[ ¨$1¨ == ¨--setup¨ ]]; then
 	# get pyscard
 	sudo apt-get update
 	sudo apt-get upgrade -yq
-	sudo apt-get install -yq python3-pyscard python-pip pcsc-tools pcscd git python3-setuptools libpcsclite-dev python3-dev \
+	sudo apt-get install -yq python3-pyscard python-pip python3-pip pcsc-tools pcscd git python3-setuptools libpcsclite-dev python3-dev \
 				mosquitto-clients mosquitto scratch python-pygame
 
 	git pull
