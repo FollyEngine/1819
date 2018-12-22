@@ -1,5 +1,10 @@
 #!/usr/bin/python3
 
+# first we need a setup.sh with 
+# sudo pip install --no-cache-dir -r ./requirements.txt
+
+# should be run from the RPi directory (which contains ./mqtt/ and ./database/) like `python update.py`
+
 from peewee import *
 from playhouse.shortcuts import model_to_dict, dict_to_model
 import json
