@@ -10,10 +10,11 @@ with json contents like {"touch7":true,"device":"silverpodium","time":"2018-12-1
 #include "mqtt.h"
 
 // One podium is gold, the other is silver.  uncomment the podium you're updating here
-char podiumName[] = "goldpodium";
+// char podiumName[] = "goldpodium";
 // char podiumName[] = "silverpodium";
+char podiumName[] = "blackpodium";
 
-Mqtt mqtt = Mqtt("ASUS", "MEGA SHED", "10.10.11.2", 1883, podiumName);
+Mqtt mqtt = Mqtt("ASUS", "MEGA SHED", "192.168.4.1", 1883, podiumName);
 
 // BUILD as WEMOS LOLIN32 - see http://esp32village.blogspot.com/2018/04/esp32.html
 // OR
