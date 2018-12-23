@@ -23,51 +23,64 @@ myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 
 ########################################
+health = 100
+def show_health():
+    hostmqtt.publishL(myHostname, 'neopixel', 'play', {
+                    'operation': 'health',
+                    'count': health,
+                    'colour': 'blue'
+                })
+
+
+nfcTag = ''
+magic = None
+modifier = None
+def reset():
+    global nfcTag
+    nfcTag = ''
+    global magic
+    magic = None
+    global modifier
+    modifier = None
+    hostmqtt.publishL(myHostname, 'neopixel', 'play', {
+                    'operation': 'health',
+                    'count': 0,
+                })
+    report_state("reset")
+
+def report_state(reason):
+    print("%s" % reason)
+    hostmqtt.publishL(myHostname, DEVICENAME, 'state', {
+                    'nfc': nfcTag,
+                    'magic': magic,
+                    'modifier': modifier,
+                    'reason': reason,
+                })
+
+########################################
 # on_message subscription functions
-displaying = ''
-health = 10
-def health_calc(host, colour, change = 0):
-    global health
-    if health < 0:
-        health = 15
-
-    if change < 0:
-        hostmqtt.publishL(host, 'neopixel', 'play', {
-                        'operation': 'health',
-                        'count': health,
-                        'colour': 'red'
-                    })
-        health = health + change
-
-    if colour == "off":
-        hostmqtt.publishL(host, 'neopixel', 'play', {
-                        'operation': 'health',
-                        'count': 15,
-                        'colour': colour
-                    })
-    else:
-        hostmqtt.publishL(host, 'neopixel', 'play', {
-                        'operation': 'health',
-                        'count': health,
-                        'colour': colour
-                    })
-
-def show_health(topic, payload):
+def read_nfc(topic, payload):
     host, device, verb = topic.split('/')
 
-    global displaying
-    if displaying == payload['tag']:
-        displaying = ''
-        colour = 'off'
+    global nfcTag
+    if nfcTag == payload['tag']:
+        reset()
+        report_state('remove-nfc')
     else:
-        displaying = payload['tag']
-        colour = 'blue'
+        nfcTag = payload['tag']
+        report_state('set-nfc')
 
-    health_calc(host, colour, 0)
 
 def magic_cast(topic, payload):
-    if displaying == '':
+    if nfcTag == '':
         # no-one logged on to podium, so no magic happening
+        report_state('uhf-no-nfc')
+        return
+    if magic == None:
+        report_state('uhf-no-database')
+        return
+    if modifier == None:
+        report_state('uhf-no-modifier')
         return
     #TODO: add maths that changes the person's health
     host, device, verb = topic.split('/')
@@ -76,7 +89,11 @@ def magic_cast(topic, payload):
                     'tagid': payload['tag']
                 })
 
-    health_calc(host, 'blue', -2)
+    # TODO: need to wait for other side, then figure out how won, and then do consequenses
+    global health
+    health = health - 2
+    report_state('uhf-cast-magic')
+    show_health()
 
 
 def test_msg(topic, payload):
@@ -90,6 +107,41 @@ def test_msg(topic, payload):
                     'colour': 'off',
                     'tagid': 'test'
                 })
+
+def get_magic(topic, payload):
+    #{"Earth": 10, 
+    # "time": "2018-12-22T20:43:40.715609", 
+    # "nfc": "550A5CBC", 
+    # "Fire": 10, 
+    # "Air": 10, 
+    # "Water": 10, 
+    # "id": 4, 
+    # "uhf": "3000e200001606180258170069a0", 
+    # "name": "", 
+    # "device": "db_lookup"}
+    if payload['nfc'] == nfcTag:
+        global magic
+        magic = payload
+        show_health()
+        report_state('set-magic-stats')
+    else:
+        report_state('not-my-magic-stats')
+
+
+def set_modifier(topic, payload):
+    global modifier
+    mod = None
+    for t in ['touch0', 'touch3', 'touch5', 'touch6']:
+        if t in payload:
+            if payload[t] == True:
+                if mod != None:
+                    # if they're holding more than one, then they're not ready to cast
+                    modifier = None
+                    report_state('more-than-one-modifier-touched')
+                    return
+                mod = t
+    modifier = mod
+    report_state('modifier-ready')
 ########################################
 
 
@@ -99,12 +151,15 @@ def test_msg(topic, payload):
 
 # test signal
 hostmqtt.subscribeL("all", DEVICENAME, "test", test_msg)
-hostmqtt.subscribeL(myHostname, 'rfid-nfc', "scan", show_health)
 
+hostmqtt.subscribeL(myHostname, 'rfid-nfc', "scan", read_nfc)
+hostmqtt.subscribeL('all', 'db_lookup', 'magic-item', get_magic)
+hostmqtt.subscribeL('+', 'blackpodium', 'touch', set_modifier)
 hostmqtt.subscribeL(myHostname, 'yellow-rfid', "scan", magic_cast)
 
-
 hostmqtt.status({"status": "listening"})
+
+reset()
 
 #try:
 hostmqtt.loop_forever()

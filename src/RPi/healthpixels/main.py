@@ -113,14 +113,18 @@ def theaterChaseRainbow(strip, wait_ms=50):
             for i in range(0, strip.numPixels(), 3):
                 strip.setPixelColor(i+q, 0)
 
-def health(strip, color, count, wait_ms=50):
-    """Wipe color across display a pixel at a time."""
+# health will be a setting of 10 pixels, and the number will be out of 100
+def health(strip, color, health, wait_ms=50):
+    count = health/100
+
     if count > strip.numPixels():
         count = strip.numPixels()
-    for i in range(count):
-        strip.setPixelColor(i, color)
-        strip.show()
-        time.sleep(wait_ms/1000.0)
+    for i in strip.numPixels():
+        if i <= count:
+            strip.setPixelColor(i, color)
+        else:
+            strip.setPixelColor(i, 'off')
+    strip.show()
 
 ############
 colours = {
