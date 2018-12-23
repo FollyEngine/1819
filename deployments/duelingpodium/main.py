@@ -81,16 +81,16 @@ def reset():
     their_magic_cast = None
     global combat_round
     combat_round = combat_round + 1
-    if skip_ABC_reset > 0:
-        global skip_ABC_reset
-        skip_ABC_reset = skip_ABC_reset - 1
-    else:
-        playerCurrentState['Attack'] = playerStartState['Attack']
-        playerCurrentState['Boost'] = playerStartState['Boost']
-        playerCurrentState['Counter'] = playerStartState['Counter']
-
-    if playerCurrentState['Attack'] == 0 and playerCurrentState['Boost'] == 0 and playerCurrentState['Counter'] == 0:
-        play('Dueling/Disable.wav')
+    if playerCurrentState != None:
+        if skip_ABC_reset > 0:
+            global skip_ABC_reset
+            skip_ABC_reset = skip_ABC_reset - 1
+        else:
+            playerCurrentState['Attack'] = playerStartState['Attack']
+            playerCurrentState['Boost'] = playerStartState['Boost']
+            playerCurrentState['Counter'] = playerStartState['Counter']
+        if playerCurrentState['Attack'] == 0 and playerCurrentState['Boost'] == 0 and playerCurrentState['Counter'] == 0:
+            play('Dueling/Disable.wav')
     show_health()
     report_state(state)
 
@@ -183,8 +183,8 @@ def get_magic(topic, payload):
     # "uhf": "3000e200001606180258170069a0", 
     # "name": "", 
     # "device": "db_lookup"}
+    global magic
     if payload['nfc'] == nfcTag and magic == None:
-        global magic
         magic = payload
         global playerStartState
         playerStartState['Attack'] = baselineStats['Attack'] * (magic['Fire']*10/100)
