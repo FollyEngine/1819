@@ -57,6 +57,8 @@ combat_round = 0
 skip_ABC_reset = 0
 def reset():
     state = 'continue-combat'
+    global health
+    global combat_round
     if health <= 0:
         global nfcTag
         nfcTag = ''
@@ -70,7 +72,6 @@ def reset():
         opponentsCurrent = None
         global health
         health = 0
-        global combat_round
         combat_round = 0
         state = "full-reset"
     global modifier
@@ -79,11 +80,10 @@ def reset():
     my_magic_cast = None
     global their_magic_cast
     their_magic_cast = None
-    global combat_round
     combat_round = combat_round + 1
     if playerCurrentState != None:
+        global skip_ABC_reset
         if skip_ABC_reset > 0:
-            global skip_ABC_reset
             skip_ABC_reset = skip_ABC_reset - 1
         else:
             playerCurrentState['Attack'] = playerStartState['Attack']
@@ -110,6 +110,7 @@ def ive_been_attacked(payload):
     # TODO: not sure if this sound is supposed to happen straight away, or not until both podiums go
     play('TODO - ned to look at the ATK sheet')
 def reconcile_magic():
+    global skip_ABC_reset
     if my_magic_cast != None and their_magic_cast != None:
         # we use their cast info to determin the effects on us
         if their_magic_cast['modifier'] == 'attack':
@@ -129,13 +130,11 @@ def reconcile_magic():
                 #boost attack and counter for next round (or again and again) - again, use the round number
                 playerCurrentState['Attack'] = playerCurrentState['Attack'] * playerCurrentState['Boost']
                 playerCurrentState['Counter'] = playerCurrentState['Counter'] * playerCurrentState['Boost']
-                global skip_ABC_reset
                 skip_ABC_reset = 1
         if their_magic_cast['modifier'] == 'disable':
             playerCurrentState['Attack'] = 0
             playerCurrentState['Boost'] = 0
             playerCurrentState['Counter'] = 0
-            global skip_ABC_reset
             skip_ABC_reset = 1
         # send player's currentState to other podium
         hostmqtt.publishL(otherPodium, DEVICENAME, 'player-state', playerCurrentState)
