@@ -1,1 +1,1 @@
-./deployments/switch/run.sh: line 59: ./../../deployments/switch/main.py: Permission denied
+./deployments/switch/run.sh: line 63: ./../../deployments/switch/main.py: Permission denied
