@@ -42,7 +42,6 @@ magic = None
 modifier = None
 my_magic_cast = None
 their_magic_cast = None
-disable_next_round = False
 def reset():
     state = 'continue-combat'
     if health <= 0:
@@ -53,10 +52,6 @@ def reset():
         global health
         health = 0
         state = "full-reset"
-    else:
-        # TODO: how to deal with disable_next_round
-        global disable_next_round
-        disable_next_round = False
     global modifier
     modifier = None
     global my_magic_cast
@@ -160,15 +155,12 @@ def set_modifier(topic, payload):
         report_state('modifier-ready')
 
 def magic_cast(topic, payload):
-    host, device, verb = topic.split('/')
+    host, _, _ = topic.split('/')
     if host != myHostname:
         global their_magic_cast
         their_magic_cast = payload
         if payload['modifier'] == 'attack':
             ive_been_attacked(payload)
-        elif payload['modifier'] == 'disable':
-            global disable_next_round
-            disable_next_round = True
     else:
         global my_magic_cast
         my_magic_cast = payload
@@ -178,6 +170,7 @@ def magic_cast(topic, payload):
             play('Dueling/Counter.wav')
         elif payload['modifier'] == 'disable':
             play('Dueling/Disable.wav')
+
     reconcile_magic()
 
 def read_uhf(topic, payload):
