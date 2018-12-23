@@ -24,6 +24,10 @@ myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 
 ########################################
+# Fire: Attack, Earth: Boost%, Air: Counter, Water: Energy
+baselineStats = {'Attack': 10, 'Boost': 100, 'Counter': 15, 'Energy': 40}
+
+########################################
 def play(sound):
     hostmqtt.publishL(myHostname, 'audio', 'play', {
                     'sound': sound,
@@ -38,7 +42,9 @@ def show_health():
                 })
 
 nfcTag = ''
-magic = None
+magic = None    # this is the item element Levels
+playerStartState = None
+playerCurrentState = None
 modifier = None
 my_magic_cast = None
 their_magic_cast = None
@@ -49,6 +55,10 @@ def reset():
         nfcTag = ''
         global magic
         magic = None
+        global playerStartState
+        playerStartState = None
+        global playerCurrentState
+        playerCurrentState = None
         global health
         health = 0
         state = "full-reset"
@@ -66,6 +76,8 @@ def report_state(reason):
     hostmqtt.publishL(myHostname, DEVICENAME, 'state', {
                     'nfc': nfcTag,
                     'magic': magic,
+                    'playerStart': playerStartState,
+                    'playerCurrent': playerCurrentState,
                     'modifier': modifier,
                     'reason': reason,
                 })
@@ -76,6 +88,8 @@ def reconcile_magic():
     if my_magic_cast != None and their_magic_cast != None:
         # this is the place where we figure out the consequences
         report_state('combat!')
+        health = 100 * playerCurrentState['Energy'] / playerStartState['Energy']
+        show_health()
     # TODO: how to start the timeout....
 ########################################
 # on_message subscription functions
@@ -115,9 +129,17 @@ def get_magic(topic, payload):
     # "uhf": "3000e200001606180258170069a0", 
     # "name": "", 
     # "device": "db_lookup"}
-    if payload['nfc'] == nfcTag:
+    if payload['nfc'] == nfcTag and magic == None:
         global magic
         magic = payload
+        global playerStartState
+        playerStartState['Attack'] = baselineStats['Attack'] * (magic['Fire']*10/100)
+        playerStartState['Boost'] = baselineStats['Boost'] * (magic['Earth']*10/100)
+        playerStartState['Counter'] = baselineStats['Counter'] * (magic['Air']*10/100)
+        playerStartState['Energy'] = baselineStats['Energy'] * (magic['Water']*10/100)
+        global playerCurrentState
+        playerCurrentState = playerStartState
+
         show_health()
         report_state('set-magic-stats')
     else:
