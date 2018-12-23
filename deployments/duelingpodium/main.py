@@ -23,6 +23,10 @@ mqttHost = config.getValue("mqtthostname", "mqtt.local")
 myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 
+otherPodium = 'podium1'
+if myHostname == otherPodium:
+    otherPodium = 'podium2'
+
 ########################################
 # Fire: Attack, Earth: Boost%, Air: Counter, Water: Energy
 baselineStats = {'Attack': 10, 'Boost': 100, 'Counter': 15, 'Energy': 40}
@@ -45,9 +49,12 @@ nfcTag = ''
 magic = None    # this is the item element Levels
 playerStartState = None
 playerCurrentState = None
+opponentsCurrent = None
 modifier = None
 my_magic_cast = None
 their_magic_cast = None
+combat_round = 0
+skip_ABC_reset = 0
 def reset():
     state = 'continue-combat'
     if health <= 0:
@@ -59,8 +66,12 @@ def reset():
         playerStartState = None
         global playerCurrentState
         playerCurrentState = None
+        global opponentsCurrent
+        opponentsCurrent = None
         global health
         health = 0
+        global combat_round
+        combat_round = 0
         state = "full-reset"
     global modifier
     modifier = None
@@ -68,6 +79,18 @@ def reset():
     my_magic_cast = None
     global their_magic_cast
     their_magic_cast = None
+    global combat_round
+    combat_round = combat_round + 1
+    if skip_ABC_reset > 0:
+        global skip_ABC_reset
+        skip_ABC_reset = skip_ABC_reset - 1
+    else:
+        playerCurrentState['Attack'] = playerStartState['Attack']
+        playerCurrentState['Boost'] = playerStartState['Boost']
+        playerCurrentState['Counter'] = playerStartState['Counter']
+
+    if playerCurrentState['Attack'] == 0 and playerCurrentState['Boost'] == 0 and playerCurrentState['Counter'] == 0:
+        play('Dueling/Disable.wav')
     show_health()
     report_state(state)
 
@@ -78,17 +101,48 @@ def report_state(reason):
                     'magic': magic,
                     'playerStart': playerStartState,
                     'playerCurrent': playerCurrentState,
+                    'opponentsCurrent': opponentsCurrent,
                     'modifier': modifier,
                     'reason': reason,
+                    'combat-round': combat_round,
                 })
 def ive_been_attacked(payload):
     # TODO: not sure if this sound is supposed to happen straight away, or not until both podiums go
     play('TODO - ned to look at the ATK sheet')
 def reconcile_magic():
     if my_magic_cast != None and their_magic_cast != None:
-        # this is the place where we figure out the consequences
+        # we use their cast info to determin the effects on us
+        if their_magic_cast['modifier'] == 'attack':
+            if my_magic_cast['modifier'] == 'counter':
+                if playerCurrentState['Counter'] > opponentsCurrent['Energy']:
+                    # TODO: not sure 
+                    their_magic_cast['Energy'] = opponentsCurrent['Energy'] - playerCurrentState['Counter']
+            elif my_magic_cast['modifier'] == 'boost':
+                global boost
+                boost = 0
+            elif my_magic_cast['modifier'] == 'attack':
+                if playerCurrentState['Attack'] > opponentsCurrent['Attack']:
+                    opponentsCurrent['Energy'] = 0
+            playerCurrentState['Energy'] = playerCurrentState['Energy'] - opponentsCurrent['Energy']
+        else:
+            if my_magic_cast['modifier'] == 'boost':
+                #boost attack and counter for next round (or again and again) - again, use the round number
+                playerCurrentState['Attack'] = playerCurrentState['Attack'] * playerCurrentState['Boost']
+                playerCurrentState['Counter'] = playerCurrentState['Counter'] * playerCurrentState['Boost']
+                global skip_ABC_reset
+                skip_ABC_reset = 1
+        if their_magic_cast['modifier'] == 'disable':
+            playerCurrentState['Attack'] = 0
+            playerCurrentState['Boost'] = 0
+            playerCurrentState['Counter'] = 0
+            global skip_ABC_reset
+            skip_ABC_reset = 1
+        # send player's currentState to other podium
+        hostmqtt.publishL(otherPodium, DEVICENAME, 'player-state', playerCurrentState)
         report_state('combat!')
+        global health
         health = 100 * playerCurrentState['Energy'] / playerStartState['Energy']
+        reset()
         show_health()
     # TODO: how to start the timeout....
 ########################################
@@ -139,6 +193,8 @@ def get_magic(topic, payload):
         playerStartState['Energy'] = baselineStats['Energy'] * (magic['Water']*10/100)
         global playerCurrentState
         playerCurrentState = playerStartState
+        # send player's currentState to other podium
+        hostmqtt.publishL(otherPodium, DEVICENAME, 'player-state', playerCurrentState)
 
         show_health()
         report_state('set-magic-stats')
@@ -180,6 +236,7 @@ def magic_cast(topic, payload):
     host, _, _ = topic.split('/')
     if host != myHostname:
         global their_magic_cast
+        # TODO: this needs to be the other podium's playerCurrentState
         their_magic_cast = payload
         if payload['modifier'] == 'attack':
             ive_been_attacked(payload)
@@ -212,7 +269,10 @@ def read_uhf(topic, payload):
                     'modifier': modifier,
                 })
     report_state('uhf-cast-magic')
-    
+
+def opponents_state(topic, payload):
+    global opponentsCurrent
+    opponentsCurrent = payload
 
 ########################################
 
@@ -229,6 +289,10 @@ hostmqtt.subscribeL('all', 'db_lookup', 'magic-item', get_magic)
 hostmqtt.subscribeL('+', 'blackpodium', 'touch', set_modifier)
 hostmqtt.subscribeL(myHostname, 'yellow-rfid', "scan", read_uhf)
 hostmqtt.subscribeL('+', DEVICENAME, "magic_cast", magic_cast)
+
+
+# send player's currentState to other podium
+hostmqtt.subscribeL(myHostname, DEVICENAME, "player-state", opponents_state)
 
 hostmqtt.status({"status": "listening"})
 
