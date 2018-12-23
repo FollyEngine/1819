@@ -70,7 +70,6 @@ def reset():
         playerCurrentState = None
         global opponentsCurrent
         opponentsCurrent = None
-        global health
         health = 0
         combat_round = 0
         state = "full-reset"
