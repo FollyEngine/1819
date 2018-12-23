@@ -38,3 +38,15 @@
 2. displays user's health
 3. waits for wand/orb/magic item to be registered as cast using the UHF reader
 4. plays magic audio - `/usr/share/scratch/Media/Sounds/Effects/Pop.wav`, `./Sounds/Effects/Rattle.wav`, `./Sounds/Human/FingerSnap.wav`, `./Sounds/Vocals/Singer1.wav`, `./Sounds/Animal/Goose.wav`
+
+## What actually happens.
+
+1. user scans on bottom of wand (nfc)
+2. lookup wand info
+3. set health to 100 and display on healthbar
+4. user holds one of the modifier stones
+5. user casts wand using yellow UHF reader
+6. (other user does too - with timeout whish implies the other user loses)
+7. sounds play, lights light, effects happen
+8. combat maths decides who won, and what damage gets taken from users health
+9. repeat until one user's health <= 0

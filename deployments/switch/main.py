@@ -20,10 +20,13 @@ import config
 import mqtt
 
 DEVICENAME="switch1"
-
-mqttHost = config.getValue("mqtthostname", "mqtt.local")
 myHostname = config.getValue("hostname", socket.gethostname())
-hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
+
+#mqttHost = config.getValue("mqtthostname", "mqtt.local")
+#hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
+master_mqtt_host = config.getValue("mqttmaster", "mqtt.thegame.folly.site")
+hostmqtt = mqtt.MQTT(master_mqtt_host, myHostname, "relay_to", "everyone", "S4C7Tzjc2gD92y9", 1883)
+
 
 ########################################
 # on_message subscription functions

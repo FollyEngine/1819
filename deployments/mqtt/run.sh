@@ -2,13 +2,13 @@
 
 # run / setup for the switch1  RPi (for progress bar)
 WHOAMI=$(hostname)
-PACKAGES="mqtt switch"
-MQTTHOST="mqtt.thegame.folly.site"
+PACKAGES="database"
+MQTTHOST="mqtt.local"
 CONFIGFILE=
 
 
 # Auto start by adding the following to the RPi pi user crontab
-# @reboot cd 1819; ./deployments/switch/run.sh > switch.log 2>&1
+# @reboot cd 1819; ./deployments/mqtt/run.sh > switch.log 2>&1
 
 
 echo "$WHOAMI in $(pwd)"
@@ -45,7 +45,7 @@ if [[ ¨$1¨ == ¨--setup¨ ]]; then
 	exit
 fi
 
-for i in $(seq 1 45); do 
+for i in $(seq 1 25); do 
 	sleep 1
 	if [[ $(ping -c 1 "$MQTTHOST") ]]; then 
 		break
@@ -60,7 +60,7 @@ for pkg in $PACKAGES; do
 	sudo ./$pkg/main.py > $pkg-${DATE}.log 2>&1 &
 done
 
-./../../deployments/switch/main.py $CONFIGFILE > controller-${DATE}.log 2>&1 &
+./../../deployments/mqtt/main.py $CONFIGFILE > controller-${DATE}.log 2>&1 &
 
 echo "DONE"
 exit

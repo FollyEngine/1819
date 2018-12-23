@@ -19,7 +19,7 @@ myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 #hostmqtt.loop_start()   # use the background thread
 
-sounddir = config.getValue("sounddir", "./audio/")
+sounddir = config.getValue("sounddir", "../../sounds/")
 testsound = config.getValue("testsound", "test.wav")
 
 # TODO: fix this...

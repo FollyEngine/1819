@@ -121,28 +121,28 @@ class MQTT:
             #print("message retain flag=",message.retain)
             if message.topic in self.sub:
                 message_func = self.sub[message.topic]
-                print("direct")
+                #print("direct")
             else:
                 for t in self.sub:
-                    print("topic_matches_sub(%s, %s)" % (t, message.topic))
+                    #print("topic_matches_sub(%s, %s)" % (t, message.topic))
                     if self.topic_matches_sub(t, message.topic):
                         message_func = self.sub[t]
-                        print("match")
+                        #print("match")
                         break
 
-            print(message_func)
+            #print(message_func)
             if message_func == "":
                 print("No message_func found for %s" % message.topic)
                 return
 
             raw_payload=str(message.payload.decode("utf-8"))
-            print("HHRAW: "+message.topic+": "+raw_payload)
+            #print("HHRAW: "+message.topic+": "+raw_payload)
 
             if raw_payload == "" or raw_payload == "REMOVED" or raw_payload == "(null)":
                 return
 
             payload = self.decode(raw_payload)
-            print("DECODED: "+message.topic+": "+str(payload))
+            #print("DECODED: "+message.topic+": "+str(payload))
             message_func(message.topic, payload)
         except Exception as e:
             print("exception:")
