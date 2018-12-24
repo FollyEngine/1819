@@ -2,6 +2,7 @@
 ## This script requires that main_pid does not exist on system start.
 if [ ! -f main_pid ] ; then
    nohup python ./src/RPi/$HOSTNAME/main.py &
+   echo $! > main_pid
 fi
 # Update repository, and if our main file has changed, restart it
 OLD_HEAD=$(git rev-parse HEAD)
