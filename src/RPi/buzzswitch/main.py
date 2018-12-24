@@ -1,6 +1,23 @@
+#!//usr/bin/python3
+
 import time
 import RPi.GPIO as GPIO
 
+import paho.mqtt.client as mqtt #import the client1
+import paho.mqtt.publish as publish
+import mqtt
+
+# mqtt setup
+mqttHost = config.getValue("mqtthostname", "mqtt.local")
+myHostname = config.getValue("hostname", socket.gethostname())
+hostmqtt = mqtt.MQTT(mqttHost, myHostname, "relay_from")
+hostmqtt.loop_start()   # use the background thread
+
+master_mqtt_host = config.getValue("mqttmaster", "mqtt.thegame.folly.site")
+mastermqtt = mqtt.MQTT(master_mqtt_host, myHostname, "relay_to", "everyone", "S4C7Tzjc2gD92y9", 1883)
+
+
+# wire sensor setup
 GPIO.setmode(GPIO.BOARD)
 
 GPIO.setup(15,GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
@@ -76,3 +93,6 @@ try:
 
 except KeyboardInterrupt:
 	GPIO.cleanup()
+
+## a function that publishes an event to mosquito
+## hostmqtt.publishL("all", "audio", "mute", {})
