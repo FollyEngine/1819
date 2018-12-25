@@ -17,7 +17,7 @@ import config
 import mqtt
 from time import sleep
 
-DEVICENAME="healthcontroller"
+DEVICENAME=$HOSTNAME
 
 mqttHost = config.getValue("mqtthostname", "mqtt.local")
 myHostname = config.getValue("hostname", socket.gethostname())
