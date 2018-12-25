@@ -8,6 +8,7 @@ import yaml
 import time
 from neopixel import *
 import argparse
+import traceback
 
 # the config and mqtt modules are in a bad place atm :/
 import sys
