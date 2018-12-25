@@ -70,7 +70,7 @@ def relay_message_from_master(topic, payload):
 
 hostmqtt.subscribeL("+", "+", "+", relay_message_to_master)
 print(hostmqtt.sub)
-#mastermqtt.subscribeL("+", "+", "+", relay_message_from_master)
+mastermqtt.subscribeL("+", "+", "+", relay_message_from_master)
 
 hostmqtt.status({"status": "listening"})
 mastermqtt.status({"status": "listening"})
