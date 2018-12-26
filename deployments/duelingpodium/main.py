@@ -288,6 +288,7 @@ def get_magic(topic, payload):
         # send player's currentState to other podium
         hostmqtt.publishL(otherPodium, DEVICENAME, 'player-state', playerCurrentState)
 
+        health = 100 * playerCurrentState['Energy'] / playerStartState['Energy']
         show_health()
         report_state('set-magic-stats')
     else:
