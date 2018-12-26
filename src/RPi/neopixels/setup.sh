@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-sudo pip install --no-cache-dir -r ./src/RPi/neopixel/requirements.txt
-sudo pip3 install --no-cache-dir -r ./src/RPi/neopixel/requirements.txt
+sudo pip install --no-cache-dir -r ./src/RPi/neopixels/requirements.txt
+sudo pip3 install --no-cache-dir -r ./src/RPi/neopixels/requirements.txt
 
 cd
 if [[ -d rpi_ws2810 ]]; then
