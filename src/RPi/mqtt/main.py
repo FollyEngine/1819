@@ -1,4 +1,10 @@
 #!//usr/bin/python3
+# This is the mqtt relay, which listens to all the devices and the remote mqtt server and relays & responds to subscriptions
+
+### BUT FIRST
+# this RPi also owns the database.  start that
+import subprocess
+subprocess.Popen(['nohup', 'database/main.py'])
 
 import paho.mqtt.client as mqtt #import the client1
 import paho.mqtt.publish as publish
@@ -70,7 +76,7 @@ def relay_message_from_master(topic, payload):
 
 hostmqtt.subscribeL("+", "+", "+", relay_message_to_master)
 print(hostmqtt.sub)
-#mastermqtt.subscribeL("+", "+", "+", relay_message_from_master)
+mastermqtt.subscribeL("+", "+", "+", relay_message_from_master)
 
 hostmqtt.status({"status": "listening"})
 mastermqtt.status({"status": "listening"})

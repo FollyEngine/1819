@@ -1,18 +1,19 @@
 #!/usr/bin/python3
+# This script should run whileever the mmmporium is open.
+# it listens to mqtt messages from scanners (probably cauldron and podium??) and does something databasey about them and publishes a message about that.
 
-# should be run from the RPi directory (which contains ./mqtt/ and ./database/) like `python update.py`
+# This belongs to the MQTT server, so it's called from src/mqtt which is the parent folder of this file
 
 from peewee import *
 from playhouse.shortcuts import model_to_dict, dict_to_model
 import json
 import datetime
-
+# this is the main database updater.  it listens for 
 # the config and mqtt modules are in a bad place atm :/
 import sys
-sys.path.append('./mqtt/')
+sys.path.append('./')
 import config
 import mqtt
-sys.path.append('./database/')
 from database import *
 
 DEVICENAME="db_lookup"
@@ -23,10 +24,6 @@ myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 
 # update.py is for updating the database
-# if you scan an nfc tag, and then a uhf tag, those 2 tags will be put in the MagicItem table
-# if either tof those 2 tags is already there, then that row will be updated
-
-# if you scan a UHF tag only, then the ingredients table will have that tag update_or_created.
 
 def scan_nfc(topic, payload):
     item = MagicItem.get(nfc=payload['tag'])

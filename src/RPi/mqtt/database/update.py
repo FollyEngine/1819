@@ -1,9 +1,11 @@
 #!/usr/bin/python3
+# This script adds wands/orbs/ingredients/whatever to the database.
+# run it when you need to add new things
 
 # first we need a setup.sh with 
 # sudo pip install --no-cache-dir -r ./requirements.txt
 
-# should be run from the RPi directory (which contains ./mqtt/ and ./database/) like `python update.py`
+# This belongs to the MQTT server, so it's called from src/mqtt which is the parent folder of this file
 
 from peewee import *
 from playhouse.shortcuts import model_to_dict, dict_to_model
@@ -12,10 +14,9 @@ import datetime
 
 # the config and mqtt modules are in a bad place atm :/
 import sys
-sys.path.append('./mqtt/')
+sys.path.append('./')
 import config
 import mqtt
-sys.path.append('./database/')
 from database import *
 
 DEVICENAME="db_update"

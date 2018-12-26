@@ -105,9 +105,54 @@ def report_state(reason):
                     'reason': reason,
                     'combat-round': combat_round,
                 })
+
+#	F	    E	    W	    A
+#F	Fire	Lava	Steam	Lightning
+#E	Lava	Earth	Wood	Dust
+#W	Steam	Wood	Water	Ice
+#A	Lightning	Dust	Ice	Air
+#Elements		F	E	W	A	F	F	E	F	E	W	
+#Elements		F	E	W	A	E	W	W	A	A	A	Balanced
+#Spell		Fire	Earth	Water	Air	  Lava	    Steam	Wood	Electricity	Dust	Ice	Light
+#LED1	RED	GREEN	BLUE	WHITE	RED	    RED	    GREEN	RED	GREEN	BLUE	AMBER
+#	2	RED	GREEN	BLUE	WHITE	GREEN   BLUE	BLUE	WHITE	WHITE	WHITE	AMBER
+#	3	RED	GREEN	BLUE	WHITE	RED	    RED	    GREEN	RED	GREEN	BLUE	AMBER
+#	4	RED	GREEN	BLUE	WHITE	GREEN   BLUE	BLUE	WHITE	WHITE	WHITE	AMBER
+#Sound	Fire.wav	ATK - Earth.wav	ATK - Water.mp3	ATK - Air.mp3	STK - Lava.wav	ATK - Steam.wav	AK - Wood.wav	ATK - Lightning.wav	ATK - Sand.wav	ATK - Ice.mp3	ATK - Light.wav
+spellSounds = {
+"Steam": "Dueling/ATK - Steam.wav",
+"Lightning": "Dueling/ATK - Lightning.wav",
+"Lava": "Dueling/ATK - Lava.wav",
+"Fire": "Dueling/ATK - Fire.wav",
+"Ice": "Dueling/ATK - Ice.mp3",
+"Dust": "Dueling/ATK - Sand.wav",
+"Wood": "Dueling/ATK - Wood.wav",
+"Light ": "Dueling/ATK - Light .wav",
+"Earth": "Dueling/ATK - Earth.wav",
+"Water": "Dueling/ATK - Water.mp3",
+"Air": "Dueling/ATK - Air.mp3",
+}
+spellColours = {
+"Steam": {"1": "RED", "2": "BLUE", "3": "RED", "4": "BLUE"},
+"Lightning": {"1": "RED", "2": "WHITE", "3": "RED", "4": "WHITE"},
+"Lava": {"1": "RED", "2": "GREEN", "3": "RED", "4": "GREEN"},
+"Fire": {"1": "RED", "2": "RED", "3": "RED", "4": "RED"},
+"Ice": {"1": "BLUE", "2": "WHITE", "3": "BLUE", "4": "WHITE"},
+"Dust": {"1": "GREEN", "2": "WHITE", "3": "GREEN", "4": "WHITE"},
+"Wood": {"1": "GREEN", "2": "BLUE", "3": "GREEN", "4": "BLUE"},
+"Light ": {"1": "AMBER", "2": "AMBER", "3": "AMBER", "4": "AMBER"},
+"Earth": {"1": "GREEN", "2": "GREEN", "3": "GREEN", "4": "GREEN"},
+"Water": {"1": "BLUE", "2": "BLUE", "3": "BLUE", "4": "BLUE"},
+"Air": {"1": "WHITE", "2": "WHITE", "3": "WHITE", "4": "WHITE"},
+}
 def ive_been_attacked(payload):
     # TODO: not sure if this sound is supposed to happen straight away, or not until both podiums go
-    play('TODO - ned to look at the ATK sheet')
+    play(spellSounds[playerStartState['Spell']])
+    # TODO: this message may need to be broken up into 2 - depends on where the DMX controlllers live...
+    hostmqtt.publishL('dmx', 'dmx', 'play', {
+                    "Spell": playerStartState['Spell'],
+                    "Parcans": spellColours[playerStartState['Spell']],
+                })
 def reconcile_magic():
     global skip_ABC_reset
     if my_magic_cast != None and their_magic_cast != None:
@@ -169,12 +214,57 @@ def read_nfc(topic, payload):
         report_state('set-nfc')
         play('Dueling/Magic Detected.mp3')
 
+
+#	F	    E	    W	    A
+#F	Fire	Lava	Steam	Lightning
+#E	Lava	Earth	Wood	Dust
+#W	Steam	Wood	Water	Ice
+#A	Lightning	Dust	Ice	Air
+spellTypes = {
+    'F': 'Fire',
+    'E': 'Earth',
+    'W': 'Water',
+    'A': 'Air',
+
+    'FE': 'Lava',
+    'FW': 'Steam',
+    'FA': 'Lightening',
+
+    'EF': 'Lava',
+    'EW': 'Wood',
+    'EA': 'Dust',
+
+    'WF': 'Steam',
+    'WE': 'Wood',
+    'WA': 'Ice',
+
+    'AF': 'Lightening',
+    'AE': 'Dust',
+    'AW': 'Ice',
+}
+
+def calculateMagic(magic):
+    avg = (magic['Fire'] + magic['Earth'] + magic['Water'] + magic['Air']) / 4
+    spell = 'light'
+    magic_key = ''
+    if magic['Fire'] > avg:
+        magic_key += 'F'
+    if magic['Earth'] > avg:
+        magic_key += 'E'
+    if magic['Water'] > avg:
+        magic_key += 'W'
+    if magic['A'] > avg:
+        magic_key += 'A'
+    if magic_key in spellTypes:
+        spell = spellTypes[magic_key]
+    return spell
+
 # info from the database
 def get_magic(topic, payload):
     #{"Earth": 10, 
     # "time": "2018-12-22T20:43:40.715609", 
     # "nfc": "550A5CBC", 
-    # "Fire": 10, 
+    # "Fire": 10, 2700
     # "Air": 10, 
     # "Water": 10, 
     # "id": 4, 
@@ -189,6 +279,7 @@ def get_magic(topic, payload):
         playerStartState['Boost'] = baselineStats['Boost'] * (magic['Earth']*10/100)
         playerStartState['Counter'] = baselineStats['Counter'] * (magic['Air']*10/100)
         playerStartState['Energy'] = baselineStats['Energy'] * (magic['Water']*10/100)
+        playerStartState['Spell'] = calculateMagic(magic)
         global playerCurrentState
         playerCurrentState = playerStartState
         # send player's currentState to other podium

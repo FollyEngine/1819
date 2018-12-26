@@ -77,6 +77,9 @@ reader = mercury.Reader("tmr:///dev/ttyACM0")
 
 reader.set_region("AU")
 reader.set_read_plan([1], "GEN2")
+
+# min power == 1800?
+# max power == 2700
 reader.set_read_powers([1], [2700])
 
 #using this causes the python to hang
