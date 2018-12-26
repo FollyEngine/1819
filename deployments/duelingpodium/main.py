@@ -357,12 +357,15 @@ def read_uhf(topic, payload):
     if modifier == None:
         report_state('uhf-no-modifier')
         return
-    hostmqtt.publishL(myHostname, DEVICENAME, 'magic_cast', {
+    if payload['tag'] == magic['uhf']:
+        hostmqtt.publishL(myHostname, DEVICENAME, 'magic_cast', {
                     'nfc': nfcTag,
                     'magic': magic,
                     'modifier': modifier,
                 })
-    report_state('uhf-cast-magic')
+        report_state('uhf-cast-magic')
+    else:
+        report_state('uhf-wrong-magic-item')
 
 def opponents_state(topic, payload):
     global opponentsCurrent
