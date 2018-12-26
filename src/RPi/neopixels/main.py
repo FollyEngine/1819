@@ -52,18 +52,6 @@ strip.begin()
 #  mosquitto_pub -h mqtt -t two/neopixel/play -m '{"operation": "theatrechase", "colour": "green"}'
 
 ############
-operations = {
-    # custom = has A, B, C, D
-    'magic_item': magic_item,
-    # needs colour and count
-    'health': health,
-    #needs colour
-    'colourwipe': colorWipe,
-    'theatrechase': theaterChase,
-    #no colour option
-    'rainbow': rainbow,
-    'rainbow_cycle': rainbowCycle,
-}
 colours = {
     'off': Color(0,0,0),
     'white': Color(180,180,180),
@@ -181,7 +169,19 @@ def get(obj, name, default):
         result = obj[name]
     return result
 
-
+############
+operations = {
+    # custom = has A, B, C, D
+    'magic_item': magic_item,
+    # needs colour and count
+    'health': health,
+    #needs colour
+    'colourwipe': colorWipe,
+    'theatrechase': theaterChase,
+    #no colour option
+    'rainbow': rainbow,
+    'rainbow_cycle': rainbowCycle,
+}
 def play(payload = {}):
     operationname = get(payload, 'operation', 'colourwipe')
     operation = get(operations, operationname, operations['colourwipe'])
