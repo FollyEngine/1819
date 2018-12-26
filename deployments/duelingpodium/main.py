@@ -206,7 +206,9 @@ def read_nfc(topic, payload):
     host, device, verb = topic.split('/')
 
     global nfcTag
+    global health
     if nfcTag == payload['tag']:
+        health = 0
         reset()
         report_state('remove-nfc')
     else:
