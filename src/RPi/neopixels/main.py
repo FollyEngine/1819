@@ -115,7 +115,7 @@ def health(strip, color, health, wait_ms=50):
 
     if count > strip.numPixels():
         count = strip.numPixels()
-    for i in strip.numPixels():
+    for i in range(0, strip.numPixels()):
         if i <= count:
             strip.setPixelColor(i, color)
         else:
