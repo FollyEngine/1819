@@ -37,7 +37,7 @@ def play(sound):
                     'sound': sound,
                     #'tagid': payload['tag']
                 })
-health = 100
+health = 0
 def show_health():
     hostmqtt.publishL(myHostname, 'neopixel', 'play', {
                     'operation': 'health',
@@ -209,8 +209,8 @@ def read_nfc(topic, payload):
     global health
     if nfcTag == payload['tag']:
         health = 0
-        reset()
         report_state('remove-nfc')
+        reset()
     else:
         nfcTag = payload['tag']
         report_state('set-nfc')
