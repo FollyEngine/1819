@@ -23,6 +23,7 @@ if [ ! $? ] ; then
     echo $! > main_pid
 fi
 
+sync
 ##  this "healthy" report just says that we're turned on and online.  
 ## TODO : check whether the python script is actually running without error
 ## TODO : report when an update has occurred
