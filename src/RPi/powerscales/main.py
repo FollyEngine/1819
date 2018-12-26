@@ -11,7 +11,7 @@ import traceback
 
 # the config and mqtt modules are in a bad place atm :/
 import sys
-sys.path.append('./src/RPi/mqtt/')
+sys.path.append('./mqtt/')
 print(sys.path)
 import config
 import mqtt
