@@ -17,7 +17,7 @@ import config
 import mqtt
 from time import sleep
 
-DEVICENAME=$HOSTNAME
+DEVICENAME='powerscales'
 
 mqttHost = config.getValue("mqtthostname", "mqtt.local")
 myHostname = config.getValue("hostname", socket.gethostname())
