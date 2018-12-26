@@ -8,7 +8,7 @@ CONFIGFILE=
 
 
 # Auto start by adding the following to the RPi pi user crontab
-# @reboot cd 1819; ./deployments/powerscales/run.sh > cauldron.log 2>&1
+# @reboot cd 1819; ./deployments/powerscales/run.sh > powerscales.log 2>&1
 
 
 echo "$WHOAMI in $(pwd)"
