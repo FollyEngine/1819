@@ -51,6 +51,28 @@ strip.begin()
 # can do things like:
 #  mosquitto_pub -h mqtt -t two/neopixel/play -m '{"operation": "theatrechase", "colour": "green"}'
 
+############
+operations = {
+    # custom = has A, B, C, D
+    'magic_item': magic_item,
+    # needs colour and count
+    'health': health,
+    #needs colour
+    'colourwipe': colorWipe,
+    'theatrechase': theaterChase,
+    #no colour option
+    'rainbow': rainbow,
+    'rainbow_cycle': rainbowCycle,
+}
+colours = {
+    'off': Color(0,0,0),
+    'white': Color(180,180,180),
+    'green': Color(255,0,0),
+    'red': Color(0,255,0),
+    'blue': Color(0,0,255),
+    'yellow': Color(255,255,0)
+}
+
 # Define functions which animate LEDs in various ways.
 def colorWipe(strip, color, wait_ms=50):
     """Wipe color across display a pixel at a time."""
@@ -119,7 +141,7 @@ def health(strip, color, health, wait_ms=50):
         if i <= count:
             strip.setPixelColor(i, color)
         else:
-            strip.setPixelColor(i, 'off')
+            strip.setPixelColor(i, colours['off'])
     strip.show()
 
 def magic_item(strip, payload):
@@ -152,27 +174,6 @@ def magic_item(strip, payload):
         strip.show()
         time.sleep(wait_ms/1000.0)
 
-############
-operations = {
-    # custom = has A, B, C, D
-    'magic_item': magic_item,
-    # needs colour and count
-    'health': health,
-    #needs colour
-    'colourwipe': colorWipe,
-    'theatrechase': theaterChase,
-    #no colour option
-    'rainbow': rainbow,
-    'rainbow_cycle': rainbowCycle,
-}
-colours = {
-    'off': Color(0,0,0),
-    'white': Color(180,180,180),
-    'green': Color(255,0,0),
-    'red': Color(0,255,0),
-    'blue': Color(0,0,255),
-    'yellow': Color(255,255,0)
-}
 ############
 def get(obj, name, default):
     result = default
