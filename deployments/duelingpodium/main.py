@@ -125,16 +125,34 @@ spellSounds = {
 "Lava": "Dueling/ATK - Lava.wav",
 "Fire": "Dueling/ATK - Fire.wav",
 "Ice": "Dueling/ATK - Ice.mp3",
-"Sand": "Dueling/ATK - Sand.wav",
+"Dust": "Dueling/ATK - Sand.wav",
 "Wood": "Dueling/ATK - Wood.wav",
 "Light ": "Dueling/ATK - Light .wav",
 "Earth": "Dueling/ATK - Earth.wav",
 "Water": "Dueling/ATK - Water.mp3",
 "Air": "Dueling/ATK - Air.mp3",
 }
+spellColours = {
+"Steam": {"1": "RED", "2": "BLUE", "3": "RED", "4": "BLUE"},
+"Lightning": {"1": "RED", "2": "WHITE", "3": "RED", "4": "WHITE"},
+"Lava": {"1": "RED", "2": "GREEN", "3": "RED", "4": "GREEN"},
+"Fire": {"1": "RED", "2": "RED", "3": "RED", "4": "RED"},
+"Ice": {"1": "BLUE", "2": "WHITE", "3": "BLUE", "4": "WHITE"},
+"Dust": {"1": "GREEN", "2": "WHITE", "3": "GREEN", "4": "WHITE"},
+"Wood": {"1": "GREEN", "2": "BLUE", "3": "GREEN", "4": "BLUE"},
+"Light ": {"1": "AMBER", "2": "AMBER", "3": "AMBER", "4": "AMBER"},
+"Earth": {"1": "GREEN", "2": "GREEN", "3": "GREEN", "4": "GREEN"},
+"Water": {"1": "BLUE", "2": "BLUE", "3": "BLUE", "4": "BLUE"},
+"Air": {"1": "WHITE", "2": "WHITE", "3": "WHITE", "4": "WHITE"},
+}
 def ive_been_attacked(payload):
     # TODO: not sure if this sound is supposed to happen straight away, or not until both podiums go
     play(spellSounds[playerStartState['Spell']])
+    # TODO: this message may need to be broken up into 2 - depends on where the DMX controlllers live...
+    hostmqtt.publishL('dmx', 'dmx', 'play', {
+                    "Spell": playerStartState['Spell'],
+                    "Parcans": spellColours[playerStartState['Spell']],
+                })
 def reconcile_magic():
     global skip_ABC_reset
     if my_magic_cast != None and their_magic_cast != None:
