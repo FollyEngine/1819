@@ -17,14 +17,15 @@ time.sleep(1)
 
 ## make everything red and flashy
 print("strobe test") 
-mydmx.setChannel(16, 255) # intensity 
-mydmx.setChannel(17, 255) # intensity 
-mydmx.setChannel(12, 255) # intensity 
-mydmx.setChannel(11, 255)
+mydmx.setChannel(16, 255) # strobe2 intensity 
+mydmx.setChannel(17, 255) # strobe2 strobe 
+mydmx.setChannel(12, 255) # strobe1 strobe 
+mydmx.setChannel(11, 255) # strobe1 intensity
 mydmx.setChannel(21, 255)
 mydmx.setChannel(22, 255)
 mydmx.setChannel(37, 255)
 mydmx.setChannel(31, 255)
+mydmx.setChannel(46, 255) # smoke
 mydmx.render()
 time.sleep(3)
 setallzero()
