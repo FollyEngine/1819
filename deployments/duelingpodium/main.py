@@ -275,6 +275,7 @@ def get_magic(topic, payload):
     if payload['nfc'] == nfcTag and magic == None:
         magic = payload
         global playerStartState
+        playerStartState = {}
         playerStartState['Attack'] = baselineStats['Attack'] * (magic['Fire']*10/100)
         playerStartState['Boost'] = baselineStats['Boost'] * (magic['Earth']*10/100)
         playerStartState['Counter'] = baselineStats['Counter'] * (magic['Air']*10/100)
