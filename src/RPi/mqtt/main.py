@@ -3,8 +3,8 @@
 
 ### BUT FIRST
 # this RPi also owns the database.  start that
-import subprocess
-subprocess.Popen(['nohup', 'database/main.py'])
+#import subprocess
+#subprocess.Popen(['nohup', 'database/main.py'])
 
 import paho.mqtt.client as mqtt #import the client1
 import paho.mqtt.publish as publish
