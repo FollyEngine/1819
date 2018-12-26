@@ -255,7 +255,7 @@ def calculateMagic(magic):
         magic_key += 'E'
     if magic['Water'] > avg:
         magic_key += 'W'
-    if magic['A'] > avg:
+    if magic['Air'] > avg:
         magic_key += 'A'
     if magic_key in spellTypes:
         spell = spellTypes[magic_key]
