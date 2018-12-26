@@ -375,7 +375,13 @@ hostmqtt.subscribeL("all", DEVICENAME, "test", test_msg)
 
 hostmqtt.subscribeL(myHostname, 'rfid-nfc', "scan", read_nfc)
 hostmqtt.subscribeL('all', 'db_lookup', 'magic-item', get_magic)
-hostmqtt.subscribeL('+', 'blackpodium', 'touch', set_modifier)
+touchdevice = 'blackpodium'
+if myHostname == 'podium1':
+    touchdevice = 'silverpodium'
+elif myHostname == 'podium2':
+    touchdevice = 'goldpodium'
+
+hostmqtt.subscribeL('+', touchdevice, 'touch', set_modifier)
 hostmqtt.subscribeL(myHostname, 'yellow-rfid', "scan", read_uhf)
 hostmqtt.subscribeL('+', DEVICENAME, "magic_cast", magic_cast)
 
