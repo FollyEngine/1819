@@ -121,7 +121,7 @@ def theaterChaseRainbow(strip, wait_ms=50):
 
 # health will be a setting of 10 pixels, and the number will be out of 100
 def health(strip, color, health, wait_ms=50):
-    count = health/100
+    count = health/10
 
     if count > strip.numPixels():
         count = strip.numPixels()
