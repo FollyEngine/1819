@@ -9,6 +9,7 @@ import yaml
 import time
 import argparse
 import traceback
+import pysimpledmx
 
 
 # the config and mqtt modules are in a bad place atm :/
@@ -22,6 +23,8 @@ DEVICENAME="podium"
 mqttHost = config.getValue("mqtthostname", "mqtt.local")
 myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
+
+mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB1")
 
 otherPodium = 'podium1'
 if myHostname == otherPodium:
@@ -145,6 +148,58 @@ spellColours = {
 "Water": {"1": "BLUE", "2": "BLUE", "3": "BLUE", "4": "BLUE"},
 "Air": {"1": "WHITE", "2": "WHITE", "3": "WHITE", "4": "WHITE"},
 }
+## the mixed element spells are supposed to flash between colours i think... i'm just mixing the colours.  sorry.
+#  DESIGN : all four seconds except smoke which stops a second early, and the mixed elements which flash between two colours.
+#  IMPLEMENTATION : mixed elements get mixed colours.  everything goes 4 seconds, the smoke just lasts for a while.
+def stopthathorribleflashing():
+    for i in range(2,50):
+      mydmx.setChannel(i, 0)
+      mydmx.render()
+
+def smokeyflashy(spellDMXcode):
+    # TODO : loop through DMXcode array, set most of the things to zero and a couple to 255
+    for i in range(2,50):
+      mydmx.setChannel([spellDMXcode[i])
+    mydmx.render()    
+    # TODO: wait four seconds.  how should we do that?  a callback?
+    stopthathorribleflashing()
+
+spellDMXcodes = {
+"Fire": {10:0,11:0,15:0,16:0,31:255,32:0,33:0,34:0,35:0,36:0,46:0}
+"Earth": {10:0,11:0,15:0,16:0,31:0,32:255,33:0,34:0,35:0,36:0,46:255}
+"Water": {10:0,11:0,15:0,16:0,31:0,32:0,33:255,34:0,35:0,36:0,46:255}
+"Air": {10:0,11:0,15:0,16:0,31:0,32:0,33:0,34:255,35:0,36:0,46:255}
+"Lava": {10:0,11:0,15:0,16:0,31:255,32:255,33:0,34:0,35:0,36:0,46:255}
+"Steam": {10:0,11:0,15:0,16:0,31:255,32:0,33:255,34:0,35:0,36:0,46:255}
+"Wood": {10:0,11:0,15:0,16:0,31:0,32:255,33:0,34:255,35:0,36:0,46:255}
+"Electricity": {10:0,11:0,15:0,16:0,31:255,32:0,33:255,34:0,35:0,36:0,46:255}
+"Dust": {10:0,11:0,15:0,16:0,31:0,32:255,33:0,34:255,35:0,36:0,46:255}
+"Ice": {10:0,11:0,15:0,16:0,31:0,32:0,33:255,34:255,35:0,36:0,46:255}
+"Light": {10:0,11:0,15:0,16:0,31:0,32:0,33:0,34:0,35:255,36:0,46:255}
+#Fire		31	4	46=smoke
+#Earth		32	4	46
+#Water		33	4	46
+#Air		34	4	46
+#Lava		31,32	1,1,1,1	46
+#Steam		31, 33	1,1,1,1	46
+#Wood		32,34	1,1,1,1	46
+#Electricity	31,33	1,1,1,1	46
+#Dust		32,34	1,1,1,1	46
+#Ice		33,34	1,1,1,1	46
+#Light		35	4	46
+#"10":strobe1
+#"11":strobe1
+#"15":strobe2
+#"16":strobe2
+#"31":red
+#"32":green
+#"33":blue
+#"34":white
+#"35":amber
+#"36":intensity (light is on)
+#"46":smoke
+
+}
 def ive_been_attacked(payload):
     # TODO: not sure if this sound is supposed to happen straight away, or not until both podiums go
     play(spellSounds[playerStartState['Spell']])
@@ -153,6 +208,7 @@ def ive_been_attacked(payload):
                     "Spell": playerStartState['Spell'],
                     "Parcans": spellColours[playerStartState['Spell']],
                 })
+    
 def reconcile_magic():
     global skip_ABC_reset
     if my_magic_cast != None and their_magic_cast != None:
