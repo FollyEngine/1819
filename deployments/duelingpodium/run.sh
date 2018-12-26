@@ -15,8 +15,8 @@ echo "$WHOAMI in $(pwd)"
 echo "talking to message queue server: $MQTTHOST"
 echo "packages: $PACKAGES"
 
+sleep 1  # wait a moment for network to come up
 git pull
-
 if [[ ¨$1¨ == ¨--setup¨ ]]; then
 	echo "Running Setup"
 	# get pyscard
