@@ -160,7 +160,7 @@ def reconcile_magic():
     global playerCurrentState
     global their_magic_cast
     if my_magic_cast != None and their_magic_cast != None:
-        print('reconcile_magic')
+        print('reconcile_magic, I cast: %s, they cast: %s' % (my_magic_cast['modifier'], their_magic_cast['modifier']))
         # we use their cast info to determin the effects on us
         if their_magic_cast['modifier'] == 'attack':
             print('they attack')
