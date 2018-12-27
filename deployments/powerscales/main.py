@@ -12,28 +12,16 @@ import traceback
 # the config and mqtt modules are in a bad place atm :/
 import sys
 sys.path.append('./mqtt/')
+print(sys.path)
 import config
 import mqtt
 from time import sleep
 
-DEVICENAME="healthcontroller"
+DEVICENAME='powerscales'
 
 mqttHost = config.getValue("mqtthostname", "mqtt.local")
 myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
-########################################
-def getHealth(tag, payload):
-    payload['A'] = 0
-    payload['B'] = 0
-    payload['C'] = 0
-    payload['D'] = 0
-    if tag != "":
-        # lookup
-        payload['A'] = 3
-        payload['B'] = 6
-        payload['C'] = 9
-        payload['D'] = 1
-    return payload
 ########################################
 # on_message subscription functions
 displaying = ''
@@ -43,15 +31,22 @@ def show_health(topic, payload):
     global displaying
     if verb == 'removed':
         displaying = ''
+        hostmqtt.publishL(myHostname, 'healthpixels', 'play',
+            {'reason': 'tag-off', 'operation': 'magic_item', "Air": 0, "Fire": 0, "Water": 0, "Earth": 0})
     elif displaying == payload['tag']:
         displaying = ''
+        hostmqtt.publishL(myHostname, 'healthpixels', 'play',
+            {'reason': 'tag-off', 'operation': 'magic_item', "Air": 0, "Fire": 0, "Water": 0, "Earth": 0})
     else:
         displaying = payload['tag']
 
-    #play({'operation': 'magic_item', "A": 7, "B": 3, "C": 9, "D": 10})
-    payload["operation"] = "magic_item"
-    payload = getHealth(displaying, payload)
-    hostmqtt.publishL(host, 'healthpixels', 'play', payload)
+def get_magic(topic, payload):
+    global magic
+    if payload['nfc'] == displaying:
+        magic = payload
+        payload["operation"] = "magic_item"
+        hostmqtt.publishL(myHostname, 'healthpixels', 'play', payload)
+
 
 def test_msg(topic, payload):
     #print("Running test_msg")
@@ -77,6 +72,8 @@ hostmqtt.subscribeL("all", DEVICENAME, "test", test_msg)
 
 hostmqtt.subscribeL(myHostname, 'rfid-nfc', "scan", show_health)
 hostmqtt.subscribeL(myHostname, 'rfid-nfc', "removed", show_health)
+
+hostmqtt.subscribeL('all', 'db_lookup', 'magic-item', get_magic)
 
 hostmqtt.status({"status": "listening"})
 

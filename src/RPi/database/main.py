@@ -11,7 +11,7 @@ import datetime
 # this is the main database updater.  it listens for 
 # the config and mqtt modules are in a bad place atm :/
 import sys
-sys.path.append('./')
+sys.path.append('./mqtt/')
 import config
 import mqtt
 from database import *

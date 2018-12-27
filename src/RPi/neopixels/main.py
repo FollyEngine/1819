@@ -51,6 +51,16 @@ strip.begin()
 # can do things like:
 #  mosquitto_pub -h mqtt -t two/neopixel/play -m '{"operation": "theatrechase", "colour": "green"}'
 
+############
+colours = {
+    'off': Color(0,0,0),
+    'white': Color(180,180,180),
+    'green': Color(255,0,0),
+    'red': Color(0,255,0),
+    'blue': Color(0,0,255),
+    'yellow': Color(255,255,0)
+}
+
 # Define functions which animate LEDs in various ways.
 def colorWipe(strip, color, wait_ms=50):
     """Wipe color across display a pixel at a time."""
@@ -111,15 +121,15 @@ def theaterChaseRainbow(strip, wait_ms=50):
 
 # health will be a setting of 10 pixels, and the number will be out of 100
 def health(strip, color, health, wait_ms=50):
-    count = health/100
+    count = health/10
 
     if count > strip.numPixels():
         count = strip.numPixels()
-    for i in strip.numPixels():
+    for i in range(0, strip.numPixels()):
         if i <= count:
             strip.setPixelColor(i, color)
         else:
-            strip.setPixelColor(i, 'off')
+            strip.setPixelColor(i, colours['off'])
     strip.show()
 
 def magic_item(strip, payload):
@@ -153,6 +163,13 @@ def magic_item(strip, payload):
         time.sleep(wait_ms/1000.0)
 
 ############
+def get(obj, name, default):
+    result = default
+    if name in obj:
+        result = obj[name]
+    return result
+
+############
 operations = {
     # custom = has A, B, C, D
     'magic_item': magic_item,
@@ -165,22 +182,6 @@ operations = {
     'rainbow': rainbow,
     'rainbow_cycle': rainbowCycle,
 }
-colours = {
-    'off': Color(0,0,0),
-    'white': Color(180,180,180),
-    'green': Color(255,0,0),
-    'red': Color(0,255,0),
-    'blue': Color(0,0,255),
-    'yellow': Color(255,255,0)
-}
-############
-def get(obj, name, default):
-    result = default
-    if name in obj:
-        result = obj[name]
-    return result
-
-
 def play(payload = {}):
     operationname = get(payload, 'operation', 'colourwipe')
     operation = get(operations, operationname, operations['colourwipe'])

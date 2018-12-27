@@ -40,7 +40,7 @@ def play(sound):
                     'sound': sound,
                     #'tagid': payload['tag']
                 })
-health = 100
+health = 0
 def show_health():
     hostmqtt.publishL(myHostname, 'neopixel', 'play', {
                     'operation': 'health',
@@ -262,9 +262,11 @@ def read_nfc(topic, payload):
     host, device, verb = topic.split('/')
 
     global nfcTag
+    global health
     if nfcTag == payload['tag']:
-        reset()
+        health = 0
         report_state('remove-nfc')
+        reset()
     else:
         nfcTag = payload['tag']
         report_state('set-nfc')
@@ -309,7 +311,7 @@ def calculateMagic(magic):
         magic_key += 'E'
     if magic['Water'] > avg:
         magic_key += 'W'
-    if magic['A'] > avg:
+    if magic['Air'] > avg:
         magic_key += 'A'
     if magic_key in spellTypes:
         spell = spellTypes[magic_key]
@@ -331,6 +333,7 @@ def get_magic(topic, payload):
     if payload['nfc'] == nfcTag and magic == None:
         magic = payload
         global playerStartState
+        playerStartState = {}
         playerStartState['Attack'] = baselineStats['Attack'] * (magic['Fire']*10/100)
         playerStartState['Boost'] = baselineStats['Boost'] * (magic['Earth']*10/100)
         playerStartState['Counter'] = baselineStats['Counter'] * (magic['Air']*10/100)
@@ -341,6 +344,8 @@ def get_magic(topic, payload):
         # send player's currentState to other podium
         hostmqtt.publishL(otherPodium, DEVICENAME, 'player-state', playerCurrentState)
 
+        global health
+        health = 100 * playerCurrentState['Energy'] / playerStartState['Energy']
         show_health()
         report_state('set-magic-stats')
     else:
@@ -408,12 +413,15 @@ def read_uhf(topic, payload):
     if modifier == None:
         report_state('uhf-no-modifier')
         return
-    hostmqtt.publishL(myHostname, DEVICENAME, 'magic_cast', {
+    if payload['tag'] == magic['uhf']:
+        hostmqtt.publishL(myHostname, DEVICENAME, 'magic_cast', {
                     'nfc': nfcTag,
                     'magic': magic,
                     'modifier': modifier,
                 })
-    report_state('uhf-cast-magic')
+        report_state('uhf-cast-magic')
+    else:
+        report_state('uhf-wrong-magic-item')
 
 def opponents_state(topic, payload):
     global opponentsCurrent
@@ -431,7 +439,13 @@ hostmqtt.subscribeL("all", DEVICENAME, "test", test_msg)
 
 hostmqtt.subscribeL(myHostname, 'rfid-nfc', "scan", read_nfc)
 hostmqtt.subscribeL('all', 'db_lookup', 'magic-item', get_magic)
-hostmqtt.subscribeL('+', 'blackpodium', 'touch', set_modifier)
+touchdevice = 'blackpodium'
+if myHostname == 'podium1':
+    touchdevice = 'silverpodium'
+elif myHostname == 'podium2':
+    touchdevice = 'goldpodium'
+
+hostmqtt.subscribeL('+', touchdevice, 'touch', set_modifier)
 hostmqtt.subscribeL(myHostname, 'yellow-rfid', "scan", read_uhf)
 hostmqtt.subscribeL('+', DEVICENAME, "magic_cast", magic_cast)
 

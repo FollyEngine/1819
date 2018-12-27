@@ -2,13 +2,13 @@
 
 # run / setup for the Dueling podium RPi
 WHOAMI=$(hostname)
-PACKAGES="mqtt healthpixels rfid-mifare"
+PACKAGES="mqtt powerscales rfid-mifare"
 MQTTHOST="mqtt.local"
 CONFIGFILE=
 
 
 # Auto start by adding the following to the RPi pi user crontab
-# @reboot cd 1819; ./deployments/cauldron/run.sh > cauldron.log 2>&1
+# @reboot cd 1819; ./deployments/powerscales/run.sh > powerscales.log 2>&1
 
 
 echo "$WHOAMI in $(pwd)"
@@ -60,7 +60,7 @@ for pkg in $PACKAGES; do
 	sudo ./$pkg/main.py > $pkg-${DATE}.log 2>&1 &
 done
 
-./../../deployments/healthdisplay/main.py $CONFIGFILE > controller-${DATE}.log 2>&1 &
+./../../deployments/powerscales/main.py $CONFIGFILE > controller-${DATE}.log 2>&1 &
 
 echo "DONE"
 exit

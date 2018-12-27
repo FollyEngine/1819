@@ -1,4 +1,6 @@
+
 import time
+
 import sys
 import socket
 #from subprocess import call
@@ -87,11 +89,12 @@ standingBy = True
 
 print interval, "seconds"
 
-
+colorWipe(strip,colours['blue'],50)
 
 try:
 	while standingBy:
-		time.sleep(0.5)
+		time.sleep(0.25)
+
 
 		if (GPIO.input(11) == 1):
 			if (state != 0):
@@ -100,11 +103,16 @@ try:
 			print state
 			colorWipe(strip,colours['green'],50)
 
-			interval = 4
+			interval = 5
 			print interval, " seconds"
 			time.sleep(interval)
-
 			
+#			while (GPIO.input(11) == 0):
+#				while (GPIO.input(22) == 0):
+#					colorWipe(strip,colours['green'],50)
+#					colorWipe(strip,colours['off'],50)
+
+				
 		if (GPIO.input(22) == 1):
 			if (state != 1):
 				print "STATE CHANGE"
@@ -116,14 +124,20 @@ try:
 			print interval, " seconds"
 			time.sleep(interval)
 
+#			while (GPIO.input(11) == 0):
+#				while (GPIO.input(22) == 0):
+#					colorWipe(strip,colours['red'],50)
+#					colorWipe(strip,colours['off'],50)
+
+
+
 		if (state == -1):
 			rainbow(strip,20,1)
-			
+
 
 		if (state == 0):
 			colorWipe(strip,colours['green'],50)
 			colorWipe(strip,colours['off'],50)
-			
 
 		if (state == 1):
 			colorWipe(strip,colours['red'],50)
