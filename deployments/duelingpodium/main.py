@@ -237,8 +237,6 @@ def read_nfc(topic, payload):
     else:
         nfcTag = payload['tag']
         report_state('set-nfc')
-        play('Dueling/Magic Detected.mp3')
-
 
 #	F	    E	    W	    A
 #F	Fire	Lava	Steam	Lightning
@@ -297,26 +295,30 @@ def get_magic(topic, payload):
     # "name": "", 
     # "device": "db_lookup"}
     global magic
-    if payload['nfc'] == nfcTag and magic == None:
-        print('set_magic ------------------- ONCE per combat')
-        magic = payload
-        global playerStartState
-        playerStartState = {}
-        playerStartState['Attack'] = baselineStats['Attack'] * (magic['Fire']*10/100)
-        playerStartState['Boost'] = baselineStats['Boost'] * (magic['Earth']*10/100)
-        playerStartState['Counter'] = baselineStats['Counter'] * (magic['Air']*10/100)
-        playerStartState['Energy'] = baselineStats['Energy'] * (magic['Water']*10/100)
-        playerStartState['Spell'] = calculateMagic(magic)
-        global playerCurrentState
-        playerCurrentState = copy.deepcopy(playerStartState)
-        # send player's currentState to other podium
-        hostmqtt.publishL(otherPodium, DEVICENAME, 'player-state', playerCurrentState)
+    new_wand_set = False
+    if payload['nfc'] == nfcTag:
+        if magic == None or magic['nfc'] != payload['nfc']:
+            print('set_magic ------------------- ONCE per combat')
+            play('Dueling/Magic Detected.mp3')
+            magic = payload
+            global playerStartState
+            playerStartState = {}
+            playerStartState['Attack'] = baselineStats['Attack'] * (magic['Fire']*10/100)
+            playerStartState['Boost'] = baselineStats['Boost'] * (magic['Earth']*10/100)
+            playerStartState['Counter'] = baselineStats['Counter'] * (magic['Air']*10/100)
+            playerStartState['Energy'] = baselineStats['Energy'] * (magic['Water']*10/100)
+            playerStartState['Spell'] = calculateMagic(magic)
+            global playerCurrentState
+            playerCurrentState = copy.deepcopy(playerStartState)
+            # send player's currentState to other podium
+            hostmqtt.publishL(otherPodium, DEVICENAME, 'player-state', playerCurrentState)
 
-        global health
-        health = 100 * playerCurrentState['Energy'] / playerStartState['Energy']
-        show_health()
-        report_state('set-magic-stats')
-    else:
+            global health
+            health = 100 * playerCurrentState['Energy'] / playerStartState['Energy']
+            show_health()
+            report_state('set-magic-stats')
+            new_wand_set = True
+    if not new_wand_set:
         # if its for the other podium, we could use it - but it could also be for the cauldron
         report_state('not-my-magic-stats')
 
