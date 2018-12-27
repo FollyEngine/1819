@@ -160,11 +160,11 @@ def magic_item(strip, payload):
     #TODO: should default the 4 values
     #do one (A, B first)
     index = 0
-    blank = length - air
+    blank = length - fire
     for i in range(blank):
         one.setPixelColor(index, colours['off'])
         index = index + 1
-    for i in range(air):
+    for i in range(fire):
         one.setPixelColor(index, colours['red'])
         index = index + 1
     blank = length - water
