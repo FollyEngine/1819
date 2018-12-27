@@ -38,9 +38,15 @@ def smokeyflashy(spellDMXcode):
     print(thisDMX)
     for dmx in thisDMX:
       print(dmx)
+      
     # TODO: wait four seconds.  how should we do that?  a callback?
+    time.sleep(4)
     stopthathorribleflashing()
 
+def attack()
+    # mqtt "attack" signal should include the name of the podium being attacked, and the spell 
+    mastermqtt.status({"status": "attacked!"})
+    
 # these codes are for one side.  the other side is just the same +100
 spellDMXcodes = {
 "Fire": [31,46],
@@ -55,6 +61,6 @@ spellDMXcodes = {
 "Ice": [33,34,46],
 "Light": [35,46]
 }
-smokeyflashy("Ice")
+smokeyflashy("Electricity")
 
 stopthathorribleflashing()
