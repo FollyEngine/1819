@@ -44,15 +44,39 @@ def show_health(topic, payload):
     global displaying
     if verb == 'removed':
         displaying = ''
+        hostmqtt.publishL('all', 'healthpixels', 'play', {
+                    'operation': 'colorwipe',
+                    'colour': 'off',
+                    'tagid': 'removed'
+                })
     elif displaying == payload['tag']:
         displaying = ''
+        hostmqtt.publishL('all', 'healthpixels', 'play', {
+                    'operation': 'colorwipe',
+                    'colour': 'off',
+                    'tagid': 'removed'
+                })
     else:
         displaying = payload['tag']
 
-    #play({'operation': 'magic_item', "A": 7, "B": 3, "C": 9, "D": 10})
-    payload["operation"] = "magic_item"
-    payload = getHealth(displaying, payload)
-    hostmqtt.publishL(host, 'healthpixels', 'play', payload)
+def get_magic(topic, payload):
+    #{"Earth": 10, 
+    # "time": "2018-12-22T20:43:40.715609", 
+    # "nfc": "550A5CBC", 
+    # "Fire": 10, 2700
+    # "Air": 10, 
+    # "Water": 10, 
+    # "id": 4, 
+    # "uhf": "3000e200001606180258170069a0", 
+    # "name": "", 
+    # "device": "db_lookup"}
+    global magic
+    if payload['nfc'] == displaying:
+        magic = payload
+        payload["operation"] = "magic_item"
+        payload = getHealth(displaying, payload)
+        hostmqtt.publishL(myHostname, 'healthpixels', 'play', payload)
+
 
 def test_msg(topic, payload):
     #print("Running test_msg")
@@ -78,6 +102,8 @@ hostmqtt.subscribeL("all", DEVICENAME, "test", test_msg)
 
 hostmqtt.subscribeL(myHostname, 'rfid-nfc', "scan", show_health)
 hostmqtt.subscribeL(myHostname, 'rfid-nfc', "removed", show_health)
+
+hostmqtt.subscribeL('all', 'db_lookup', 'magic-item', get_magic)
 
 hostmqtt.status({"status": "listening"})
 
