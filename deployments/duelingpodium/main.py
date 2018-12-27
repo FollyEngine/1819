@@ -267,7 +267,7 @@ spellTypes = {
 
 def calculateMagic(magic):
     avg = (magic['Fire'] + magic['Earth'] + magic['Water'] + magic['Air']) / 4
-    spell = 'light'
+    spell = 'Light'
     magic_key = ''
     if magic['Fire'] > avg:
         magic_key += 'F'
