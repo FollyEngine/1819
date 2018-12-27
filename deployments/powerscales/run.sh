@@ -2,7 +2,7 @@
 
 # run / setup for the Dueling podium RPi
 WHOAMI=$(hostname)
-PACKAGES="mqtt rfid-mifare"
+PACKAGES="mqtt powerscales rfid-mifare"
 MQTTHOST="mqtt.local"
 CONFIGFILE=
 
@@ -60,7 +60,7 @@ for pkg in $PACKAGES; do
 	sudo ./$pkg/main.py > $pkg-${DATE}.log 2>&1 &
 done
 
-./powerscales/main.py $CONFIGFILE > controller-${DATE}.log 2>&1 &
+./../../deployments/powerscales/main.py $CONFIGFILE > controller-${DATE}.log 2>&1 &
 
 echo "DONE"
 exit
