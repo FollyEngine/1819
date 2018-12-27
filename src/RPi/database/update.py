@@ -14,7 +14,7 @@ import datetime
 
 # the config and mqtt modules are in a bad place atm :/
 import sys
-sys.path.append('./')
+sys.path.append('./mqtt/')
 import config
 import mqtt
 from database import *
