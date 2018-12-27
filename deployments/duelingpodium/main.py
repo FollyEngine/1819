@@ -157,6 +157,8 @@ def ive_been_attacked(payload):
     
 def reconcile_magic():
     global skip_ABC_reset
+    global playerCurrentState
+    global their_magic_cast
     if my_magic_cast != None and their_magic_cast != None:
         # we use their cast info to determin the effects on us
         if their_magic_cast['modifier'] == 'attack':
