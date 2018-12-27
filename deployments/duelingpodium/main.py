@@ -202,6 +202,9 @@ def reconcile_magic():
         global health
         health = 100 * playerCurrentState['Energy'] / playerStartState['Energy']
         hostmqtt.publishL(myHostname, DEVICENAME, 'health', {'health': health})
+        if health <= 0:
+            hostmqtt.publish('combat-end', {'I': 'died'})
+
         reset()
         show_health()
     else:
@@ -391,6 +394,16 @@ def read_uhf(topic, payload):
 def opponents_state(topic, payload):
     global opponentsCurrent
     opponentsCurrent = payload
+def msg_combat_end(topic, payload):
+    if health <= 0:
+        hostmqtt.publish('combat-end', {'colour': 'red', 'count': 3})
+    else:
+        hostmqtt.publish('combat-end', {'colour': 'blue', 'count': 3})
+    time.sleep(2)
+
+    global health
+    health = 0
+    reset()
 
 ########################################
 
@@ -414,6 +427,7 @@ hostmqtt.subscribeL('+', touchdevice, 'touch', set_modifier)
 hostmqtt.subscribeL(myHostname, 'yellow-rfid', "scan", read_uhf)
 hostmqtt.subscribeL('+', DEVICENAME, "magic_cast", magic_cast)
 
+hostmqtt.subscribeL('+', DEVICENAME, "combat-end", msg_combat_end)
 
 # send player's currentState to other podium
 hostmqtt.subscribeL(myHostname, DEVICENAME, "player-state", opponents_state)

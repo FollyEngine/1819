@@ -235,8 +235,6 @@ hostmqtt.subscribeL(myHostname, DEVICENAME, "combat-end", msg_combat_end)
 hostmqtt.status({"status": "listening"})
 msg_combat_end('one/two/three', {'colour': 'red', 'count': 1})
 hostmqtt.publish('combat-end', {'colour': 'yellow', 'count': 1})
-#play({'operation': 'colourwipe', 'colour': 'red'})
-#play({'operation': 'colourwipe', 'colour': 'off'})
 
 try:
     while True:
