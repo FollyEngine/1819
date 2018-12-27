@@ -295,6 +295,7 @@ def get_magic(topic, payload):
     # "device": "db_lookup"}
     global magic
     if payload['nfc'] == nfcTag and magic == None:
+        print('set_magic ------------------- ONCE per combat')
         magic = payload
         global playerStartState
         playerStartState = {}
