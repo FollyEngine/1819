@@ -19,7 +19,7 @@ git diff --name-only $OLD_HEAD $NEW_HEAD ./src/RPi/$HOSTNAME/main.py | grep main
 if [ ! $? ] ; then
   # our main file was updated.  kill the running one and start a new one
     kill $(cat main_pid)
-    nohup python ./src/RPi/$HOSTNAME/main.py &
+    cd src/RPi && nohup python ./$HOSTNAME/main.py &
     echo $! > main_pid
 fi
 
