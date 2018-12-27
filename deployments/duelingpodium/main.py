@@ -140,7 +140,7 @@ spellColours = {
 "Ice": {"1": "BLUE", "2": "WHITE", "3": "BLUE", "4": "WHITE"},
 "Dust": {"1": "GREEN", "2": "WHITE", "3": "GREEN", "4": "WHITE"},
 "Wood": {"1": "GREEN", "2": "BLUE", "3": "GREEN", "4": "BLUE"},
-"Light ": {"1": "AMBER", "2": "AMBER", "3": "AMBER", "4": "AMBER"},
+"Light": {"1": "AMBER", "2": "AMBER", "3": "AMBER", "4": "AMBER"},
 "Earth": {"1": "GREEN", "2": "GREEN", "3": "GREEN", "4": "GREEN"},
 "Water": {"1": "BLUE", "2": "BLUE", "3": "BLUE", "4": "BLUE"},
 "Air": {"1": "WHITE", "2": "WHITE", "3": "WHITE", "4": "WHITE"},
