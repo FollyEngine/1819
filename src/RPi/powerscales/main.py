@@ -155,6 +155,7 @@ def magic_item(strip, payload):
     water = payload['Water'] / 10
     earth = payload['Earth'] / 10
     fire = payload['Fire'] / 10
+    print("fire: %d, earth %d, water %d, air %d" % (fire, earth, water, air))
 
     #TODO: should default the 4 values
     #do one (A, B first)
