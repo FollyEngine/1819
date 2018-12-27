@@ -9,8 +9,7 @@ import yaml
 import time
 import argparse
 import traceback
-import pysimpledmx
-
+import copy
 
 # the config and mqtt modules are in a bad place atm :/
 import sys
@@ -23,8 +22,6 @@ DEVICENAME="podium"
 mqttHost = config.getValue("mqtthostname", "mqtt.local")
 myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
-
-mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB1")
 
 otherPodium = 'podium1'
 if myHostname == otherPodium:
@@ -130,7 +127,7 @@ spellSounds = {
 "Ice": "Dueling/ATK - Ice.mp3",
 "Dust": "Dueling/ATK - Sand.wav",
 "Wood": "Dueling/ATK - Wood.wav",
-"Light ": "Dueling/ATK - Light .wav",
+"Light": "Dueling/ATK - Light .wav",
 "Earth": "Dueling/ATK - Earth.wav",
 "Water": "Dueling/ATK - Water.mp3",
 "Air": "Dueling/ATK - Air.mp3",
@@ -143,63 +140,12 @@ spellColours = {
 "Ice": {"1": "BLUE", "2": "WHITE", "3": "BLUE", "4": "WHITE"},
 "Dust": {"1": "GREEN", "2": "WHITE", "3": "GREEN", "4": "WHITE"},
 "Wood": {"1": "GREEN", "2": "BLUE", "3": "GREEN", "4": "BLUE"},
-"Light ": {"1": "AMBER", "2": "AMBER", "3": "AMBER", "4": "AMBER"},
+"Light": {"1": "AMBER", "2": "AMBER", "3": "AMBER", "4": "AMBER"},
 "Earth": {"1": "GREEN", "2": "GREEN", "3": "GREEN", "4": "GREEN"},
 "Water": {"1": "BLUE", "2": "BLUE", "3": "BLUE", "4": "BLUE"},
 "Air": {"1": "WHITE", "2": "WHITE", "3": "WHITE", "4": "WHITE"},
 }
-## the mixed element spells are supposed to flash between colours i think... i'm just mixing the colours.  sorry.
-#  DESIGN : all four seconds except smoke which stops a second early, and the mixed elements which flash between two colours.
-#  IMPLEMENTATION : mixed elements get mixed colours.  everything goes 4 seconds, the smoke just lasts for a while.
-def stopthathorribleflashing():
-    for i in range(2,50):
-      mydmx.setChannel(i, 0)
-      mydmx.render()
 
-def smokeyflashy(spellDMXcode):
-    # TODO : loop through DMXcode array, set most of the things to zero and a couple to 255
-    for i in range(2,50):
-      mydmx.setChannel([spellDMXcode[i])
-    mydmx.render()    
-    # TODO: wait four seconds.  how should we do that?  a callback?
-    stopthathorribleflashing()
-
-spellDMXcodes = {
-"Fire": {10:0,11:0,15:0,16:0,31:255,32:0,33:0,34:0,35:0,36:0,46:0}
-"Earth": {10:0,11:0,15:0,16:0,31:0,32:255,33:0,34:0,35:0,36:0,46:255}
-"Water": {10:0,11:0,15:0,16:0,31:0,32:0,33:255,34:0,35:0,36:0,46:255}
-"Air": {10:0,11:0,15:0,16:0,31:0,32:0,33:0,34:255,35:0,36:0,46:255}
-"Lava": {10:0,11:0,15:0,16:0,31:255,32:255,33:0,34:0,35:0,36:0,46:255}
-"Steam": {10:0,11:0,15:0,16:0,31:255,32:0,33:255,34:0,35:0,36:0,46:255}
-"Wood": {10:0,11:0,15:0,16:0,31:0,32:255,33:0,34:255,35:0,36:0,46:255}
-"Electricity": {10:0,11:0,15:0,16:0,31:255,32:0,33:255,34:0,35:0,36:0,46:255}
-"Dust": {10:0,11:0,15:0,16:0,31:0,32:255,33:0,34:255,35:0,36:0,46:255}
-"Ice": {10:0,11:0,15:0,16:0,31:0,32:0,33:255,34:255,35:0,36:0,46:255}
-"Light": {10:0,11:0,15:0,16:0,31:0,32:0,33:0,34:0,35:255,36:0,46:255}
-#Fire		31	4	46=smoke
-#Earth		32	4	46
-#Water		33	4	46
-#Air		34	4	46
-#Lava		31,32	1,1,1,1	46
-#Steam		31, 33	1,1,1,1	46
-#Wood		32,34	1,1,1,1	46
-#Electricity	31,33	1,1,1,1	46
-#Dust		32,34	1,1,1,1	46
-#Ice		33,34	1,1,1,1	46
-#Light		35	4	46
-#"10":strobe1
-#"11":strobe1
-#"15":strobe2
-#"16":strobe2
-#"31":red
-#"32":green
-#"33":blue
-#"34":white
-#"35":amber
-#"36":intensity (light is on)
-#"46":smoke
-
-}
 def ive_been_attacked(payload):
     # TODO: not sure if this sound is supposed to happen straight away, or not until both podiums go
     play(spellSounds[playerStartState['Spell']])
@@ -211,27 +157,41 @@ def ive_been_attacked(payload):
     
 def reconcile_magic():
     global skip_ABC_reset
+    global playerCurrentState
+    global their_magic_cast
     if my_magic_cast != None and their_magic_cast != None:
+        print('reconcile_magic, I cast: %s, they cast: %s' % (my_magic_cast['modifier'], their_magic_cast['modifier']))
         # we use their cast info to determin the effects on us
         if their_magic_cast['modifier'] == 'attack':
+            print('they attack %d' % opponentsCurrent['Attack'])
             if my_magic_cast['modifier'] == 'counter':
+                print('I counter')
                 if playerCurrentState['Counter'] > opponentsCurrent['Energy']:
                     # TODO: not sure 
                     their_magic_cast['Energy'] = opponentsCurrent['Energy'] - playerCurrentState['Counter']
             elif my_magic_cast['modifier'] == 'boost':
+                print('i boosted, it failed')
                 global boost
                 boost = 0
             elif my_magic_cast['modifier'] == 'attack':
+                print('i attack %d' % playerCurrentState['Attack'])
                 if playerCurrentState['Attack'] > opponentsCurrent['Attack']:
                     opponentsCurrent['Energy'] = 0
+
+            hostmqtt.publishL(myHostname, DEVICENAME, 'health', {'player': playerCurrentState['Energy'], 'opponent': opponentsCurrent['Energy']})
+            print("my energy %d, their energy %d" % (playerCurrentState['Energy'], opponentsCurrent['Energy']))
             playerCurrentState['Energy'] = playerCurrentState['Energy'] - opponentsCurrent['Energy']
         else:
             if my_magic_cast['modifier'] == 'boost':
+                print('i boosted')
                 #boost attack and counter for next round (or again and again) - again, use the round number
-                playerCurrentState['Attack'] = playerCurrentState['Attack'] * playerCurrentState['Boost']
-                playerCurrentState['Counter'] = playerCurrentState['Counter'] * playerCurrentState['Boost']
+                print("boosting Attack from: %d" % playerCurrentState['Attack'])
+                playerCurrentState['Attack'] = playerCurrentState['Attack'] + playerCurrentState['Attack'] * (playerCurrentState['Boost']/100)
+                print("boosting Attack to: %d" % playerCurrentState['Attack'])
+                playerCurrentState['Counter'] = playerCurrentState['Attack'] + playerCurrentState['Counter'] * (playerCurrentState['Boost']/100)
                 skip_ABC_reset = 1
         if their_magic_cast['modifier'] == 'disable':
+            print('they cast disable')
             playerCurrentState['Attack'] = 0
             playerCurrentState['Boost'] = 0
             playerCurrentState['Counter'] = 0
@@ -241,8 +201,15 @@ def reconcile_magic():
         report_state('combat!')
         global health
         health = 100 * playerCurrentState['Energy'] / playerStartState['Energy']
+        hostmqtt.publishL(myHostname, DEVICENAME, 'health', {'health': health})
+        if health <= 0:
+            hostmqtt.publish('combat-end', {'I': 'died'})
+
         reset()
         show_health()
+    else:
+        print('reconcile_magic not ready')
+
     # TODO: how to start the timeout....
 ########################################
 # on_message subscription functions
@@ -303,7 +270,7 @@ spellTypes = {
 
 def calculateMagic(magic):
     avg = (magic['Fire'] + magic['Earth'] + magic['Water'] + magic['Air']) / 4
-    spell = 'light'
+    spell = 'Light'
     magic_key = ''
     if magic['Fire'] > avg:
         magic_key += 'F'
@@ -331,6 +298,7 @@ def get_magic(topic, payload):
     # "device": "db_lookup"}
     global magic
     if payload['nfc'] == nfcTag and magic == None:
+        print('set_magic ------------------- ONCE per combat')
         magic = payload
         global playerStartState
         playerStartState = {}
@@ -340,7 +308,7 @@ def get_magic(topic, payload):
         playerStartState['Energy'] = baselineStats['Energy'] * (magic['Water']*10/100)
         playerStartState['Spell'] = calculateMagic(magic)
         global playerCurrentState
-        playerCurrentState = playerStartState
+        playerCurrentState = copy.deepcopy(playerStartState)
         # send player's currentState to other podium
         hostmqtt.publishL(otherPodium, DEVICENAME, 'player-state', playerCurrentState)
 
@@ -426,6 +394,16 @@ def read_uhf(topic, payload):
 def opponents_state(topic, payload):
     global opponentsCurrent
     opponentsCurrent = payload
+def msg_combat_end(topic, payload):
+    if health <= 0:
+        hostmqtt.publishL(myHostname, 'neopixel', 'combat-end', {'colour': 'red', 'count': 3})
+    else:
+        hostmqtt.publishL(myHostname, 'neopixel', 'combat-end', {'colour': 'blue', 'count': 3})
+    time.sleep(2)
+
+    global health
+    health = 0
+    reset()
 
 ########################################
 
@@ -449,6 +427,7 @@ hostmqtt.subscribeL('+', touchdevice, 'touch', set_modifier)
 hostmqtt.subscribeL(myHostname, 'yellow-rfid', "scan", read_uhf)
 hostmqtt.subscribeL('+', DEVICENAME, "magic_cast", magic_cast)
 
+hostmqtt.subscribeL('+', DEVICENAME, "combat-end", msg_combat_end)
 
 # send player's currentState to other podium
 hostmqtt.subscribeL(myHostname, DEVICENAME, "player-state", opponents_state)
