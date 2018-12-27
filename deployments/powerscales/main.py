@@ -31,7 +31,8 @@ def show_health(topic, payload):
     global displaying
     if verb == 'removed':
         displaying = ''
-        hostmqtt.publishL(myHostname, 'healthpixels', 'play', {'reason': 'tag-off', operation': 'magic_item', "Air": 0, "Fire": 0, "Water": 0, "Earth": 0})
+        hostmqtt.publishL(myHostname, 'healthpixels', 'play',
+            {'reason': 'tag-off', 'operation': 'magic_item', "Air": 0, "Fire": 0, "Water": 0, "Earth": 0})
     elif displaying == payload['tag']:
         displaying = ''
         hostmqtt.publishL(myHostname, 'healthpixels', 'play',
