@@ -23,19 +23,6 @@ mqttHost = config.getValue("mqtthostname", "mqtt.local")
 myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 ########################################
-def getHealth(tag, payload):
-    payload['A'] = 0
-    payload['B'] = 0
-    payload['C'] = 0
-    payload['D'] = 0
-    if tag != "":
-        # lookup
-        payload['A'] = 3
-        payload['B'] = 6
-        payload['C'] = 9
-        payload['D'] = 1
-    return payload
-########################################
 # on_message subscription functions
 displaying = ''
 def show_health(topic, payload):
@@ -74,7 +61,6 @@ def get_magic(topic, payload):
     if payload['nfc'] == displaying:
         magic = payload
         payload["operation"] = "magic_item"
-        payload = getHealth(displaying, payload)
         hostmqtt.publishL(myHostname, 'healthpixels', 'play', payload)
 
 

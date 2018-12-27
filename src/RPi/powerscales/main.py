@@ -253,11 +253,11 @@ hostmqtt.subscribeL("all", DEVICENAME, "test", msg_test)
 hostmqtt.status({"status": "listening"})
 
 
-play({'operation': 'magic_item', "A": 7, "B": 3, "C": 9, "D": 10})
+play({'operation': 'magic_item', "Air": 70, "Fire": 30, "Water": 90, "Earth": 10})
 
 time.sleep(3)
 
-play({'operation': 'magic_item', "A": 0, "B": 0, "C": 0, "D": 0})
+play({'operation': 'magic_item', "Air": 0, "Fire": 0, "Water": 0, "Earth": 0})
 
 try:
     while True:
