@@ -145,21 +145,24 @@ def get(obj, name, default):
 
 ##############
 
+#Fire	Earth	Water	Air
+#RED	GREEN	BLUE	WHITE
+
 def magic_item(strip, payload):
     length = 16
 
     #TODO: should default the 4 values
     #do one (A, B first)
     index = 0
-    blank = length - payload['A']
+    blank = length - payload['Air']
     for i in range(blank):
         one.setPixelColor(index, colours['off'])
         index = index + 1
-    for i in range(payload['A']):
+    for i in range(payload['Air']):
         one.setPixelColor(index, colours['red'])
         index = index + 1
-    blank = length - payload['B']
-    for i in range(payload['B']):
+    blank = length - payload['Water']
+    for i in range(payload['Water']):
         one.setPixelColor(index, colours['blue'])
         index = index + 1
     for i in range(blank):
@@ -168,15 +171,15 @@ def magic_item(strip, payload):
 
     #do two (C, D first)
     index = 0
-    blank = length - payload['C']
+    blank = length - payload['Earth']
     for i in range(blank):
         two.setPixelColor(index, colours['off'])
         index = index + 1
-    for i in range(payload['C']):
-        two.setPixelColor(index, colours['yellow'])
+    for i in range(payload['Earth']):
+        two.setPixelColor(index, colours['green'])
         index = index + 1
-    blank = length - payload['D']
-    for i in range(payload['D']):
+    blank = length - payload['Air']
+    for i in range(payload['Air']):
         two.setPixelColor(index, colours['white'])
         index = index + 1
     for i in range(blank):
