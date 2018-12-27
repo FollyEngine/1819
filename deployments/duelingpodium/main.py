@@ -127,7 +127,7 @@ spellSounds = {
 "Ice": "Dueling/ATK - Ice.mp3",
 "Dust": "Dueling/ATK - Sand.wav",
 "Wood": "Dueling/ATK - Wood.wav",
-"Light ": "Dueling/ATK - Light .wav",
+"Light": "Dueling/ATK - Light .wav",
 "Earth": "Dueling/ATK - Earth.wav",
 "Water": "Dueling/ATK - Water.mp3",
 "Air": "Dueling/ATK - Air.mp3",
