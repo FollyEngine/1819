@@ -5,6 +5,7 @@
 # @reboot cd ~/1819 ; rm main_pid
 # 5,10,15,20,25,30,35,40,45,50,55 * * * * cd ~/1819 && ./update.sh >> local.log 2>&1
 
+pip install --no-cache-dir -r ./src/RPi/$HOSTNAME/requirements.txt
 
 ## This script requires that main_pid does not exist on system start.
 if [ ! -f main_pid ] ; then
@@ -19,7 +20,7 @@ git diff --name-only $OLD_HEAD $NEW_HEAD ./src/RPi/$HOSTNAME/main.py | grep main
 if [ ! $? ] ; then
   # our main file was updated.  kill the running one and start a new one
     kill $(cat main_pid)
-    nohup python ./src/RPi/$HOSTNAME/main.py &
+    cd src/RPi && nohup python ./$HOSTNAME/main.py &
     echo $! > main_pid
 fi
 
