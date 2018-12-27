@@ -27,6 +27,13 @@ otherPodium = 'podium1'
 if myHostname == otherPodium:
     otherPodium = 'podium2'
 
+touchdevice = 'blackpodium'
+if myHostname == 'podium1':
+    touchdevice = 'silverpodium'
+elif myHostname == 'podium2':
+    touchdevice = 'goldpodium'
+
+
 ########################################
 # Fire: Attack, Earth: Boost%, Air: Counter, Water: Energy
 baselineStats = {'Attack': 10, 'Boost': 100, 'Counter': 15, 'Energy': 40}
@@ -147,14 +154,7 @@ spellColours = {
 }
 
 def ive_been_attacked(payload):
-    # TODO: not sure if this sound is supposed to happen straight away, or not until both podiums go
     play(spellSounds[playerStartState['Spell']])
-    # TODO: this message may need to be broken up into 2 - depends on where the DMX controlllers live...
-    hostmqtt.publishL('dmx', 'dmx', 'play', {
-                    "Spell": playerStartState['Spell'],
-                    "Parcans": spellColours[playerStartState['Spell']],
-                })
-    
 def reconcile_magic():
     global skip_ABC_reset
     global playerCurrentState
@@ -361,7 +361,16 @@ def magic_cast(topic, payload):
     else:
         global my_magic_cast
         my_magic_cast = payload
-        if payload['modifier'] == 'boost':
+        if payload['modifier'] == 'attack':
+            # TODO: this could also be in ive_been_attacked
+            spell = calculateMagic(magic)
+            hostmqtt.publishL('dmx/dmx/play', {
+                'From': myHostname,
+                'From2': touchdevice,
+                'Spell': spell,
+                "Parcans": spellColours[spell],
+                })    
+        elif payload['modifier'] == 'boost':
             play('Dueling/Boost.wav')
         elif payload['modifier'] == 'counter':
             play('Dueling/Counter.wav')
@@ -417,11 +426,6 @@ hostmqtt.subscribeL("all", DEVICENAME, "test", test_msg)
 
 hostmqtt.subscribeL(myHostname, 'rfid-nfc', "scan", read_nfc)
 hostmqtt.subscribeL('all', 'db_lookup', 'magic-item', get_magic)
-touchdevice = 'blackpodium'
-if myHostname == 'podium1':
-    touchdevice = 'silverpodium'
-elif myHostname == 'podium2':
-    touchdevice = 'goldpodium'
 
 hostmqtt.subscribeL('+', touchdevice, 'touch', set_modifier)
 hostmqtt.subscribeL(myHostname, 'yellow-rfid', "scan", read_uhf)
