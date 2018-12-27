@@ -396,9 +396,9 @@ def opponents_state(topic, payload):
     opponentsCurrent = payload
 def msg_combat_end(topic, payload):
     if health <= 0:
-        hostmqtt.publish('combat-end', {'colour': 'red', 'count': 3})
+        hostmqtt.publishL(myHostname, 'neopixel', 'combat-end', {'colour': 'red', 'count': 3})
     else:
-        hostmqtt.publish('combat-end', {'colour': 'blue', 'count': 3})
+        hostmqtt.publishL(myHostname, 'neopixel', 'combat-end', {'colour': 'blue', 'count': 3})
     time.sleep(2)
 
     global health
