@@ -178,8 +178,8 @@ def reconcile_magic():
         else:
             if my_magic_cast['modifier'] == 'boost':
                 #boost attack and counter for next round (or again and again) - again, use the round number
-                playerCurrentState['Attack'] = playerCurrentState['Attack'] * playerCurrentState['Boost']
-                playerCurrentState['Counter'] = playerCurrentState['Counter'] * playerCurrentState['Boost']
+                playerCurrentState['Attack'] = playerCurrentState['Attack'] + playerCurrentState['Attack'] * (playerCurrentState['Boost']/100)
+                playerCurrentState['Counter'] = playerCurrentState['Attack'] + playerCurrentState['Counter'] * (playerCurrentState['Boost']/100)
                 skip_ABC_reset = 1
         if their_magic_cast['modifier'] == 'disable':
             playerCurrentState['Attack'] = 0
