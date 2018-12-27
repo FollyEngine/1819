@@ -160,23 +160,30 @@ def reconcile_magic():
     global playerCurrentState
     global their_magic_cast
     if my_magic_cast != None and their_magic_cast != None:
+        print('reconcile_magic')
         # we use their cast info to determin the effects on us
         if their_magic_cast['modifier'] == 'attack':
+            print('they attack')
             if my_magic_cast['modifier'] == 'counter':
+                print('I counter')
                 if playerCurrentState['Counter'] > opponentsCurrent['Energy']:
                     # TODO: not sure 
                     their_magic_cast['Energy'] = opponentsCurrent['Energy'] - playerCurrentState['Counter']
             elif my_magic_cast['modifier'] == 'boost':
+                print('i boosted, it failed')
                 global boost
                 boost = 0
             elif my_magic_cast['modifier'] == 'attack':
+                print('i attack')
                 if playerCurrentState['Attack'] > opponentsCurrent['Attack']:
                     opponentsCurrent['Energy'] = 0
 
             hostmqtt.publishL(myHostname, DEVICENAME, 'health', {'player': playerCurrentState['Energy'], 'opponent': opponentsCurrent['Energy']})
+            print("my energy %d, their energy %d" % (playerCurrentState['Energy'], opponentsCurrent['Energy']))
             playerCurrentState['Energy'] = playerCurrentState['Energy'] - opponentsCurrent['Energy']
         else:
             if my_magic_cast['modifier'] == 'boost':
+                print('i boosted')
                 #boost attack and counter for next round (or again and again) - again, use the round number
                 print("boosting Attack from: %d" % playerCurrentState['Attack'])
                 playerCurrentState['Attack'] = playerCurrentState['Attack'] + playerCurrentState['Attack'] * (playerCurrentState['Boost']/100)
@@ -184,6 +191,7 @@ def reconcile_magic():
                 playerCurrentState['Counter'] = playerCurrentState['Attack'] + playerCurrentState['Counter'] * (playerCurrentState['Boost']/100)
                 skip_ABC_reset = 1
         if their_magic_cast['modifier'] == 'disable':
+            print('they cast disable')
             playerCurrentState['Attack'] = 0
             playerCurrentState['Boost'] = 0
             playerCurrentState['Counter'] = 0
@@ -196,6 +204,9 @@ def reconcile_magic():
         hostmqtt.publishL(myHostname, DEVICENAME, 'health', {'health': health})
         reset()
         show_health()
+    else:
+        print('reconcile_magic not ready')
+
     # TODO: how to start the timeout....
 ########################################
 # on_message subscription functions
