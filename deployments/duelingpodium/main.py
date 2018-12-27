@@ -156,14 +156,6 @@ def stopthathorribleflashing():
       mydmx.setChannel(i, 0)
       mydmx.render()
 
-def smokeyflashy(spellDMXcode):
-    # TODO : loop through DMXcode array, set most of the things to zero and a couple to 255
-    for i in range(2,50):
-      mydmx.setChannel([spellDMXcode[i])
-    mydmx.render()    
-    # TODO: wait four seconds.  how should we do that?  a callback?
-    stopthathorribleflashing()
-
 spellDMXcodes = {
 "Fire": {10:0,11:0,15:0,16:0,31:255,32:0,33:0,34:0,35:0,36:0,46:0}
 "Earth": {10:0,11:0,15:0,16:0,31:0,32:255,33:0,34:0,35:0,36:0,46:255}
@@ -198,8 +190,15 @@ spellDMXcodes = {
 #"35":amber
 #"36":intensity (light is on)
 #"46":smoke
-
 }
+def smokeyflashy(spellDMXcode):
+    # TODO : loop through DMXcode array, set most of the things to zero and a couple to 255
+    for i in range(2,50):
+      mydmx.setChannel(spellDMXcode[i])
+    mydmx.render()    
+    # TODO: wait four seconds.  how should we do that?  a callback?
+    stopthathorribleflashing()
+
 def ive_been_attacked(payload):
     # TODO: not sure if this sound is supposed to happen straight away, or not until both podiums go
     play(spellSounds[playerStartState['Spell']])
