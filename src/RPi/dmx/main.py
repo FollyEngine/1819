@@ -15,6 +15,11 @@ sys.path.append('./mqtt/')
 import mqtt
 import config
 
+import pysimpledmx
+import time
+
+mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB1")
+
 mqttHost = config.getValue("mqtthostname", "mqtt.local")
 myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, "relay_from")
@@ -22,6 +27,7 @@ hostmqtt.loop_start()   # use the background thread
 
 master_mqtt_host = config.getValue("mqttmaster", "mqtt.thegame.folly.site")
 mastermqtt = mqtt.MQTT(master_mqtt_host, myHostname, "relay_to", "everyone", "S4C7Tzjc2gD92y9", 1883)
+
 
 hostmqtt.subscribeL("+", "+", "+", attack)
 
@@ -46,6 +52,7 @@ def smokeyflashy(spellDMXcode):
 def attack()
     # mqtt "attack" signal should include the name of the podium being attacked, and the spell 
     mastermqtt.status({"status": "attacked!"})
+    smokeyflashy("Fire")
     
 # these codes are for one side.  the other side is just the same +100
 spellDMXcodes = {
