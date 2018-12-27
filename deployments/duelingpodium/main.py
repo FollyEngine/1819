@@ -9,7 +9,7 @@ import yaml
 import time
 import argparse
 import traceback
-import pysimpledmx
+#import pysimpledmx
 
 
 # the config and mqtt modules are in a bad place atm :/
@@ -24,7 +24,7 @@ mqttHost = config.getValue("mqtthostname", "mqtt.local")
 myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 
-mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB1")
+#mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB1")
 
 otherPodium = 'podium1'
 if myHostname == otherPodium:
@@ -152,22 +152,22 @@ spellColours = {
 #  DESIGN : all four seconds except smoke which stops a second early, and the mixed elements which flash between two colours.
 #  IMPLEMENTATION : mixed elements get mixed colours.  everything goes 4 seconds, the smoke just lasts for a while.
 def stopthathorribleflashing():
-    for i in range(2,50):
-      mydmx.setChannel(i, 0)
-      mydmx.render()
+#    for i in range(2,50):
+#      mydmx.setChannel(i, 0)
+#      mydmx.render()
 
 spellDMXcodes = {
-"Fire": {10:0,11:0,15:0,16:0,31:255,32:0,33:0,34:0,35:0,36:0,46:0}
-"Earth": {10:0,11:0,15:0,16:0,31:0,32:255,33:0,34:0,35:0,36:0,46:255}
-"Water": {10:0,11:0,15:0,16:0,31:0,32:0,33:255,34:0,35:0,36:0,46:255}
-"Air": {10:0,11:0,15:0,16:0,31:0,32:0,33:0,34:255,35:0,36:0,46:255}
-"Lava": {10:0,11:0,15:0,16:0,31:255,32:255,33:0,34:0,35:0,36:0,46:255}
-"Steam": {10:0,11:0,15:0,16:0,31:255,32:0,33:255,34:0,35:0,36:0,46:255}
-"Wood": {10:0,11:0,15:0,16:0,31:0,32:255,33:0,34:255,35:0,36:0,46:255}
-"Electricity": {10:0,11:0,15:0,16:0,31:255,32:0,33:255,34:0,35:0,36:0,46:255}
-"Dust": {10:0,11:0,15:0,16:0,31:0,32:255,33:0,34:255,35:0,36:0,46:255}
-"Ice": {10:0,11:0,15:0,16:0,31:0,32:0,33:255,34:255,35:0,36:0,46:255}
-"Light": {10:0,11:0,15:0,16:0,31:0,32:0,33:0,34:0,35:255,36:0,46:255}
+#"Fire": {10:0,11:0,15:0,16:0,31:255,32:0,33:0,34:0,35:0,36:0,46:0}
+#"Earth": {10:0,11:0,15:0,16:0,31:0,32:255,33:0,34:0,35:0,36:0,46:255}
+#"Water": {10:0,11:0,15:0,16:0,31:0,32:0,33:255,34:0,35:0,36:0,46:255}
+#"Air": {10:0,11:0,15:0,16:0,31:0,32:0,33:0,34:255,35:0,36:0,46:255}
+#"Lava": {10:0,11:0,15:0,16:0,31:255,32:255,33:0,34:0,35:0,36:0,46:255}
+#"Steam": {10:0,11:0,15:0,16:0,31:255,32:0,33:255,34:0,35:0,36:0,46:255}
+#"Wood": {10:0,11:0,15:0,16:0,31:0,32:255,33:0,34:255,35:0,36:0,46:255}
+#"Electricity": {10:0,11:0,15:0,16:0,31:255,32:0,33:255,34:0,35:0,36:0,46:255}
+#"Dust": {10:0,11:0,15:0,16:0,31:0,32:255,33:0,34:255,35:0,36:0,46:255}
+#"Ice": {10:0,11:0,15:0,16:0,31:0,32:0,33:255,34:255,35:0,36:0,46:255}
+#"Light": {10:0,11:0,15:0,16:0,31:0,32:0,33:0,34:0,35:255,36:0,46:255}
 #Fire		31	4	46=smoke
 #Earth		32	4	46
 #Water		33	4	46
@@ -193,9 +193,9 @@ spellDMXcodes = {
 }
 def smokeyflashy(spellDMXcode):
     # TODO : loop through DMXcode array, set most of the things to zero and a couple to 255
-    for i in range(2,50):
-      mydmx.setChannel(spellDMXcode[i])
-    mydmx.render()    
+#    for i in range(2,50):
+#      mydmx.setChannel(spellDMXcode[i])
+#    mydmx.render()    
     # TODO: wait four seconds.  how should we do that?  a callback?
     stopthathorribleflashing()
 
