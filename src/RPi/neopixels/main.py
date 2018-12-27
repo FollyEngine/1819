@@ -218,14 +218,24 @@ def msg_play(topic, payload):
 def msg_test(topic, payload):
     play({'operation': 'colourwipe', 'colour': 'yellow'})
 
+def msg_combat_end(topic, payload):
+    colourname = get(payload, 'colour', 'yellow')
+    count = get(payload, 'count', 1)
+    for i in range(0, count):
+        play({'operation': 'colourwipe', 'colour': colourname})
+        play({'operation': 'colourwipe', 'colour': 'off'})
+
 
 hostmqtt.subscribe("play", msg_play)
 hostmqtt.subscribeL("all", DEVICENAME, "play", msg_play)
 hostmqtt.subscribeL("all", DEVICENAME, "test", msg_test)
 
+hostmqtt.subscribeL(myHostname, DEVICENAME, "combat-end", msg_combat_end)
+
 hostmqtt.status({"status": "listening"})
-play({'operation': 'colourwipe', 'colour': 'red'})
-play({'operation': 'colourwipe', 'colour': 'off'})
+msg_combat_end('one/two/three', {'colour': 'red', 'count': 1})
+#play({'operation': 'colourwipe', 'colour': 'red'})
+#play({'operation': 'colourwipe', 'colour': 'off'})
 
 try:
     while True:
