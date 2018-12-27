@@ -31,32 +31,14 @@ def show_health(topic, payload):
     global displaying
     if verb == 'removed':
         displaying = ''
-        hostmqtt.publishL('all', 'healthpixels', 'play', {
-                    'operation': 'colorwipe',
-                    'colour': 'off',
-                    'tagid': 'removed'
-                })
+        hostmqtt.publishL(myHostname, 'healthpixels', 'play', {'reason': 'tag-off', operation': 'magic_item', "Air": 0, "Fire": 0, "Water": 0, "Earth": 0})
     elif displaying == payload['tag']:
         displaying = ''
-        hostmqtt.publishL('all', 'healthpixels', 'play', {
-                    'operation': 'colorwipe',
-                    'colour': 'off',
-                    'tagid': 'removed'
-                })
+        hostmqtt.publishL(myHostname, 'healthpixels', 'play', {'reason': 'tag-off', operation': 'magic_item', "Air": 0, "Fire": 0, "Water": 0, "Earth": 0})
     else:
         displaying = payload['tag']
 
 def get_magic(topic, payload):
-    #{"Earth": 10, 
-    # "time": "2018-12-22T20:43:40.715609", 
-    # "nfc": "550A5CBC", 
-    # "Fire": 10, 2700
-    # "Air": 10, 
-    # "Water": 10, 
-    # "id": 4, 
-    # "uhf": "3000e200001606180258170069a0", 
-    # "name": "", 
-    # "device": "db_lookup"}
     global magic
     if payload['nfc'] == displaying:
         magic = payload
