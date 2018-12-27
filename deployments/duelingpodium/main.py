@@ -154,7 +154,8 @@ spellColours = {
 }
 
 def ive_been_attacked(payload):
-    play(spellSounds[playerStartState['Spell']])
+    spell = calculateMagic(payload['magic'])
+    play(spellSounds[spell])
 def reconcile_magic():
     global skip_ABC_reset
     global playerCurrentState
