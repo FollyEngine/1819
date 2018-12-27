@@ -366,7 +366,7 @@ def magic_cast(topic, payload):
         if payload['modifier'] == 'attack':
             # TODO: this could also be in ive_been_attacked
             spell = calculateMagic(magic)
-            hostmqtt.publishL('dmx/dmx/play', {
+            hostmqtt.publishL('dmx', 'dmx', 'play', {
                 'From': myHostname,
                 'From2': touchdevice,
                 'Spell': spell,
