@@ -9,7 +9,7 @@ import yaml
 import time
 import argparse
 import traceback
-
+import copy
 
 # the config and mqtt modules are in a bad place atm :/
 import sys
@@ -163,7 +163,7 @@ def reconcile_magic():
         print('reconcile_magic, I cast: %s, they cast: %s' % (my_magic_cast['modifier'], their_magic_cast['modifier']))
         # we use their cast info to determin the effects on us
         if their_magic_cast['modifier'] == 'attack':
-            print('they attack')
+            print('they attack %d' % opponentsCurrent['Attack'])
             if my_magic_cast['modifier'] == 'counter':
                 print('I counter')
                 if playerCurrentState['Counter'] > opponentsCurrent['Energy']:
@@ -174,7 +174,7 @@ def reconcile_magic():
                 global boost
                 boost = 0
             elif my_magic_cast['modifier'] == 'attack':
-                print('i attack')
+                print('i attack %d' % playerCurrentState['Attack'])
                 if playerCurrentState['Attack'] > opponentsCurrent['Attack']:
                     opponentsCurrent['Energy'] = 0
 
@@ -305,7 +305,7 @@ def get_magic(topic, payload):
         playerStartState['Energy'] = baselineStats['Energy'] * (magic['Water']*10/100)
         playerStartState['Spell'] = calculateMagic(magic)
         global playerCurrentState
-        playerCurrentState = playerStartState
+        playerCurrentState = copy.deepcopy(playerStartState)
         # send player's currentState to other podium
         hostmqtt.publishL(otherPodium, DEVICENAME, 'player-state', playerCurrentState)
 
