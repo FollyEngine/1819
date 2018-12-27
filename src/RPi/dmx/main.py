@@ -29,31 +29,41 @@ master_mqtt_host = config.getValue("mqttmaster", "mqtt.thegame.folly.site")
 mastermqtt = mqtt.MQTT(master_mqtt_host, myHostname, "relay_to", "everyone", "S4C7Tzjc2gD92y9", 1883)
 
 
-hostmqtt.subscribeL("+", "+", "+", attack)
+hostmqtt.subscribeL("+", "dmx", "play", attack)
 
 
 def stopthathorribleflashing():
     print("stoppit")
-#    for i in range(2,50):
+    for i in range(2,50):
+      mydmx.setChannel(i, 0)
 #     print(i)
 
-def smokeyflashy(spellDMXcode):
+def smokeyflashy(DMXadjustment, spellDMXcode):
     print("smokeyflashy")
     # TODO : loop through DMXcode array, set most of the things to zero and a couple to 255
-    thisDMX=spellDMXcodes[spellDMXcode]
+    thisDMX = spellDMXcodes[spellDMXcode]
     print(thisDMX)
     for dmx in thisDMX:
-      print(dmx)
+      print(dmx+DMXadjustment)
+      mydmx.setChannel(i+DMXadjustment, 255)
+      
       
     # TODO: wait four seconds.  how should we do that?  a callback?
     time.sleep(4)
     stopthathorribleflashing()
 
-def attack()
+def attack(topic, payload):
     # mqtt "attack" signal should include the name of the podium being attacked, and the spell 
-    mastermqtt.status({"status": "attacked!"})
-    smokeyflashy("Fire")
+    # decode the json, it should look like this, where the podium is the one sending the spell
+#podium2/dmx/play {'from': 'podium2', 'spell':'Air'}
+#podium1/dmx/play {'from': 'podium1', 'spell':'Electricity'}
+    DMXadjustment = 0
+    if payload["from"] == "poduim2":
+      DMXadjustment = 100
     
+    mastermqtt.status({"status": "attacked!"})
+    smokeyflashy(DMXadjustment, payload["spell"])
+
 # these codes are for one side.  the other side is just the same +100
 spellDMXcodes = {
 "Fire": [31,46],
