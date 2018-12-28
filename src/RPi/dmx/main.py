@@ -18,7 +18,15 @@ import config
 import pysimpledmx
 import time
 
-mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB1")
+# this is ugly but times are tough
+try:
+  mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB0")
+try:
+  mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB2")
+try:
+  mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB3")
+try:
+  mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB4")
 
 mqttHost = config.getValue("mqtthostname", "mqtt.local")
 myHostname = config.getValue("hostname", socket.gethostname())
