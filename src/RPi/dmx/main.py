@@ -45,15 +45,13 @@ def smokeyflashy(DMXadjustment, spellDMXcode):
     print(thisDMX)
     for dmx in thisDMX:
       print(dmx+DMXadjustment)
-      mydmx.setChannel(i+DMXadjustment, 255)
-      
+      mydmx.setChannel(i+DMXadjustment, 255)      
       
     # TODO: wait four seconds.  how should we do that?  a callback?
     time.sleep(4)
     stopthathorribleflashing()
 
 def attack(topic, payload):
-    # mqtt "attack" signal should include the name of the podium being attacked, and the spell 
     # decode the json, it should look like this, where the podium is the one sending the spell
 #podium2/dmx/play {'from': 'podium2', 'spell':'Air'}
 #podium1/dmx/play {'from': 'podium1', 'spell':'Electricity'}
@@ -81,3 +79,18 @@ spellDMXcodes = {
 smokeyflashy("Electricity")
 
 stopthathorribleflashing()
+
+hostmqtt.status({"status": "listening"})
+mastermqtt.status({"status": "listening"})
+
+try:
+    #while True:
+    #    sleep(1)
+    mastermqtt.loop_forever()
+except Exception as ex:
+    traceback.print_exc()
+except KeyboardInterrupt:
+    print("exit")
+
+hostmqtt.status({"status": "STOPPED"})
+mastermqtt.status({"status": "STOPPED"})
