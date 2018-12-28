@@ -21,12 +21,24 @@ import time
 # this is ugly but times are tough
 try:
   mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB0")
+except:
+    print("DMX failed on USB0")  
+try:
+  mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB1")
+except:
+    print("DMX failed on USB1")  
 try:
   mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB2")
+except:
+    print("DMX failed on USB2")  
 try:
   mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB3")
+except:
+    print("DMX failed on USB3")  
 try:
   mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB4")
+except:
+    print("DMX failed on USB4")  
 
 mqttHost = config.getValue("mqtthostname", "mqtt.local")
 myHostname = config.getValue("hostname", socket.gethostname())
