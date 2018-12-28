@@ -55,6 +55,7 @@ def stopthathorribleflashing():
     print("stoppit")
     for i in range(2,50):
       mydmx.setChannel(i, 0)
+    mydmx.render()
 #     print(i)
 
 def smokeyflashy(DMXadjustment, spellDMXcode):

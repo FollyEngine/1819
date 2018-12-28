@@ -91,8 +91,6 @@ mydmx.render()
 time.sleep(3)
 setallzero()
 
-# pin spot ########################################
-# 37 is intensity
 print ("test all pin spot")
 for i in range(21,26):
 	print(i)
@@ -103,6 +101,7 @@ for i in range(21,26):
 print("off")
 setallzero()
 
+# parcan ########################################
 print("30 + 37 makes nothing (channel 30 is not set)")
 
 print("31 + 37 makes red")
