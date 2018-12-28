@@ -71,16 +71,19 @@ def smokeyflashy(DMXadjustment, spellDMXcode):
     stopthathorribleflashing()
 
 def attack(topic, payload):
-    mastermqtt.status({"status": "attacked!"})
-    print("attacked!")
-    # decode the json, it should look like this, where the podium is the one sending the spell
-#podium2/dmx/play {'from': 'podium2', 'spell':'Air'}
-#podium1/dmx/play {'from': 'podium1', 'spell':'Electricity'}
-    DMXadjustment = 0
-    if payload["from"] == "poduim2":
-      DMXadjustment = 100
-    
-    smokeyflashy(DMXadjustment, payload["spell"])
+    try:
+      mastermqtt.status({"status": "attacked!"})
+      print("attacked!")
+      # decode the json, it should look like this, where the podium is the one sending the spell
+  #podium2/dmx/play {'from': 'podium2', 'spell':'Air'}
+  #podium1/dmx/play {'from': 'podium1', 'spell':'Electricity'}
+      DMXadjustment = 0
+      if payload["from"] == "poduim2":
+	DMXadjustment = 100
+      
+      smokeyflashy(DMXadjustment, payload["spell"])
+    except Exception as ex:
+        traceback.print_exc()
 
 # these codes are for one side.  the other side is just the same +100
 spellDMXcodes = {
