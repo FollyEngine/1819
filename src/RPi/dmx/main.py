@@ -7,6 +7,7 @@ import paho.mqtt.client as mqtt #import the client1
 import paho.mqtt.publish as publish
 import time
 import sys
+import socket
 from time import sleep
 
 # the config and mqtt modules are in a bad place atm :/
@@ -63,13 +64,15 @@ def smokeyflashy(DMXadjustment, spellDMXcode):
     print(thisDMX)
     for dmx in thisDMX:
       print(dmx+DMXadjustment)
-      mydmx.setChannel(i+DMXadjustment, 255)      
+      mydmx.setChannel(dmx+DMXadjustment, 255)      
       
     # TODO: wait four seconds.  how should we do that?  a callback?
     time.sleep(4)
     stopthathorribleflashing()
 
 def attack(topic, payload):
+    mastermqtt.status({"status": "attacked!"})
+    print("attacked!")
     # decode the json, it should look like this, where the podium is the one sending the spell
 #podium2/dmx/play {'from': 'podium2', 'spell':'Air'}
 #podium1/dmx/play {'from': 'podium1', 'spell':'Electricity'}
@@ -77,7 +80,6 @@ def attack(topic, payload):
     if payload["from"] == "poduim2":
       DMXadjustment = 100
     
-    mastermqtt.status({"status": "attacked!"})
     smokeyflashy(DMXadjustment, payload["spell"])
 
 # these codes are for one side.  the other side is just the same +100
