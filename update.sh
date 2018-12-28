@@ -7,19 +7,20 @@
 
 
 ## This script requires that main_pid does not exist on system start.
+# TODO: if main_pid exists, check whether the process is running
 if [ ! -f main_pid ] ; then
   pip install --no-cache-dir -r ./src/RPi/$HOSTNAME/requirements.txt
   cd src/RPi && nohup python ./$HOSTNAME/main.py &
   mosquitto_pub -h "mqtt.thegame.folly.site"  -u mqtt.thegame.folly.site -P S4C7Tzjc2gD92y9  -t "$HOSTNAME/$HOSTNAME/health" -m "{\"status\":\"started\",\"time\":\"$(date +%Y-%m-%dZ%H:%M:%S)\",\"device\":\"$HOSTNAME $(hostname -I)\"}"
   echo $! > main_pid
 fi
-# Update repository, and if our main file has changed, restart it
+
+## Update repository, and if our main file has changed, restart it
 OLD_HEAD=$(git rev-parse HEAD)
 git pull
 NEW_HEAD=$(git rev-parse HEAD)
 git diff --name-only $OLD_HEAD $NEW_HEAD ./src/RPi/$HOSTNAME/main.py | grep main.py
 gitstatus=$?
-echo "status of that grep $gitstatus" 
 if [ ! $gitstatus ] ; then
   # our main file was updated.  kill the running one and start a new one
     kill $(cat main_pid)
