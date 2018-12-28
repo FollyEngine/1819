@@ -27,6 +27,13 @@ otherPodium = 'podium1'
 if myHostname == otherPodium:
     otherPodium = 'podium2'
 
+touchdevice = 'blackpodium'
+if myHostname == 'podium1':
+    touchdevice = 'silverpodium'
+elif myHostname == 'podium2':
+    touchdevice = 'goldpodium'
+
+
 ########################################
 # Fire: Attack, Earth: Boost%, Air: Counter, Water: Energy
 baselineStats = {'Attack': 10, 'Boost': 100, 'Counter': 15, 'Energy': 40}
@@ -147,14 +154,8 @@ spellColours = {
 }
 
 def ive_been_attacked(payload):
-    # TODO: not sure if this sound is supposed to happen straight away, or not until both podiums go
-    play(spellSounds[playerStartState['Spell']])
-    # TODO: this message may need to be broken up into 2 - depends on where the DMX controlllers live...
-    hostmqtt.publishL('dmx', 'dmx', 'play', {
-                    "Spell": playerStartState['Spell'],
-                    "Parcans": spellColours[playerStartState['Spell']],
-                })
-    
+    spell = calculateMagic(payload['magic'])
+    play(spellSounds[spell])
 def reconcile_magic():
     global skip_ABC_reset
     global playerCurrentState
@@ -237,8 +238,6 @@ def read_nfc(topic, payload):
     else:
         nfcTag = payload['tag']
         report_state('set-nfc')
-        play('Dueling/Magic Detected.mp3')
-
 
 #	F	    E	    W	    A
 #F	Fire	Lava	Steam	Lightning
@@ -297,26 +296,30 @@ def get_magic(topic, payload):
     # "name": "", 
     # "device": "db_lookup"}
     global magic
-    if payload['nfc'] == nfcTag and magic == None:
-        print('set_magic ------------------- ONCE per combat')
-        magic = payload
-        global playerStartState
-        playerStartState = {}
-        playerStartState['Attack'] = baselineStats['Attack'] * (magic['Fire']*10/100)
-        playerStartState['Boost'] = baselineStats['Boost'] * (magic['Earth']*10/100)
-        playerStartState['Counter'] = baselineStats['Counter'] * (magic['Air']*10/100)
-        playerStartState['Energy'] = baselineStats['Energy'] * (magic['Water']*10/100)
-        playerStartState['Spell'] = calculateMagic(magic)
-        global playerCurrentState
-        playerCurrentState = copy.deepcopy(playerStartState)
-        # send player's currentState to other podium
-        hostmqtt.publishL(otherPodium, DEVICENAME, 'player-state', playerCurrentState)
+    new_wand_set = False
+    if payload['nfc'] == nfcTag:
+        if magic == None or magic['nfc'] != payload['nfc']:
+            print('set_magic ------------------- ONCE per combat')
+            play('Dueling/Magic Detected.mp3')
+            magic = payload
+            global playerStartState
+            playerStartState = {}
+            playerStartState['Attack'] = baselineStats['Attack'] * (magic['Fire']*10/100)
+            playerStartState['Boost'] = baselineStats['Boost'] * (magic['Earth']*10/100)
+            playerStartState['Counter'] = baselineStats['Counter'] * (magic['Air']*10/100)
+            playerStartState['Energy'] = baselineStats['Energy'] * (magic['Water']*10/100)
+            playerStartState['Spell'] = calculateMagic(magic)
+            global playerCurrentState
+            playerCurrentState = copy.deepcopy(playerStartState)
+            # send player's currentState to other podium
+            hostmqtt.publishL(otherPodium, DEVICENAME, 'player-state', playerCurrentState)
 
-        global health
-        health = 100 * playerCurrentState['Energy'] / playerStartState['Energy']
-        show_health()
-        report_state('set-magic-stats')
-    else:
+            global health
+            health = 100 * playerCurrentState['Energy'] / playerStartState['Energy']
+            show_health()
+            report_state('set-magic-stats')
+            new_wand_set = True
+    if not new_wand_set:
         # if its for the other podium, we could use it - but it could also be for the cauldron
         report_state('not-my-magic-stats')
 
@@ -361,7 +364,16 @@ def magic_cast(topic, payload):
     else:
         global my_magic_cast
         my_magic_cast = payload
-        if payload['modifier'] == 'boost':
+        if payload['modifier'] == 'attack':
+            # TODO: this could also be in ive_been_attacked
+            spell = calculateMagic(magic)
+            hostmqtt.publishL('dmx', 'dmx', 'play', {
+                'From': myHostname,
+                'From2': touchdevice,
+                'Spell': spell,
+                "Parcans": spellColours[spell],
+                })    
+        elif payload['modifier'] == 'boost':
             play('Dueling/Boost.wav')
         elif payload['modifier'] == 'counter':
             play('Dueling/Counter.wav')
@@ -417,11 +429,6 @@ hostmqtt.subscribeL("all", DEVICENAME, "test", test_msg)
 
 hostmqtt.subscribeL(myHostname, 'rfid-nfc', "scan", read_nfc)
 hostmqtt.subscribeL('all', 'db_lookup', 'magic-item', get_magic)
-touchdevice = 'blackpodium'
-if myHostname == 'podium1':
-    touchdevice = 'silverpodium'
-elif myHostname == 'podium2':
-    touchdevice = 'goldpodium'
 
 hostmqtt.subscribeL('+', touchdevice, 'touch', set_modifier)
 hostmqtt.subscribeL(myHostname, 'yellow-rfid', "scan", read_uhf)
