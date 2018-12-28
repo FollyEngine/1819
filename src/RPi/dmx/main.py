@@ -64,7 +64,8 @@ def smokeyflashy(DMXadjustment, spellDMXcode):
     print(thisDMX)
     for dmx in thisDMX:
       print(dmx+DMXadjustment)
-      mydmx.setChannel(dmx+DMXadjustment, 255)      
+      mydmx.setChannel(dmx+DMXadjustment, 255)     
+    mydmx.render()
       
     # TODO: wait four seconds.  how should we do that?  a callback?
     time.sleep(4)
