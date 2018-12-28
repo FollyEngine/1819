@@ -22,6 +22,7 @@ if [ ! $? ] ; then
     kill $(cat main_pid)
     cd src/RPi && nohup python ./$HOSTNAME/main.py &
     echo $! > main_pid
+    mosquitto_pub -h "mqtt.thegame.folly.site"  -u mqtt.thegame.folly.site -P S4C7Tzjc2gD92y9  -t "$HOSTNAME/$HOSTNAME/health" -m "{\"status\":\"healthy\",\"time\":\"$(date +%Y-%m-%dZ%H:%M:%S)\",\"device\":\"$HOSTNAME $(hostname -I)\"}"
 fi
 
 sync
