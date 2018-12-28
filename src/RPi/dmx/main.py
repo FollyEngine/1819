@@ -72,7 +72,8 @@ spellDMXcodes = {
 "Electricity": [31,33,46],
 "Dust": [32,34,46],
 "Ice": [33,34,46],
-"Light": [35,46]
+"Light": [35,46],
+"Strobe": [11,12]
 }
 smokeyflashy("Electricity")
 
