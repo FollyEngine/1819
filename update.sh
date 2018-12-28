@@ -21,7 +21,7 @@ NEW_HEAD=$(git rev-parse HEAD)
 git diff --name-only $OLD_HEAD $NEW_HEAD ./src/RPi/$HOSTNAME/main.py | grep main.py
 gitstatus = $?
 echo "status of that grep $gitstatus" 
-if [ ! gitstatus ] ; then
+if [ ! $gitstatus ] ; then
   # our main file was updated.  kill the running one and start a new one
     kill $(cat main_pid)
     cd src/RPi && nohup python ./$HOSTNAME/main.py &
