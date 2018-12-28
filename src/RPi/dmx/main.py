@@ -41,9 +41,9 @@ except:
 		    print("DMX failed on USB4")  
 
 mqttHost = config.getValue("mqtthostname", "mqtt.local")
-myHostname = config.getValue("hostname", socket.gethostname())
-hostmqtt = mqtt.MQTT(mqttHost, myHostname, "relay_from")
-hostmqtt.loop_start()   # use the background thread
+##myHostname = config.getValue("hostname", socket.gethostname())
+##hostmqtt = mqtt.MQTT(mqttHost, myHostname, "relay_from")
+##hostmqtt.loop_start()   # use the background thread
 
 master_mqtt_host = config.getValue("mqttmaster", "mqtt.thegame.folly.site")
 mastermqtt = mqtt.MQTT(master_mqtt_host, myHostname, "relay_to", "everyone", "S4C7Tzjc2gD92y9", 1883)
@@ -99,9 +99,9 @@ smokeyflashy("Electricity")
 
 stopthathorribleflashing()
 
-hostmqtt.subscribeL("+", "dmx", "play", attack)
+mastermqtt.subscribeL("+", "dmx", "play", attack)
 
-hostmqtt.status({"status": "listening"})
+##hostmqtt.status({"status": "listening"})
 mastermqtt.status({"status": "listening"})
 
 try:
@@ -113,5 +113,5 @@ except Exception as ex:
 except KeyboardInterrupt:
     print("exit")
 
-hostmqtt.status({"status": "STOPPED"})
+##hostmqtt.status({"status": "STOPPED"})
 mastermqtt.status({"status": "STOPPED"})
