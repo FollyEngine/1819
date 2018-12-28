@@ -153,9 +153,6 @@ spellColours = {
 "Air": {"1": "WHITE", "2": "WHITE", "3": "WHITE", "4": "WHITE"},
 }
 
-def ive_been_attacked(payload):
-    spell = calculateMagic(payload['magic'])
-    play(spellSounds[spell])
 def reconcile_magic():
     global skip_ABC_reset
     global playerCurrentState
@@ -182,6 +179,10 @@ def reconcile_magic():
             hostmqtt.publishL(myHostname, DEVICENAME, 'health', {'player': playerCurrentState['Energy'], 'opponent': opponentsCurrent['Energy']})
             print("my energy %d, their energy %d" % (playerCurrentState['Energy'], opponentsCurrent['Energy']))
             playerCurrentState['Energy'] = playerCurrentState['Energy'] - opponentsCurrent['Energy']
+
+            # play the opponent's attack sounds
+            spell = calculateMagic(their_magic_cast['magic'])
+            play(spellSounds[spell])
         else:
             if my_magic_cast['modifier'] == 'boost':
                 print('i boosted')
@@ -197,6 +198,24 @@ def reconcile_magic():
             playerCurrentState['Boost'] = 0
             playerCurrentState['Counter'] = 0
             skip_ABC_reset = 1
+
+        # effects for this duel
+        if my_magic_cast['modifier'] == 'attack':
+            # TODO: this could also be in ive_been_attacked
+            spell = calculateMagic(magic)
+            hostmqtt.publishL('dmx', 'dmx', 'play', {
+                'From': myHostname,
+                'From2': touchdevice,
+                'Spell': spell,
+                "Parcans": spellColours[spell],
+                })    
+        elif my_magic_cast['modifier'] == 'boost':
+            play('Dueling/Boost.wav')
+        elif my_magic_cast['modifier'] == 'counter':
+            play('Dueling/Counter.wav')
+        elif my_magic_cast['modifier'] == 'disable':
+            play('Dueling/Disable.wav')
+
         # send player's currentState to other podium
         hostmqtt.publishL(otherPodium, DEVICENAME, 'player-state', playerCurrentState)
         report_state('combat!')
@@ -359,27 +378,9 @@ def magic_cast(topic, payload):
         global their_magic_cast
         # TODO: this needs to be the other podium's playerCurrentState
         their_magic_cast = payload
-        if payload['modifier'] == 'attack':
-            ive_been_attacked(payload)
     else:
         global my_magic_cast
         my_magic_cast = payload
-        if payload['modifier'] == 'attack':
-            # TODO: this could also be in ive_been_attacked
-            spell = calculateMagic(magic)
-            hostmqtt.publishL('dmx', 'dmx', 'play', {
-                'From': myHostname,
-                'From2': touchdevice,
-                'Spell': spell,
-                "Parcans": spellColours[spell],
-                })    
-        elif payload['modifier'] == 'boost':
-            play('Dueling/Boost.wav')
-        elif payload['modifier'] == 'counter':
-            play('Dueling/Counter.wav')
-        elif payload['modifier'] == 'disable':
-            play('Dueling/Disable.wav')
-
     reconcile_magic()
 
 def read_uhf(topic, payload):
