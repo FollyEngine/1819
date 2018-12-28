@@ -95,7 +95,7 @@ spellDMXcodes = {
 "Light": [35,46],
 "Strobe": [11,12]
 }
-smokeyflashy("Electricity")
+smokeyflashy(0,"Electricity")
 
 stopthathorribleflashing()
 
