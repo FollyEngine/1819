@@ -29,8 +29,6 @@ master_mqtt_host = config.getValue("mqttmaster", "mqtt.thegame.folly.site")
 mastermqtt = mqtt.MQTT(master_mqtt_host, myHostname, "relay_to", "everyone", "S4C7Tzjc2gD92y9", 1883)
 
 
-hostmqtt.subscribeL("+", "dmx", "play", attack)
-
 
 def stopthathorribleflashing():
     print("stoppit")
@@ -79,6 +77,8 @@ spellDMXcodes = {
 smokeyflashy("Electricity")
 
 stopthathorribleflashing()
+
+hostmqtt.subscribeL("+", "dmx", "play", attack)
 
 hostmqtt.status({"status": "listening"})
 mastermqtt.status({"status": "listening"})
