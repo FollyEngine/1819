@@ -53,7 +53,7 @@ mastermqtt = mqtt.MQTT(master_mqtt_host, myHostname, "relay_to", "everyone", "S4
 
 def stopthathorribleflashing():
     print("stoppit")
-    for i in range(2,50):
+    for i in range(2,500):
       mydmx.setChannel(i, 0)
     mydmx.render()
 #     print(i)
