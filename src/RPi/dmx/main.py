@@ -87,17 +87,17 @@ def attack(topic, payload):
 
 # these codes are for one side.  the other side is just the same +100
 spellDMXcodes = {
-"Fire": [31,46],
-"Earth": [32,46],
-"Water": [33,46],
-"Air": [34,46],
-"Lava": [31,32,46],
-"Steam": [31,33,46],
-"Wood": [32,34,46],
-"Electricity": [31,33,46],
-"Dust": [32,34,46],
-"Ice": [33,34,46],
-"Light": [35,46],
+"Fire": [37,31,46],
+"Earth": [37,32,46],
+"Water": [37,33,46],
+"Air": [37,34,46],
+"Lava": [37,31,32,46],
+"Steam": [37,31,33,46],
+"Wood": [37,32,34,46],
+"Electricity": [37,31,33,46],
+"Dust": [37,32,34,46],
+"Ice": [37,33,34,46],
+"Light": [37,35,46],
 "Strobe": [11,12]
 }
 smokeyflashy(0,"Electricity")
