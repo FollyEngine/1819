@@ -9,7 +9,7 @@ pip install --no-cache-dir -r ./src/RPi/$HOSTNAME/requirements.txt
 
 ## This script requires that main_pid does not exist on system start.
 if [ ! -f main_pid ] ; then
-   nohup python ./src/RPi/$HOSTNAME/main.py &
+   cd src/RPi && nohup python ./$HOSTNAME/main.py &
    echo $! > main_pid
 fi
 # Update repository, and if our main file has changed, restart it
@@ -22,7 +22,7 @@ if [ ! $? ] ; then
     kill $(cat main_pid)
     cd src/RPi && nohup python ./$HOSTNAME/main.py &
     echo $! > main_pid
-    mosquitto_pub -h "mqtt.thegame.folly.site"  -u mqtt.thegame.folly.site -P S4C7Tzjc2gD92y9  -t "$HOSTNAME/$HOSTNAME/health" -m "{\"status\":\"healthy\",\"time\":\"$(date +%Y-%m-%dZ%H:%M:%S)\",\"device\":\"$HOSTNAME $(hostname -I)\"}"
+    mosquitto_pub -h "mqtt.thegame.folly.site"  -u mqtt.thegame.folly.site -P S4C7Tzjc2gD92y9  -t "$HOSTNAME/$HOSTNAME/health" -m "{\"status\":\"updated\",\"time\":\"$(date +%Y-%m-%dZ%H:%M:%S)\",\"device\":\"$HOSTNAME $(hostname -I)\"}"
 fi
 
 sync
