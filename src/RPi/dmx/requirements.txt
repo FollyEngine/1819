@@ -1,3 +1,2 @@
 pysimpledmx
 paho-mqtt
-pyyaml
