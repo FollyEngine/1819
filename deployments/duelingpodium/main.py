@@ -35,10 +35,6 @@ elif myHostname == 'podium2':
 
 
 ########################################
-# Fire: Attack, Earth: Boost%, Air: Counter, Water: Energy
-baselineStats = {'Attack': 10, 'Boost': 100, 'Counter': 15, 'Energy': 40}
-
-########################################
 def play(sound):
     hostmqtt.publishL(myHostname, 'audio', 'play', {
                     'sound': sound,
@@ -153,7 +149,7 @@ spellColours = {
 "Air": {"1": "WHITE", "2": "WHITE", "3": "WHITE", "4": "WHITE"},
 }
 
-def reconcile_magic():
+def reconcile_magic(t_topic, t_payload):
     global skip_ABC_reset
     global playerCurrentState
     global their_magic_cast
@@ -323,6 +319,11 @@ def get_magic(topic, payload):
             magic = payload
             global playerStartState
             playerStartState = {}
+
+            ########################################
+            # Fire: Attack, Earth: Boost%, Air: Counter, Water: Energy
+            baselineStats = {'Attack': 10, 'Boost': 100, 'Counter': 15, 'Energy': 40}
+
             playerStartState['Attack'] = baselineStats['Attack'] * (magic['Fire']*10/100)
             playerStartState['Boost'] = baselineStats['Boost'] * (magic['Earth']*10/100)
             playerStartState['Counter'] = baselineStats['Counter'] * (magic['Air']*10/100)
@@ -381,7 +382,7 @@ def magic_cast(topic, payload):
     else:
         global my_magic_cast
         my_magic_cast = payload
-    reconcile_magic()
+    hostmqtt.publishL('all', DEVICENAME, 'reconcile_magic', reconcile_magic)
 
 def read_uhf(topic, payload):
     if nfcTag == '':
@@ -435,6 +436,7 @@ hostmqtt.subscribeL('+', touchdevice, 'touch', set_modifier)
 hostmqtt.subscribeL(myHostname, 'yellow-rfid', "scan", read_uhf)
 hostmqtt.subscribeL('+', DEVICENAME, "magic_cast", magic_cast)
 
+hostmqtt.subscribeL('+', DEVICENAME, 'reconcile_magic', reconcile_magic)
 hostmqtt.subscribeL('+', DEVICENAME, "combat-end", msg_combat_end)
 
 # send player's currentState to other podium
