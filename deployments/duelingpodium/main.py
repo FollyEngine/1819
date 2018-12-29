@@ -41,11 +41,12 @@ def play(sound):
                     #'tagid': payload['tag']
                 })
 health = 0
-def show_health():
+def show_health(tip = 'off'):
     hostmqtt.publishL(myHostname, 'neopixel', 'play', {
                     'operation': 'health',
                     'count': health,
-                    'colour': 'blue'
+                    'colour': 'blue',
+                    'tip': tip,
                 })
 
 nfcTag = ''
@@ -400,6 +401,8 @@ def magic_cast(topic, payload):
     else:
         global my_magic_cast
         my_magic_cast = payload
+        show_health('white')
+
     hostmqtt.publishL('all', DEVICENAME, 'reconcile_magic', {'reason': 'magic_was_cast'})
 
 def read_uhf(topic, payload):
