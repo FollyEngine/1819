@@ -70,7 +70,10 @@ def smokeyflashy(DMXadjustment, spellDMXcode):
     mydmx.render()
       
     # TODO: wait four seconds.  how should we do that?  a callback?
-    time.sleep(4)
+    time.sleep(3)
+    mydmx.setChannel(46+DMXadjustment, 0)
+    mydmx.render()
+    time.sleep(1)
     stopthathorribleflashing()
 
 def attack(topic, payload):
