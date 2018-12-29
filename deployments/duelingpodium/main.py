@@ -168,10 +168,9 @@ def reconcile_magic(t_topic, t_payload):
                 print('i boosted, it failed')
                 global boost
                 boost = 0
+                skip_ABC_reset = 0
             elif my_magic_cast['modifier'] == 'attack':
                 print('i attack %d' % playerCurrentState['Attack'])
-                if playerCurrentState['Attack'] > opponentsCurrent['Attack']:
-                    opponentsCurrent['Energy'] = 0
 
             hostmqtt.publishL(myHostname, DEVICENAME, 'health', {'player': playerCurrentState['Energy'], 'opponent_attack': opponentsCurrent['Attack']})
             print("my energy %d, their energy %d" % (playerCurrentState['Energy'], opponentsCurrent['Attack']))
