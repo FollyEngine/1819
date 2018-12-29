@@ -79,11 +79,18 @@ def attack(topic, payload):
       # decode the json, it should look like this, where the podium is the one sending the spell
   #podium2/dmx/play {'from': 'podium2', 'spell':'Air'}
   #podium1/dmx/play {'from': 'podium1', 'spell':'Electricity'}
+  
+#            hostmqtt.publishL('dmx', 'dmx', 'play', {
+#                'From': myHostname,
+#                'From2': touchdevice,
+#                'Spell': spell,
+#                "Parcans": spellColours[spell],
+#                })    
       DMXadjustment = 0
-      if payload["from"] == "poduim2":
+      if payload["From"] == "poduim2":
 	DMXadjustment = 100
       
-      smokeyflashy(DMXadjustment, payload["spell"])
+      smokeyflashy(DMXadjustment, payload["Spell"])
     except Exception as ex:
         traceback.print_exc()
 
@@ -102,8 +109,9 @@ spellDMXcodes = {
 "Light": [37,35,46],
 "Strobe": [11,12]
 }
-smokeyflashy(0,"Electricity")
 
+# test on startup
+smokeyflashy(0,"Electricity")
 stopthathorribleflashing()
 
 mastermqtt.subscribeL("+", "dmx", "play", attack)
