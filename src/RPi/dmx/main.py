@@ -28,19 +28,19 @@ except:
     try:
       mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB1")
     except:
-	print("DMX failed on USB1")  
-	try:
-	  mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB2")
-	except:
-	    print("DMX failed on USB2")  
-	    try:
-	      mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB3")
-	    except:
-		print("DMX failed on USB3")  
-		try:
-		  mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB4")
-		except:
-		    print("DMX failed on USB4")  
+    print("DMX failed on USB1")  
+    try:
+      mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB2")
+    except:
+        print("DMX failed on USB2")  
+        try:
+          mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB3")
+        except:
+        print("DMX failed on USB3")  
+        try:
+          mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB4")
+        except:
+            print("DMX failed on USB4")  
 
 mqttHost = config.getValue("mqtthostname", "mqtt.local")
 myHostname = config.getValue("hostname", socket.gethostname())
@@ -59,22 +59,17 @@ def stopthathorribleflashing():
     mydmx.render()
 #     print(i)
 
-def smokeyflashy(DMXadjustment, spellDMXcode):
-    print("smokeyflashy %s %s" % (DMXadjustment, spellDMXcode))
+def smokeyflashy(DMXadjustment, spellDMXcode, value = 0):
+    print("smokeyflashy %s %s - set to %d" % (DMXadjustment, spellDMXcode, value))
 
     thisDMX = spellDMXcodes[spellDMXcode]
     print(thisDMX)
     for dmx in thisDMX:
       print(dmx+DMXadjustment)
-      mydmx.setChannel(dmx+DMXadjustment, 255)     
+      mydmx.setChannel(dmx+DMXadjustment, value)     
     mydmx.render()
-      
-    # TODO: wait four seconds.  how should we do that?  a callback?
-    time.sleep(3)
-    mydmx.setChannel(46+DMXadjustment, 0)
-    mydmx.render()
-    time.sleep(1)
-    stopthathorribleflashing()
+    if value = 0:
+      stopthathorribleflashing()
 
 def attack(topic, payload):
     try:
@@ -94,7 +89,24 @@ def attack(topic, payload):
       if payload["From"] == "podium2":
         DMXadjustment = 100
       
-      smokeyflashy(DMXadjustment, payload["Spell"])
+      #turn off after waiting 3 seconds
+      payload['wait'] = 3
+      hostmqtt.publish('off_in_seconds', payload)
+      smokeyflashy(DMXadjustment, payload["Spell"], 255)
+
+    except Exception as ex:
+        traceback.print_exc()
+
+def off_in_seconds(topic, payload):
+    try:
+      print("tru off in %d seconds! from %s" % (payload["wait"],payload["From"]))
+
+      DMXadjustment = 0
+      if payload["From"] == "podium2":
+        DMXadjustment = 100
+      
+      time.sleep(payload['wait'])
+      smokeyflashy(DMXadjustment, payload["Spell"], 0)
     except Exception as ex:
         traceback.print_exc()
 
@@ -119,6 +131,8 @@ smokeyflashy(0,"Electricity")
 stopthathorribleflashing()
 
 mastermqtt.subscribeL("+", "dmx", "play", attack)
+# poor man's callback
+mastermqtt.subscribe("off_in_seconds", off_in_seconds)
 
 hostmqtt.status({"status": "listening"})
 mastermqtt.status({"status": "listening"})
