@@ -160,9 +160,10 @@ def reconcile_magic(t_topic, t_payload):
             print('they attack %d' % opponentsCurrent['Attack'])
             if my_magic_cast['modifier'] == 'counter':
                 print('I counter')
-                if playerCurrentState['Counter'] > opponentsCurrent['Energy']:
-                    # TODO: not sure 
-                    their_magic_cast['Energy'] = opponentsCurrent['Energy'] - playerCurrentState['Counter']
+                their_magic_cast['Attack'] = their_magic_cast['Attack'] - playerCurrentState['Counter']
+                if their_magic_cast['Attack'] < 0:
+                    # this means their attack reflects on them (see below)
+                    their_magic_cast['Attack'] = 0
             elif my_magic_cast['modifier'] == 'boost':
                 print('i boosted, it failed')
                 global boost
@@ -188,6 +189,16 @@ def reconcile_magic(t_topic, t_payload):
                 print("boosting Counter to: %d" % playerCurrentState['Counter'])
                 playerCurrentState['Counter'] = playerCurrentState['Counter'] + (playerCurrentState['Counter'] * (playerCurrentState['Boost']/100))
                 skip_ABC_reset = 1
+            if their_magic_cast['modifier'] == 'counter':
+                print('they counter')
+                if my_magic_cast['modifier'] == 'attack':
+                    print('I attack %d' % my_magic_cast['Attack'])
+                    my_magic_cast['Attack'] = my_magic_cast['Attack'] - opponentsCurrent['Counter']
+                    if my_magic_cast['Attack'] < 0:
+                        # some of my attack energy was reflected onto me
+                        playerCurrentState['Energy'] = playerCurrentState['Energy'] + my_magic_cast['Attack']
+
+
         if their_magic_cast['modifier'] == 'disable':
             print('they cast disable')
             playerCurrentState['Attack'] = 0
