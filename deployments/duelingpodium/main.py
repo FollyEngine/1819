@@ -382,7 +382,7 @@ def magic_cast(topic, payload):
     else:
         global my_magic_cast
         my_magic_cast = payload
-    hostmqtt.publishL('all', DEVICENAME, 'reconcile_magic', reconcile_magic)
+    hostmqtt.publishL('all', DEVICENAME, 'reconcile_magic', {'reason': 'magic_was_cast'})
 
 def read_uhf(topic, payload):
     if nfcTag == '':
