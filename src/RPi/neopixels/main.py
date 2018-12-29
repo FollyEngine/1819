@@ -120,7 +120,7 @@ def theaterChaseRainbow(strip, wait_ms=50):
                 strip.setPixelColor(i+q, 0)
 
 # health will be a setting of 10 pixels, and the number will be out of 100
-def health(strip, color, health, wait_ms=50):
+def health(strip, color, health, tip = 'off', wait_ms=50):
     count = health/10
 
     if count > strip.numPixels():
@@ -130,6 +130,7 @@ def health(strip, color, health, wait_ms=50):
             strip.setPixelColor(i, color)
         else:
             strip.setPixelColor(i, colours['off'])
+    strip.setPixelColor(strip.numPixels()-1, colours[tip])
     strip.show()
 
 def magic_item(strip, payload):
@@ -202,8 +203,13 @@ def play(payload = {}):
         operation(strip, colour)
         return
 
-    count = get(payload, 'count', 16)
-    operation(strip, colour, count)
+    if operationname == 'health':
+        # this is the health display
+        count = get(payload, 'count', 16)
+        tip = get(payload, 'tip', 'off')
+        operation(strip, colour, count, tip)
+        return
+    print("unknown operation")
 
 ########################################
 # on_message subscription functions

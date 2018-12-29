@@ -41,11 +41,12 @@ def play(sound):
                     #'tagid': payload['tag']
                 })
 health = 0
-def show_health():
+def show_health(tip = 'off'):
     hostmqtt.publishL(myHostname, 'neopixel', 'play', {
                     'operation': 'health',
                     'count': health,
-                    'colour': 'blue'
+                    'colour': 'blue',
+                    'tip': tip,
                 })
 
 nfcTag = ''
@@ -160,17 +161,18 @@ def reconcile_magic(t_topic, t_payload):
             print('they attack %d' % opponentsCurrent['Attack'])
             if my_magic_cast['modifier'] == 'counter':
                 print('I counter')
-                if playerCurrentState['Counter'] > opponentsCurrent['Energy']:
-                    # TODO: not sure 
-                    their_magic_cast['Energy'] = opponentsCurrent['Energy'] - playerCurrentState['Counter']
+                opponentsCurrent['Attack'] = opponentsCurrent['Attack'] - playerCurrentState['Counter']
+                print("My counter reduced their attach by %d to %d" % (playerCurrentState['Counter'], opponentsCurrent['Attack']))
+                if opponentsCurrent['Attack'] < 0:
+                    # this means their attack reflects on them (see below)
+                    opponentsCurrent['Attack'] = 0
             elif my_magic_cast['modifier'] == 'boost':
                 print('i boosted, it failed')
                 global boost
                 boost = 0
+                skip_ABC_reset = 0
             elif my_magic_cast['modifier'] == 'attack':
                 print('i attack %d' % playerCurrentState['Attack'])
-                if playerCurrentState['Attack'] > opponentsCurrent['Attack']:
-                    opponentsCurrent['Energy'] = 0
 
             hostmqtt.publishL(myHostname, DEVICENAME, 'health', {'player': playerCurrentState['Energy'], 'opponent_attack': opponentsCurrent['Attack']})
             print("my energy %d, their energy %d" % (playerCurrentState['Energy'], opponentsCurrent['Attack']))
@@ -188,6 +190,17 @@ def reconcile_magic(t_topic, t_payload):
                 print("boosting Counter to: %d" % playerCurrentState['Counter'])
                 playerCurrentState['Counter'] = playerCurrentState['Counter'] + (playerCurrentState['Counter'] * (playerCurrentState['Boost']/100))
                 skip_ABC_reset = 1
+            if their_magic_cast['modifier'] == 'counter':
+                print('they counter')
+                if my_magic_cast['modifier'] == 'attack':
+                    print('I attack %d' % playerCurrentState['Attack'])
+                    playerCurrentState['Attack'] = playerCurrentState['Attack'] - opponentsCurrent['Counter']
+                    if playerCurrentState['Attack'] < 0:
+                        print("Their counter (%d) reflected some of my attack: %d" % (opponentsCurrent['Counter'], playerCurrentState['Attack']))
+                        # some of my attack energy was reflected onto me
+                        playerCurrentState['Energy'] = playerCurrentState['Energy'] + playerCurrentState['Attack']
+
+
         if their_magic_cast['modifier'] == 'disable':
             print('they cast disable')
             playerCurrentState['Attack'] = 0
@@ -388,6 +401,8 @@ def magic_cast(topic, payload):
     else:
         global my_magic_cast
         my_magic_cast = payload
+        show_health('white')
+
     hostmqtt.publishL('all', DEVICENAME, 'reconcile_magic', {'reason': 'magic_was_cast'})
 
 def read_uhf(topic, payload):

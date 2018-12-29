@@ -95,7 +95,7 @@ def attack(topic, payload):
 #                })    
       DMXadjustment = 0
       if payload["From"] == "podium2":
-	DMXadjustment = 100
+        DMXadjustment = 100
       
       smokeyflashy(DMXadjustment, payload["Spell"])
     except Exception as ex:
