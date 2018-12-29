@@ -161,6 +161,7 @@ def reconcile_magic(t_topic, t_payload):
             if my_magic_cast['modifier'] == 'counter':
                 print('I counter')
                 opponentsCurrent['Attack'] = opponentsCurrent['Attack'] - playerCurrentState['Counter']
+                print("My counter reduced their attach by %d to %d" % (playerCurrentState['Counter'], opponentsCurrent['Attack']))
                 if opponentsCurrent['Attack'] < 0:
                     # this means their attack reflects on them (see below)
                     opponentsCurrent['Attack'] = 0
@@ -194,6 +195,7 @@ def reconcile_magic(t_topic, t_payload):
                     print('I attack %d' % playerCurrentState['Attack'])
                     playerCurrentState['Attack'] = playerCurrentState['Attack'] - opponentsCurrent['Counter']
                     if playerCurrentState['Attack'] < 0:
+                        print("Their counter (%d) reflected some of my attack: %d" % (opponentsCurrent['Counter'], playerCurrentState['Attack']))
                         # some of my attack energy was reflected onto me
                         playerCurrentState['Energy'] = playerCurrentState['Energy'] + playerCurrentState['Attack']
 
