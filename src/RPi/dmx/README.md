@@ -12,6 +12,17 @@ Actually - it sounds an awful lot like we need https://github.com/lowlander/dmx_
 
 So I took a set home, and connected them to my very cheap LIXADA USB DMX thing - and ...
 
+## using pysimpledmx
+The testDMX script at src/dmx/testDMX.py uses pysimpledmx
+use it by setting a series of channels to 255 then calling render, like this:
+mydmx.setChannel(16,255)  # have to set the "intensity" channel or nothing else works
+mydmx.setChannel(17,255)  # set the "strobe" channel to full
+mydmx.render()  # send that to the light 
+
+channel 1 causes an error, and the numbers seem to be +1 from the numbers Tim discovered when testing with the sample software.
+
+
+
 ## using LIXADA
 
 Using the cmdline from https://github.com/dhocker/udmx-pyusb
@@ -33,3 +44,7 @@ for example, fully on, no flashing:
 see 
 * https://github.com/ayork02/pylightdmx
 * https://pypi.org/project/pyenttec/
+
+
+PARCAN+all lights
+have to turn intensity up or nothing else will happen

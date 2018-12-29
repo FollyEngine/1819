@@ -7,6 +7,7 @@ import paho.mqtt.client as mqtt #import the client1
 import paho.mqtt.publish as publish
 import time
 import sys
+import threading
 import traceback
 import socket
 from time import sleep
@@ -57,7 +58,12 @@ def stopthathorribleflashing():
     for i in range(2,500):
       mydmx.setChannel(i, 0)
     mydmx.render()
-#     print(i)
+
+def stopthatdmxthing(dmxChannel):
+    print("stop %s" % (dmxChannel))
+    mydmx.setChannel(dmxChannel, 0)
+    mydmx.render()
+
 
 def smokeyflashy(DMXadjustment, spellDMXcode):
     print("smokeyflashy %s %s" % (DMXadjustment, spellDMXcode))
@@ -70,11 +76,8 @@ def smokeyflashy(DMXadjustment, spellDMXcode):
     mydmx.render()
       
     # TODO: wait four seconds.  how should we do that?  a callback?
-    time.sleep(3)
-    mydmx.setChannel(46+DMXadjustment, 0)
-    mydmx.render()
-    time.sleep(1)
-    stopthathorribleflashing()
+    threading.Timer(3, stopthatdmxthing, args=46+DMXadjustment)
+    threading.Timer(4, stopthathorribleflashing)
 
 def attack(topic, payload):
     try:
@@ -99,6 +102,7 @@ def attack(topic, payload):
         traceback.print_exc()
 
 # these codes are for one side.  the other side is just the same +100
+# TODO : the mixed elements should actually flash 1 second between the two colours
 spellDMXcodes = {
 "Fire": [37,31,46],
 "Earth": [37,32,46],
