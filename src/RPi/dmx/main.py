@@ -7,6 +7,7 @@ import paho.mqtt.client as mqtt #import the client1
 import paho.mqtt.publish as publish
 import time
 import sys
+import traceback
 import socket
 from time import sleep
 
@@ -59,8 +60,8 @@ def stopthathorribleflashing():
 #     print(i)
 
 def smokeyflashy(DMXadjustment, spellDMXcode):
-    print("smokeyflashy")
-    # TODO : loop through DMXcode array, set most of the things to zero and a couple to 255
+    print("smokeyflashy %s %s" % (DMXadjustment, spellDMXcode))
+
     thisDMX = spellDMXcodes[spellDMXcode]
     print(thisDMX)
     for dmx in thisDMX:
@@ -75,7 +76,7 @@ def smokeyflashy(DMXadjustment, spellDMXcode):
 def attack(topic, payload):
     try:
       mastermqtt.status({"status": "attacked!"})
-      print("attacked!")
+      print("attacked!  spell %s from %s" % (payload["Spell"],payload["From"]))
       # decode the json, it should look like this, where the podium is the one sending the spell
   #podium2/dmx/play {'from': 'podium2', 'spell':'Air'}
   #podium1/dmx/play {'from': 'podium1', 'spell':'Electricity'}
@@ -87,7 +88,7 @@ def attack(topic, payload):
 #                "Parcans": spellColours[spell],
 #                })    
       DMXadjustment = 0
-      if payload["From"] == "poduim2":
+      if payload["From"] == "podium2":
 	DMXadjustment = 100
       
       smokeyflashy(DMXadjustment, payload["Spell"])
