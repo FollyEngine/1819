@@ -208,6 +208,12 @@ def reconcile_magic(t_topic, t_payload):
         elif my_magic_cast['modifier'] == 'boost':
             play('Dueling/Boost.wav')
         elif my_magic_cast['modifier'] == 'counter':
+            hostmqtt.publishL('dmx', 'dmx', 'play', {
+                'From': myHostname,
+                'From2': touchdevice,
+                'Spell': "Strobe",
+                "Parcans": spellColours[spell],
+                })    
             play('Dueling/Counter.wav')
         elif my_magic_cast['modifier'] == 'disable':
             play('Dueling/Disable.wav')
