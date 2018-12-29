@@ -172,9 +172,9 @@ def reconcile_magic(t_topic, t_payload):
                 if playerCurrentState['Attack'] > opponentsCurrent['Attack']:
                     opponentsCurrent['Energy'] = 0
 
-            hostmqtt.publishL(myHostname, DEVICENAME, 'health', {'player': playerCurrentState['Energy'], 'opponent': opponentsCurrent['Energy']})
-            print("my energy %d, their energy %d" % (playerCurrentState['Energy'], opponentsCurrent['Energy']))
-            playerCurrentState['Energy'] = playerCurrentState['Energy'] - opponentsCurrent['Energy']
+            hostmqtt.publishL(myHostname, DEVICENAME, 'health', {'player': playerCurrentState['Energy'], 'opponent_attack': opponentsCurrent['Attack']})
+            print("my energy %d, their energy %d" % (playerCurrentState['Energy'], opponentsCurrent['Attack']))
+            playerCurrentState['Energy'] = playerCurrentState['Energy'] - opponentsCurrent['Attack']
 
             # play the opponent's attack sounds
             spell = calculateMagic(their_magic_cast['magic'])
