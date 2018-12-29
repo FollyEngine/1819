@@ -202,7 +202,7 @@ def play(payload = {}):
         operation(strip, colour)
         return
 
-    if operationname == 'magic_item':
+    if operationname == 'health':
         # this is the health display
         count = get(payload, 'count', 16)
         tip = get(payload, 'tip', 'off')
