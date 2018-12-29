@@ -8,10 +8,13 @@
 
 ## This script requires that main_pid does not exist on system start.
 # TODO: if main_pid exists, check whether the process is running
+## BUG!!!!! the pid is actually the pid of update.sh  why is that??
 if [ ! -f main_pid ] ; then
   pip install --no-cache-dir -r ./src/RPi/$HOSTNAME/requirements.txt
+  
   cd src/RPi && nohup python ./$HOSTNAME/main.py &
   echo $! > main_pid
+
   mosquitto_pub -h "mqtt.thegame.folly.site"  -u mqtt.thegame.folly.site -P S4C7Tzjc2gD92y9  -t "$HOSTNAME/$HOSTNAME/health" -m "{\"status\":\"started\",\"time\":\"$(date +%Y-%m-%dZ%H:%M:%S)\",\"device\":\"$HOSTNAME $(hostname -I)\"}"
 fi
 
@@ -24,6 +27,8 @@ gitstatus=$?
 if [ ! $gitstatus ] ; then
   # our main file was updated.  kill the running one and start a new one
     kill $(cat main_pid)
+    ### BUG WORKAROUND : kill the main.py as well, in case it's been started manually or there's a bug (see above)
+    pkill -f "python ./$HOSTNAME/main.py"
     cd src/RPi && nohup python ./$HOSTNAME/main.py &
     echo $! > main_pid
     mosquitto_pub -h "mqtt.thegame.folly.site"  -u mqtt.thegame.folly.site -P S4C7Tzjc2gD92y9  -t "$HOSTNAME/$HOSTNAME/health" -m "{\"status\":\"updated\",\"time\":\"$(date +%Y-%m-%dZ%H:%M:%S)\",\"device\":\"$HOSTNAME $(hostname -I)\"}"
@@ -32,5 +37,4 @@ fi
 sync
 ##  this "healthy" report just says that we're turned on and online.  
 ## TODO : check whether the python script is actually running without error
-## TODO : report when an update has occurred
 mosquitto_pub -h "mqtt.thegame.folly.site"  -u mqtt.thegame.folly.site -P S4C7Tzjc2gD92y9  -t "$HOSTNAME/$HOSTNAME/health" -m "{\"status\":\"healthy\",\"time\":\"$(date +%Y-%m-%dZ%H:%M:%S)\",\"device\":\"$HOSTNAME\"}"
