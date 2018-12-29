@@ -130,6 +130,7 @@ def health(strip, color, health, tip = 'off', wait_ms=50):
             strip.setPixelColor(i, color)
         else:
             strip.setPixelColor(i, colours['off'])
+    strip.setPixelColor(strip.numPixels()-1, colours[tip])
     strip.show()
 
 def magic_item(strip, payload):
