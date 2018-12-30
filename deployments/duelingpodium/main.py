@@ -206,8 +206,11 @@ def reconcile_magic(t_topic, t_payload):
             #boost attack and counter for next round (or again and again) - again, use the round number
             print("boosting Attack from: %d" % playerCurrentState['Attack'])
             playerCurrentState['Attack'] = playerCurrentState['Attack'] + (playerCurrentState['Attack'] * (playerCurrentState['Boost']/100))
-            print("boosting Counter to: %d" % playerCurrentState['Counter'])
+            print("boosting Attack to: %d" % playerCurrentState['Attack'])
+
+            print("boosting Counter from: %d" % playerCurrentState['Counter'])
             playerCurrentState['Counter'] = playerCurrentState['Counter'] + (playerCurrentState['Counter'] * (playerCurrentState['Boost']/100))
+            print("boosting Counter to: %d" % playerCurrentState['Counter'])
             skip_ABC_reset = 1
 
     hostmqtt.publishL(myHostname, DEVICENAME, 'health-info', {'player': playerCurrentState['Energy'], 'opponent_attack': opponentsCurrent['Attack']})
