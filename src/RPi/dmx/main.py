@@ -76,7 +76,7 @@ def smokeyflashy(DMXadjustment, spellDMXcode):
     mydmx.render()
       
     # TODO: wait four seconds.  how should we do that?  a callback?
-    threading.Timer(3, stopthatdmxthing, args=46+DMXadjustment).start()
+    threading.Timer(3, stopthatdmxthing, args=[46+DMXadjustment]).start()
     threading.Timer(4, stopthathorribleflashing).start()
 
 def attack(topic, payload):
