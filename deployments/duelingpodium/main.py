@@ -395,10 +395,16 @@ def set_modifier(topic, payload):
 def magic_cast(topic, payload):
     host, _, _ = topic.split('/')
     if host != myHostname:
+        if their_magic_cast != None:
+            # you can only cast once per turn
+            return
         global their_magic_cast
         # TODO: this needs to be the other podium's playerCurrentState
         their_magic_cast = payload
     else:
+        if my_magic_cast != None:
+            # you can only cast once per turn
+            return
         global my_magic_cast
         my_magic_cast = payload
         show_health('white')
