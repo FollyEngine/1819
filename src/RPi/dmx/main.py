@@ -43,7 +43,7 @@ except:
 		except:
 		    print("DMX failed on USB4")  
 
-mqttHost = config.getValue("mqtthostname", "mqtt.local")
+mqttHost = config.getValue("mqtthostname", "10.10.11.2")
 myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, "relay_from")
 hostmqtt.loop_start()   # use the background thread
