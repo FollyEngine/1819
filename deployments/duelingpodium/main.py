@@ -149,6 +149,10 @@ spellColours = {
 }
 
 def reconcile_magic(t_topic, t_payload):
+    if my_magic_cast == None or their_magic_cast == None:
+        print('reconcile_magic not ready')
+        return
+
     global skip_ABC_reset
     global playerCurrentState
     global their_magic_cast
@@ -156,123 +160,120 @@ def reconcile_magic(t_topic, t_payload):
     their_attack_disabled = False
     my_attack_disabled = False
     my_attack_value = playerCurrentState['Attack']
-    if my_magic_cast != None and their_magic_cast != None:
-        print('reconcile_magic, I cast: %s, they cast: %s' % (my_magic_cast['modifier'], their_magic_cast['modifier']))
-        # we use their cast info to determin the effects on us
-        if their_magic_cast['modifier'] == 'attack':
-            print('they attack %d' % opponentsCurrent['Attack'])
-            if opponentsCurrent['Attack'] == 0:
-                their_attack_disabled = True
-            elif my_magic_cast['modifier'] == 'counter':
-                print('I counter')
-                opponentsCurrent['Attack'] = opponentsCurrent['Attack'] - playerCurrentState['Counter']
-                print("My counter reduced their attach by %d to %d" % (playerCurrentState['Counter'], opponentsCurrent['Attack']))
-                if opponentsCurrent['Attack'] < 0:
-                    # this means their attack reflects on them (see below)
+    print('reconcile_magic, I cast: %s, they cast: %s' % (my_magic_cast['modifier'], their_magic_cast['modifier']))
+    # we use their cast info to determin the effects on us
+    if their_magic_cast['modifier'] == 'attack':
+        print('they attack %d' % opponentsCurrent['Attack'])
+        if opponentsCurrent['Attack'] == 0:
+            their_attack_disabled = True
+        elif my_magic_cast['modifier'] == 'counter':
+            print('I counter')
+            opponentsCurrent['Attack'] = opponentsCurrent['Attack'] - playerCurrentState['Counter']
+            print("My counter reduced their attach by %d to %d" % (playerCurrentState['Counter'], opponentsCurrent['Attack']))
+            if opponentsCurrent['Attack'] < 0:
+                # this means their attack reflects on them (see below)
+                counter_reflected_attack = True
+                opponentsCurrent['Attack'] = 0
+        elif my_magic_cast['modifier'] == 'boost':
+            print('i boosted, it failed')
+            global boost
+            boost = 0
+            skip_ABC_reset = 0
+        elif my_magic_cast['modifier'] == 'attack':
+            print('i attack %d' % playerCurrentState['Attack'])
+
+        if not their_attack_disabled:
+            playerCurrentState['Energy'] = playerCurrentState['Energy'] - opponentsCurrent['Attack']
+    else:
+        if my_magic_cast['modifier'] == 'attack':
+            print('I attack %d' % playerCurrentState['Attack'])
+            if playerCurrentState['Attack'] == 0:
+                my_attack_disabled = True
+            elif their_magic_cast['modifier'] == 'counter':
+                print('they counter')
+                my_attack_value = playerCurrentState['Attack'] - opponentsCurrent['Counter']
+                if my_attack_value < 0:
+                    print("Their counter (%d) reflected some of my attack: %d" % (opponentsCurrent['Counter'], my_attack_value))
+                    # some of my attack energy was reflected onto me
                     counter_reflected_attack = True
-                    opponentsCurrent['Attack'] = 0
-            elif my_magic_cast['modifier'] == 'boost':
-                print('i boosted, it failed')
-                global boost
-                boost = 0
-                skip_ABC_reset = 0
-            elif my_magic_cast['modifier'] == 'attack':
-                print('i attack %d' % playerCurrentState['Attack'])
-
-            if not their_attack_disabled:
-                playerCurrentState['Energy'] = playerCurrentState['Energy'] - opponentsCurrent['Attack']
-        else:
-            if my_magic_cast['modifier'] == 'attack':
-                print('I attack %d' % playerCurrentState['Attack'])
-                if playerCurrentState['Attack'] == 0:
-                    my_attack_disabled = True
-                elif their_magic_cast['modifier'] == 'counter':
-                    print('they counter')
-                    my_attack_value = playerCurrentState['Attack'] - opponentsCurrent['Counter']
-                    if my_attack_value < 0:
-                        print("Their counter (%d) reflected some of my attack: %d" % (opponentsCurrent['Counter'], my_attack_value))
-                        # some of my attack energy was reflected onto me
-                        counter_reflected_attack = True
-                        playerCurrentState['Energy'] = playerCurrentState['Energy'] + my_attack_value
-            if my_magic_cast['modifier'] == 'boost':
-                print('i boosted')
-                #boost attack and counter for next round (or again and again) - again, use the round number
-                print("boosting Attack from: %d" % playerCurrentState['Attack'])
-                playerCurrentState['Attack'] = playerCurrentState['Attack'] + (playerCurrentState['Attack'] * (playerCurrentState['Boost']/100))
-                print("boosting Counter to: %d" % playerCurrentState['Counter'])
-                playerCurrentState['Counter'] = playerCurrentState['Counter'] + (playerCurrentState['Counter'] * (playerCurrentState['Boost']/100))
-                skip_ABC_reset = 1
-
-        hostmqtt.publishL(myHostname, DEVICENAME, 'health', {'player': playerCurrentState['Energy'], 'opponent_attack': opponentsCurrent['Attack']})
-        print("my energy %d, their energy %d" % (playerCurrentState['Energy'], opponentsCurrent['Energy']))
-
-        if their_magic_cast['modifier'] == 'disable':
-            print('they cast disable')
-            if my_magic_cast['modifier'] == 'attack':
-                playerCurrentState['Attack'] = 0
-            elif my_magic_cast['modifier'] == 'boost':
-                playerCurrentState['Boost'] = 0
-            elif my_magic_cast['modifier'] == 'counter':
-                playerCurrentState['Counter'] = 0
+                    playerCurrentState['Energy'] = playerCurrentState['Energy'] + my_attack_value
+        if my_magic_cast['modifier'] == 'boost':
+            print('i boosted')
+            #boost attack and counter for next round (or again and again) - again, use the round number
+            print("boosting Attack from: %d" % playerCurrentState['Attack'])
+            playerCurrentState['Attack'] = playerCurrentState['Attack'] + (playerCurrentState['Attack'] * (playerCurrentState['Boost']/100))
+            print("boosting Counter to: %d" % playerCurrentState['Counter'])
+            playerCurrentState['Counter'] = playerCurrentState['Counter'] + (playerCurrentState['Counter'] * (playerCurrentState['Boost']/100))
             skip_ABC_reset = 1
 
+    hostmqtt.publishL(myHostname, DEVICENAME, 'health', {'player': playerCurrentState['Energy'], 'opponent_attack': opponentsCurrent['Attack']})
+    print("my energy %d, their energy %d" % (playerCurrentState['Energy'], opponentsCurrent['Energy']))
 
-        # FX for this duel
-        if counter_reflected_attack:
-            # reflected attack
-            print("---- countered!")
-            if my_magic_cast['modifier'] == 'attack' and not my_attack_disabled:
-                spell = calculateMagic(magic)
-                print("--- countered my attack(%s) reflected"% spell)
-                play(spellSounds[spell])
-            if their_magic_cast['modifier'] == 'attack' and not their_attack_disabled:
-                spell = calculateMagic(their_magic_cast['magic'])
-                print("--- countered their attack(%s) reflected"% spell)
-                hostmqtt.publishL('dmx', 'dmx', 'play', {
-                    'From': myHostname,
-                    'From2': touchdevice,
-                    'Spell': spell,
-                    "Parcans": spellColours[spell],
-                    "Counter": "Reflected",
-                    })    
-        else:
-            # if they attack me
-            if their_magic_cast['modifier'] == 'attack' and not their_attack_disabled:
-                spell = calculateMagic(their_magic_cast['magic'])
-                print("their attack(%s)"% spell)
-                play(spellSounds[spell])
-            if my_magic_cast['modifier'] == 'attack' and not my_attack_disabled:
-                spell = calculateMagic(magic)
-                print("my attack(%s)"% spell)
-                hostmqtt.publishL('dmx', 'dmx', 'play', {
-                    'From': myHostname,
-                    'From2': touchdevice,
-                    'Spell': spell,
-                    "Parcans": spellColours[spell],
-                    })    
-        if my_attack_disabled:
-            play('Dueling/Disable.wav')
-        if my_magic_cast['modifier'] == 'boost':
-            play('Dueling/Boost.wav')
-        elif my_magic_cast['modifier'] == 'counter' and counter_reflected_attack:
-            play('Dueling/Counter.wav')
-        elif my_magic_cast['modifier'] == 'disable':
-            play('Dueling/Disable.wav')
+    if their_magic_cast['modifier'] == 'disable':
+        print('they cast disable')
+        if my_magic_cast['modifier'] == 'attack':
+            playerCurrentState['Attack'] = 0
+        elif my_magic_cast['modifier'] == 'boost':
+            playerCurrentState['Boost'] = 0
+        elif my_magic_cast['modifier'] == 'counter':
+            playerCurrentState['Counter'] = 0
+        skip_ABC_reset = 1
 
-        # send player's currentState to other podium
-        hostmqtt.publishL(otherPodium, DEVICENAME, 'player-state', playerCurrentState)
-        report_state('combat!')
-        global health
-        health = 100 * playerCurrentState['Energy'] / playerStartState['Energy']
-        hostmqtt.publishL(myHostname, DEVICENAME, 'health', {'health': health})
-        if health <= 0:
-            hostmqtt.publish('combat-end', {'I': 'died'})
 
-        reset()
-        hostmqtt.publishL(otherPodium, DEVICENAME, 'player-state', playerCurrentState)
-        show_health()
+    # FX for this duel
+    if counter_reflected_attack:
+        # reflected attack
+        print("---- countered!")
+        if my_magic_cast['modifier'] == 'attack' and not my_attack_disabled:
+            spell = calculateMagic(magic)
+            print("--- countered my attack(%s) reflected"% spell)
+            play(spellSounds[spell])
+        if their_magic_cast['modifier'] == 'attack' and not their_attack_disabled:
+            spell = calculateMagic(their_magic_cast['magic'])
+            print("--- countered their attack(%s) reflected"% spell)
+            hostmqtt.publishL('dmx', 'dmx', 'play', {
+                'From': myHostname,
+                'From2': touchdevice,
+                'Spell': spell,
+                "Parcans": spellColours[spell],
+                "Counter": "Reflected",
+                })    
     else:
-        print('reconcile_magic not ready')
+        # if they attack me
+        if their_magic_cast['modifier'] == 'attack' and not their_attack_disabled:
+            spell = calculateMagic(their_magic_cast['magic'])
+            print("their attack(%s)"% spell)
+            play(spellSounds[spell])
+        if my_magic_cast['modifier'] == 'attack' and not my_attack_disabled:
+            spell = calculateMagic(magic)
+            print("my attack(%s)"% spell)
+            hostmqtt.publishL('dmx', 'dmx', 'play', {
+                'From': myHostname,
+                'From2': touchdevice,
+                'Spell': spell,
+                "Parcans": spellColours[spell],
+                })    
+    if my_attack_disabled:
+        play('Dueling/Disable.wav')
+    if my_magic_cast['modifier'] == 'boost':
+        play('Dueling/Boost.wav')
+    elif my_magic_cast['modifier'] == 'counter' and counter_reflected_attack:
+        play('Dueling/Counter.wav')
+    elif my_magic_cast['modifier'] == 'disable':
+        play('Dueling/Disable.wav')
+
+    # send player's currentState to other podium
+    hostmqtt.publishL(otherPodium, DEVICENAME, 'player-state', playerCurrentState)
+    report_state('combat!')
+    global health
+    health = 100 * playerCurrentState['Energy'] / playerStartState['Energy']
+    hostmqtt.publishL(myHostname, DEVICENAME, 'health', {'health': health})
+    if health <= 0:
+        hostmqtt.publish('combat-end', {'I': 'died'})
+
+    reset()
+    hostmqtt.publishL(otherPodium, DEVICENAME, 'player-state', playerCurrentState)
+    show_health()
 
     # TODO: how to start the timeout....
 ########################################
