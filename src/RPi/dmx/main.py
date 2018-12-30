@@ -48,8 +48,8 @@ myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, "relay_from")
 hostmqtt.loop_start()   # use the background thread
 
-master_mqtt_host = config.getValue("mqttmaster", "mqtt.thegame.folly.site")
-mastermqtt = mqtt.MQTT(master_mqtt_host, myHostname, "relay_to", "everyone", "S4C7Tzjc2gD92y9", 1883)
+#master_mqtt_host = config.getValue("mqttmaster", "mqtt.thegame.folly.site")
+#mastermqtt = mqtt.MQTT(master_mqtt_host, myHostname, "relay_to", "everyone", "S4C7Tzjc2gD92y9", 1883)
 
 
 
@@ -81,7 +81,7 @@ def smokeyflashy(DMXadjustment, spellDMXcode):
 
 def attack(topic, payload):
     try:
-      mastermqtt.status({"status": "attacked!"})
+      hostmqtt.status({"status": "attacked!"})
       print("attacked!  spell %s from %s" % (payload["Spell"],payload["From"]))
       # decode the json, it should look like this, where the podium is the one sending the spell
   #podium2/dmx/play {'from': 'podium2', 'spell':'Air'}
@@ -122,19 +122,19 @@ spellDMXcodes = {
 smokeyflashy(0,"Electricity")
 stopthathorribleflashing()
 
-mastermqtt.subscribeL("+", "dmx", "play", attack)
+hostmqtt.subscribeL("+", "dmx", "play", attack)
 
 hostmqtt.status({"status": "listening"})
-mastermqtt.status({"status": "listening"})
+#mastermqtt.status({"status": "listening"})
 
 try:
-    #while True:
-    #    sleep(1)
-    mastermqtt.loop_forever()
+    while True:
+        sleep(1)
+#    hostmqtt.loop_forever()
 except Exception as ex:
     traceback.print_exc()
 except KeyboardInterrupt:
     print("exit")
 
 hostmqtt.status({"status": "STOPPED"})
-mastermqtt.status({"status": "STOPPED"})
+#mastermqtt.status({"status": "STOPPED"})
