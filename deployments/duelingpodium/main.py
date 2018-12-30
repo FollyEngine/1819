@@ -42,6 +42,10 @@ def play(sound):
                 })
 health = 0
 def show_health(tip = 'off'):
+    if playerCurrentState != None and opponentsCurrent != None:
+        hostmqtt.publishL(myHostname, DEVICENAME, 'health-info', {'player': playerCurrentState['Energy'], 'opponent_attack': opponentsCurrent['Attack']})
+        print("my energy %d, their energy %d" % (playerCurrentState['Energy'], opponentsCurrent['Energy']))
+
     hostmqtt.publishL(myHostname, 'neopixel', 'play', {
                     'operation': 'health',
                     'count': health,
@@ -206,7 +210,7 @@ def reconcile_magic(t_topic, t_payload):
             playerCurrentState['Counter'] = playerCurrentState['Counter'] + (playerCurrentState['Counter'] * (playerCurrentState['Boost']/100))
             skip_ABC_reset = 1
 
-    hostmqtt.publishL(myHostname, DEVICENAME, 'health', {'player': playerCurrentState['Energy'], 'opponent_attack': opponentsCurrent['Attack']})
+    hostmqtt.publishL(myHostname, DEVICENAME, 'health-info', {'player': playerCurrentState['Energy'], 'opponent_attack': opponentsCurrent['Attack']})
     print("my energy %d, their energy %d" % (playerCurrentState['Energy'], opponentsCurrent['Energy']))
 
     if their_magic_cast['modifier'] == 'disable':
