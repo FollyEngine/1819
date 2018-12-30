@@ -254,7 +254,7 @@ def reconcile_magic(t_topic, t_payload):
             play('Dueling/Disable.wav')
         if my_magic_cast['modifier'] == 'boost':
             play('Dueling/Boost.wav')
-        elif my_magic_cast['modifier'] == 'counter':
+        elif my_magic_cast['modifier'] == 'counter' and counter_reflected_attack:
             play('Dueling/Counter.wav')
         elif my_magic_cast['modifier'] == 'disable':
             play('Dueling/Disable.wav')
