@@ -430,6 +430,7 @@ def magic_cast(topic, payload):
         my_magic_cast = payload
         show_health('white')
 
+    hostmqtt.publishL(otherPodium, DEVICENAME, 'player-state', playerCurrentState)
     hostmqtt.publishL('all', DEVICENAME, 'reconcile_magic', {'reason': 'magic_was_cast'})
 
 def read_uhf(topic, payload):
