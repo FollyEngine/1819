@@ -92,8 +92,6 @@ def reset():
             playerCurrentState['Attack'] = playerStartState['Attack']
             playerCurrentState['Boost'] = playerStartState['Boost']
             playerCurrentState['Counter'] = playerStartState['Counter']
-        if playerCurrentState['Attack'] == 0 and playerCurrentState['Boost'] == 0 and playerCurrentState['Counter'] == 0:
-            play('Dueling/Disable.wav')
     show_health()
     report_state(state)
 
@@ -155,12 +153,16 @@ def reconcile_magic(t_topic, t_payload):
     global playerCurrentState
     global their_magic_cast
     counter_reflected_attack = False
+    their_attack_disabled = False
+    my_attack_disabled = False
     if my_magic_cast != None and their_magic_cast != None:
         print('reconcile_magic, I cast: %s, they cast: %s' % (my_magic_cast['modifier'], their_magic_cast['modifier']))
         # we use their cast info to determin the effects on us
         if their_magic_cast['modifier'] == 'attack':
             print('they attack %d' % opponentsCurrent['Attack'])
-            if my_magic_cast['modifier'] == 'counter':
+            if opponentsCurrent['Attack'] == 0:
+                their_attack_disabled = True
+            elif my_magic_cast['modifier'] == 'counter':
                 print('I counter')
                 opponentsCurrent['Attack'] = opponentsCurrent['Attack'] - playerCurrentState['Counter']
                 print("My counter reduced their attach by %d to %d" % (playerCurrentState['Counter'], opponentsCurrent['Attack']))
@@ -176,11 +178,14 @@ def reconcile_magic(t_topic, t_payload):
             elif my_magic_cast['modifier'] == 'attack':
                 print('i attack %d' % playerCurrentState['Attack'])
 
-            playerCurrentState['Energy'] = playerCurrentState['Energy'] - opponentsCurrent['Attack']
+            if not their_attack_disabled:
+                playerCurrentState['Energy'] = playerCurrentState['Energy'] - opponentsCurrent['Attack']
         else:
             if my_magic_cast['modifier'] == 'attack':
                 print('I attack %d' % playerCurrentState['Attack'])
-                if their_magic_cast['modifier'] == 'counter':
+                if playerCurrentState['Attack'] == 0:
+                    my_attack_disabled = True
+                elif their_magic_cast['modifier'] == 'counter':
                     print('they counter')
                     playerCurrentState['Attack'] = playerCurrentState['Attack'] - opponentsCurrent['Counter']
                     if playerCurrentState['Attack'] < 0:
@@ -215,11 +220,11 @@ def reconcile_magic(t_topic, t_payload):
         if counter_reflected_attack:
             # reflected attack
             print("---- countered!")
-            if my_magic_cast['modifier'] == 'attack':
+            if my_magic_cast['modifier'] == 'attack' and not my_attack_disabled:
                 spell = calculateMagic(magic)
                 print("--- countered my attack(%s) reflected"% spell)
                 play(spellSounds[spell])
-            if their_magic_cast['modifier'] == 'attack':
+            if their_magic_cast['modifier'] == 'attack' and not their_attack_disabled:
                 spell = calculateMagic(their_magic_cast['magic'])
                 print("--- countered their attack(%s) reflected"% spell)
                 hostmqtt.publishL('dmx', 'dmx', 'play', {
@@ -231,11 +236,11 @@ def reconcile_magic(t_topic, t_payload):
                     })    
         else:
             # if they attack me
-            if their_magic_cast['modifier'] == 'attack':
+            if their_magic_cast['modifier'] == 'attack' and not their_attack_disabled:
                 spell = calculateMagic(their_magic_cast['magic'])
                 print("their attack(%s)"% spell)
                 play(spellSounds[spell])
-            if my_magic_cast['modifier'] == 'attack':
+            if my_magic_cast['modifier'] == 'attack' and not my_attack_disabled:
                 spell = calculateMagic(magic)
                 print("my attack(%s)"% spell)
                 hostmqtt.publishL('dmx', 'dmx', 'play', {
@@ -244,6 +249,8 @@ def reconcile_magic(t_topic, t_payload):
                     'Spell': spell,
                     "Parcans": spellColours[spell],
                     })    
+        if my_attack_disabled:
+            play('Dueling/Disable.wav')
         if my_magic_cast['modifier'] == 'boost':
             play('Dueling/Boost.wav')
         elif my_magic_cast['modifier'] == 'counter':
