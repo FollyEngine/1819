@@ -261,6 +261,7 @@ def reconcile_magic(t_topic, t_payload):
             hostmqtt.publish('combat-end', {'I': 'died'})
 
         reset()
+        hostmqtt.publishL(otherPodium, DEVICENAME, 'player-state', playerCurrentState)
         show_health()
     else:
         print('reconcile_magic not ready')
