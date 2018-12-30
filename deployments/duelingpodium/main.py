@@ -155,6 +155,7 @@ def reconcile_magic(t_topic, t_payload):
     counter_reflected_attack = False
     their_attack_disabled = False
     my_attack_disabled = False
+    my_attack_value = playerCurrentState['Attack']
     if my_magic_cast != None and their_magic_cast != None:
         print('reconcile_magic, I cast: %s, they cast: %s' % (my_magic_cast['modifier'], their_magic_cast['modifier']))
         # we use their cast info to determin the effects on us
@@ -187,12 +188,12 @@ def reconcile_magic(t_topic, t_payload):
                     my_attack_disabled = True
                 elif their_magic_cast['modifier'] == 'counter':
                     print('they counter')
-                    playerCurrentState['Attack'] = playerCurrentState['Attack'] - opponentsCurrent['Counter']
-                    if playerCurrentState['Attack'] < 0:
-                        print("Their counter (%d) reflected some of my attack: %d" % (opponentsCurrent['Counter'], playerCurrentState['Attack']))
+                    my_attack_value = playerCurrentState['Attack'] - opponentsCurrent['Counter']
+                    if my_attack_value < 0:
+                        print("Their counter (%d) reflected some of my attack: %d" % (opponentsCurrent['Counter'], my_attack_value))
                         # some of my attack energy was reflected onto me
                         counter_reflected_attack = True
-                        playerCurrentState['Energy'] = playerCurrentState['Energy'] + playerCurrentState['Attack']
+                        playerCurrentState['Energy'] = playerCurrentState['Energy'] + my_attack_value
             if my_magic_cast['modifier'] == 'boost':
                 print('i boosted')
                 #boost attack and counter for next round (or again and again) - again, use the round number
