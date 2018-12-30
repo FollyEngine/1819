@@ -80,7 +80,6 @@ def smokeyflashy(DMXadjustment, spellDMXcode):
     threading.Timer(4, stopthathorribleflashing).start()
 
 def attack(topic, payload):
-    try:
       hostmqtt.status({"status": "attacked!"})
       print("attacked!  spell %s from %s" % (payload["Spell"],payload["From"]))
       # decode the json, it should look like this, where the podium is the one sending the spell
@@ -98,8 +97,6 @@ def attack(topic, payload):
         DMXadjustment = 100
       
       smokeyflashy(DMXadjustment, payload["Spell"])
-    except Exception as ex:
-        traceback.print_exc()
 
 # these codes are for one side.  the other side is just the same +100
 # TODO : the mixed elements should actually flash 1 second between the two colours
