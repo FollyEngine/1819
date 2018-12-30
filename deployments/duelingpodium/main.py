@@ -176,8 +176,6 @@ def reconcile_magic(t_topic, t_payload):
             elif my_magic_cast['modifier'] == 'attack':
                 print('i attack %d' % playerCurrentState['Attack'])
 
-            hostmqtt.publishL(myHostname, DEVICENAME, 'health', {'player': playerCurrentState['Energy'], 'opponent_attack': opponentsCurrent['Attack']})
-            print("my energy %d, their energy %d" % (playerCurrentState['Energy'], opponentsCurrent['Attack']))
             playerCurrentState['Energy'] = playerCurrentState['Energy'] - opponentsCurrent['Attack']
         else:
             if my_magic_cast['modifier'] == 'attack':
@@ -188,7 +186,7 @@ def reconcile_magic(t_topic, t_payload):
                     if playerCurrentState['Attack'] < 0:
                         print("Their counter (%d) reflected some of my attack: %d" % (opponentsCurrent['Counter'], playerCurrentState['Attack']))
                         # some of my attack energy was reflected onto me
-                        counter_reflected_attack = False
+                        counter_reflected_attack = True
                         playerCurrentState['Energy'] = playerCurrentState['Energy'] + playerCurrentState['Attack']
             if my_magic_cast['modifier'] == 'boost':
                 print('i boosted')
@@ -199,12 +197,17 @@ def reconcile_magic(t_topic, t_payload):
                 playerCurrentState['Counter'] = playerCurrentState['Counter'] + (playerCurrentState['Counter'] * (playerCurrentState['Boost']/100))
                 skip_ABC_reset = 1
 
+        hostmqtt.publishL(myHostname, DEVICENAME, 'health', {'player': playerCurrentState['Energy'], 'opponent_attack': opponentsCurrent['Attack']})
+        print("my energy %d, their energy %d" % (playerCurrentState['Energy'], opponentsCurrent['Energy']))
 
         if their_magic_cast['modifier'] == 'disable':
             print('they cast disable')
-            playerCurrentState['Attack'] = 0
-            playerCurrentState['Boost'] = 0
-            playerCurrentState['Counter'] = 0
+            if my_magic_cast['modifier'] == 'attack':
+                playerCurrentState['Attack'] = 0
+            elif my_magic_cast['modifier'] == 'boost':
+                playerCurrentState['Boost'] = 0
+            elif my_magic_cast['modifier'] == 'counter':
+                playerCurrentState['Counter'] = 0
             skip_ABC_reset = 1
 
 
@@ -214,11 +217,11 @@ def reconcile_magic(t_topic, t_payload):
             print("---- countered!")
             if my_magic_cast['modifier'] == 'attack':
                 spell = calculateMagic(magic)
-                print("--- countered attack(%s) reflected"% spell)
+                print("--- countered my attack(%s) reflected"% spell)
                 play(spellSounds[spell])
             if their_magic_cast['modifier'] == 'attack':
                 spell = calculateMagic(their_magic_cast['magic'])
-                print("--- countered attack(%s) reflected"% spell)
+                print("--- countered their attack(%s) reflected"% spell)
                 hostmqtt.publishL('dmx', 'dmx', 'play', {
                     'From': myHostname,
                     'From2': touchdevice,
