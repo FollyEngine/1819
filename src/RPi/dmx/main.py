@@ -125,9 +125,9 @@ hostmqtt.status({"status": "listening"})
 #mastermqtt.status({"status": "listening"})
 
 try:
-#    while True:
-#        sleep(1)
-    hostmqtt.loop_forever()
+    while True:
+        sleep(1)
+#    hostmqtt.loop_forever()
 except Exception as ex:
     traceback.print_exc()
 except KeyboardInterrupt:
