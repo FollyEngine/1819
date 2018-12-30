@@ -410,17 +410,17 @@ def set_modifier(topic, payload):
 def magic_cast(topic, payload):
     host, _, _ = topic.split('/')
     if host != myHostname:
+        global their_magic_cast
         if their_magic_cast != None:
             # you can only cast once per turn
             return
-        global their_magic_cast
         # TODO: this needs to be the other podium's playerCurrentState
         their_magic_cast = payload
     else:
+        global my_magic_cast
         if my_magic_cast != None:
             # you can only cast once per turn
             return
-        global my_magic_cast
         my_magic_cast = payload
         show_health('white')
 
@@ -451,13 +451,13 @@ def opponents_state(topic, payload):
     global opponentsCurrent
     opponentsCurrent = payload
 def msg_combat_end(topic, payload):
+    global health
     if health <= 0:
         hostmqtt.publishL(myHostname, 'neopixel', 'combat-end', {'colour': 'red', 'count': 3})
     else:
         hostmqtt.publishL(myHostname, 'neopixel', 'combat-end', {'colour': 'blue', 'count': 3})
     time.sleep(2)
 
-    global health
     health = 0
     reset()
 
