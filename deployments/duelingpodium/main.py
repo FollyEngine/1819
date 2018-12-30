@@ -473,7 +473,10 @@ def read_uhf(topic, payload):
 def opponents_state(topic, payload):
     global opponentsCurrent
     opponentsCurrent = payload
-    hostmqtt.publishL(myHostname, DEVICENAME, 'health-info', {'opponent': 'set', 'player': playerCurrentState['Energy'], 'opponent_energy': opponentsCurrent['Energy']})
+    if opponentsCurrent != None and playerCurrentState != None:
+        hostmqtt.publishL(myHostname, DEVICENAME, 'health-info', {'opponent': 'set', 'player': playerCurrentState['Energy'], 'opponent_energy': opponentsCurrent['Energy']})
+    else:
+        hostmqtt.publishL(myHostname, DEVICENAME, 'health-info', {'opponent': 'None', 'player': 'None'})
 
 def msg_combat_end(topic, payload):
     global health
