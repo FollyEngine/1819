@@ -209,31 +209,39 @@ def reconcile_magic(t_topic, t_payload):
 
 
         # FX for this duel
-        # if they attack me
-        if their_magic_cast['modifier'] == 'attack':
-            spell = calculateMagic(their_magic_cast['magic'])
-            if counter_reflected_attack:
+        if counter_reflected_attack:
+            # reflected attack
+            print("---- countered!")
+            if my_magic_cast['modifier'] == 'attack':
+                spell = calculateMagic(magic)
+                print("--- countered attack(%s) reflected"% spell)
+                play(spellSounds[spell])
+            if their_magic_cast['modifier'] == 'attack':
+                spell = calculateMagic(their_magic_cast['magic'])
+                print("--- countered attack(%s) reflected"% spell)
                 hostmqtt.publishL('dmx', 'dmx', 'play', {
                     'From': myHostname,
                     'From2': touchdevice,
                     'Spell': spell,
                     "Parcans": spellColours[spell],
-                    })
-            else:
-                # play the opponent's attack sounds
+                    "Counter": "Reflected",
+                    })    
+        else:
+            # if they attack me
+            if their_magic_cast['modifier'] == 'attack':
+                spell = calculateMagic(their_magic_cast['magic'])
+                print("their attack(%s)"% spell)
                 play(spellSounds[spell])
-        if my_magic_cast['modifier'] == 'attack':
-            spell = calculateMagic(magic)
-            if counter_reflected_attack:
-                play(spellSounds[spell])
-            else:
+            if my_magic_cast['modifier'] == 'attack':
+                spell = calculateMagic(magic)
+                print("my attack(%s)"% spell)
                 hostmqtt.publishL('dmx', 'dmx', 'play', {
                     'From': myHostname,
                     'From2': touchdevice,
                     'Spell': spell,
                     "Parcans": spellColours[spell],
                     })    
-        elif my_magic_cast['modifier'] == 'boost':
+        if my_magic_cast['modifier'] == 'boost':
             play('Dueling/Boost.wav')
         elif my_magic_cast['modifier'] == 'counter':
             hostmqtt.publishL('dmx', 'dmx', 'play', {
