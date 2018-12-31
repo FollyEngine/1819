@@ -114,11 +114,13 @@ spellDMXcodes = {
 "Dust": [37,32,34,46],
 "Ice": [37,33,34,46],
 "Light": [37,35,46],
-"Strobe": [11,12]
+"Strobe": [11,12],
+"IAmDisabled": [21,27]
 }
 
 # test on startup
 smokeyflashy(0,"Electricity")
+smokeyflashy(0,"Strobe")
 stopthathorribleflashing()
 
 hostmqtt.subscribeL("+", "dmx", "play", attack)
