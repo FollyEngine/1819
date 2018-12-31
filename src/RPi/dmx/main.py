@@ -115,6 +115,7 @@ spellDMXcodes = {
 "Ice": [37,33,34,46],
 "Light": [37,35,46],
 "Strobe": [11,12],
+"Lightning": [11,12],
 "IAmDisabled": [21,27]
 }
 
