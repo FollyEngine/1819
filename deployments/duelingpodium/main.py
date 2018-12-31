@@ -161,7 +161,6 @@ def reconcile_magic(t_topic, t_payload):
 
     global skip_ABC_reset
     global playerCurrentState
-    global their_magic_cast
     counter_reflected_attack = False
     their_attack_disabled = False
     my_attack_disabled = False
