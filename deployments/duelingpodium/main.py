@@ -153,6 +153,8 @@ spellColours = {
 }
 
 def reconcile_magic(t_topic, t_payload):
+    global their_magic_cast
+    global my_magic_cast
     if my_magic_cast == None or their_magic_cast == None:
         print('reconcile_magic not ready')
         return
