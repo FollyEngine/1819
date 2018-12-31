@@ -27,12 +27,14 @@ otherPodium = 'podium1'
 if myHostname == otherPodium:
     otherPodium = 'podium2'
 
+othertouchdevice = 'blackpodium'
 touchdevice = 'blackpodium'
 if myHostname == 'podium1':
     touchdevice = 'silverpodium'
+    othertouchdevice = 'goldpodium'
 elif myHostname == 'podium2':
     touchdevice = 'goldpodium'
-
+    othertouchdevice = 'silverpodium'
 
 ########################################
 def play(sound):
@@ -267,6 +269,11 @@ def reconcile_magic(t_topic, t_payload):
         play('Dueling/Boost.wav')
     elif my_magic_cast['modifier'] == 'counter' and counter_reflected_attack:
         play('Dueling/Counter.wav')
+        hostmqtt.publishL('dmx', 'dmx', 'play', {
+            'From': otherPodium,
+            'From2': othertouchdevice,
+            'Spell': 'Strobe',
+            })
     elif my_magic_cast['modifier'] == 'disable':
         play('Dueling/Disable.wav')
 
