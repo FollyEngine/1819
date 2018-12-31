@@ -324,7 +324,7 @@ spellTypes = {
 
     'FE': 'Lava',
     'FW': 'Steam',
-    'FA': 'Lightening',
+    'FA': 'Lightning',
 
     'EF': 'Lava',
     'EW': 'Wood',
@@ -334,7 +334,7 @@ spellTypes = {
     'WE': 'Wood',
     'WA': 'Ice',
 
-    'AF': 'Lightening',
+    'AF': 'Lightning',
     'AE': 'Dust',
     'AW': 'Ice',
 }
