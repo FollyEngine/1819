@@ -12,7 +12,7 @@
 if [ ! -f main_pid ] ; then
   pip install --no-cache-dir -r ./src/RPi/$HOSTNAME/requirements.txt
   
-  cd src/RPi && nohup python ./$HOSTNAME/main.py &
+  cd src/RPi && nohup python ./$HOSTNAME/main.py >> local.log 2>&1  &
   echo $! > main_pid
 
   mosquitto_pub -h "mqtt.thegame.folly.site"  -u mqtt.thegame.folly.site -P S4C7Tzjc2gD92y9  -t "$HOSTNAME/$HOSTNAME/health" -m "{\"status\":\"started\",\"time\":\"$(date +%Y-%m-%dZ%H:%M:%S)\",\"device\":\"$HOSTNAME $(hostname -I)\"}"
@@ -29,7 +29,7 @@ if [ ! $gitstatus ] ; then
     kill $(cat main_pid)
     ### BUG WORKAROUND : kill the main.py as well, in case it's been started manually or there's a bug (see above)
     pkill -f "python ./$HOSTNAME/main.py"
-    cd src/RPi && nohup python ./$HOSTNAME/main.py &
+    cd src/RPi && nohup python ./$HOSTNAME/main.py >> local.log 2>&1 &
     echo $! > main_pid
     mosquitto_pub -h "mqtt.thegame.folly.site"  -u mqtt.thegame.folly.site -P S4C7Tzjc2gD92y9  -t "$HOSTNAME/$HOSTNAME/health" -m "{\"status\":\"updated\",\"time\":\"$(date +%Y-%m-%dZ%H:%M:%S)\",\"device\":\"$HOSTNAME $(hostname -I)\"}"
 fi
