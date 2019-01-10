@@ -100,8 +100,11 @@ def attack(topic, payload):
 
 # these codes are for one side.  the other side is just the same +100
 # TODO : the mixed elements should actually flash 1 second between the two colours
-# Strobe: 10, 110
-# PinSpots: 20 to 26
+# and the other podium is these number + 100
+# Strobe: 10, 110 (2 channel)
+# parcan: 30
+# smoke machine: 10 (one channel)
+# PinSpots: 20 to 26 (7 channel)
 spellDMXcodes = {
 "Fire": [37,31,46],
 "Earth": [37,32,46],
