@@ -15,8 +15,8 @@ TODO:
 * Continuous Deployment + health ping
 .* make a bash script that does mqtt health status ; git pull ; restart buzzwire monitor if new
 .* crontab like this
-  @reboot cd ~/1819 ; rm main_pid
-  5,10,15,20,25,30,35,40,45,50,55 * * * * cd ~/1819 && ./update.sh >> local.log 2>&1
+@reboot cd ~/1819 ; rm main_pid
+5,10,15,20,25,30,35,40,45,50,55 * * * * cd ~/1819 && ./update.sh >> local.log 2>&1
 
 
 
