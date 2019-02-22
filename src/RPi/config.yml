@@ -1,0 +1,9 @@
+
+#mqttHost = config.getValue("mqtthostname", "localhost")
+#myHostname = config.getValue("hostname", socket.gethostname())
+#hostmqtt = mqtt.MQTT(mqttHost, myHostname, "relay_from")
+#hostmqtt.loop_start()   # use the background thread
+#master_mqtt_host = config.getValue("mqttmaster", "mqtt.thegame.folly.site")
+
+mqtthostname: "localhost"
+mqttmaster: "mqtt.thegame.folly.site"

@@ -24,13 +24,15 @@ sys.path.append('./mqtt/')
 import mqtt
 import config
 
-mqttHost = config.getValue("mqtthostname", "mqtt.local")
+sleep(5)
+
+mqttHost = config.getValue("mqtthostname", "localhost")
 myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, "relay_from")
 hostmqtt.loop_start()   # use the background thread
 
 master_mqtt_host = config.getValue("mqttmaster", "mqtt.thegame.folly.site")
-mastermqtt = mqtt.MQTT(master_mqtt_host, myHostname, "relay_to", "everyone", "S4C7Tzjc2gD92y9", 1883)
+mastermqtt = mqtt.MQTT(master_mqtt_host, myHostname, "relay_to", "everyone", "S4C7Tzjc2gD92y9", 8883)
 #mastermqtt.loop_start()   # use the background thread
 
 # end load config
