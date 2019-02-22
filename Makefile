@@ -1,9 +1,9 @@
 
 mqtt:
-	mosquitto_sub -h mqtt.thegame.folly.site -v -t +/+/+ -u everyone -P S4C7Tzjc2gD92y9
+	mosquitto_sub -d -h mqtt.thegame.folly.site -v -p 8883 -t +/+/+ -u everyone -P S4C7Tzjc2gD92y9
 
 site:
-	mosquitto_pub -h mqtt.thegame.folly.site -u everyone -P S4C7Tzjc2gD92y9 -t asdf/asdf/asdf -m '{"to": "folly.site"}'
+	mosquitto_pub -d -h mqtt.thegame.folly.site -p 8883 -u everyone -P S4C7Tzjc2gD92y9 -t asdf/asdf/asdf -m '{"to": "folly.site"}'
 
 local:
 	mosquitto_pub -h mqtt.local -t asdf/asdf/asdf -m '{"to": "folly.site"}'
