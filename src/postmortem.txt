@@ -1,0 +1,6 @@
+Woodford Game 1819 post-mortem
+
+We planned two sub-projects : the "switches" and the "podiums"
+The switches were to use 4 Rasberry Pi's and 1 arduino (or maybe two) running tiny servo motors. The hardware for three switches and the Progress Machine was built but never installed.  the software was 50% built. 
+The podiums were to use 6 Rasberry Pi's and 6 ardiunos.  The messaging server (1 RPi) was pretty stable.  The podiums (4 RPis + 2 arduinos + DMX lights/smoke machines) were functional by day three and stable by day 5.  I'm not sure about the cauldron (1 RPi + RFID).  The earthquake machines (2 arduinos + infrared + hardware) did not arrive.  We had planned a couple of dozen wands and four orbs, we ended up with half a dozen wands and one functioning but never used orb.
+

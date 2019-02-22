@@ -43,13 +43,13 @@ except:
 		except:
 		    print("DMX failed on USB4")  
 
-mqttHost = config.getValue("mqtthostname", "localmqttforsure")
+mqttHost = config.getValue("mqtthostname", "mqtt.local")
 myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, "relay_from")
-#hostmqtt.loop_start()   # use the background thread
+hostmqtt.loop_start()   # use the background thread
 
-#master_mqtt_host = config.getValue("mqttmaster", "mqtt.thegame.folly.site")
-#mastermqtt = mqtt.MQTT(master_mqtt_host, myHostname, "relay_to", "everyone", "S4C7Tzjc2gD92y9", 1883)
+master_mqtt_host = config.getValue("mqttmaster", "mqtt.thegame.folly.site")
+mastermqtt = mqtt.MQTT(master_mqtt_host, myHostname, "relay_to", "everyone", "S4C7Tzjc2gD92y9", 1883)
 
 
 
@@ -75,12 +75,13 @@ def smokeyflashy(DMXadjustment, spellDMXcode):
       mydmx.setChannel(dmx+DMXadjustment, 255)     
     mydmx.render()
       
-    # wait 2 seconds, turn off smoke and wait 4 seconds, then turn off everything
-    threading.Timer(2, stopthatdmxthing, args=[46+DMXadjustment]).start()
-    threading.Timer(4, stopthathorribleflashing).start()
+    # TODO: wait four seconds.  how should we do that?  a callback?
+    threading.Timer(3, stopthatdmxthing, args=46+DMXadjustment)
+    threading.Timer(4, stopthathorribleflashing)
 
 def attack(topic, payload):
-      hostmqtt.status({"status": "attacked!"})
+    try:
+      mastermqtt.status({"status": "attacked!"})
       print("attacked!  spell %s from %s" % (payload["Spell"],payload["From"]))
       # decode the json, it should look like this, where the podium is the one sending the spell
   #podium2/dmx/play {'from': 'podium2', 'spell':'Air'}
@@ -94,17 +95,14 @@ def attack(topic, payload):
 #                })    
       DMXadjustment = 0
       if payload["From"] == "podium2":
-        DMXadjustment = 100
+	DMXadjustment = 100
       
       smokeyflashy(DMXadjustment, payload["Spell"])
+    except Exception as ex:
+        traceback.print_exc()
 
 # these codes are for one side.  the other side is just the same +100
 # TODO : the mixed elements should actually flash 1 second between the two colours
-# and the other podium is these number + 100
-# Strobe: 10, 110 (2 channel)
-# parcan: 30
-# smoke machine: 10 (one channel)
-# PinSpots: 20 to 26 (7 channel)
 spellDMXcodes = {
 "Fire": [37,31,46],
 "Earth": [37,32,46],
@@ -117,29 +115,26 @@ spellDMXcodes = {
 "Dust": [37,32,34,46],
 "Ice": [37,33,34,46],
 "Light": [37,35,46],
-"Strobe": [11,12],
-"Lightning": [11,12],
-"IAmDisabled": [21,27]
+"Strobe": [11,12]
 }
 
 # test on startup
 smokeyflashy(0,"Electricity")
-smokeyflashy(0,"Strobe")
 stopthathorribleflashing()
 
-hostmqtt.subscribeL("+", "dmx", "play", attack)
+mastermqtt.subscribeL("+", "dmx", "play", attack)
 
 hostmqtt.status({"status": "listening"})
-#mastermqtt.status({"status": "listening"})
+mastermqtt.status({"status": "listening"})
 
 try:
-#    while True:
-#        sleep(1)
-    hostmqtt.loop_forever()   # use the foreground thread
+    #while True:
+    #    sleep(1)
+    mastermqtt.loop_forever()
 except Exception as ex:
     traceback.print_exc()
 except KeyboardInterrupt:
     print("exit")
 
 hostmqtt.status({"status": "STOPPED"})
-#mastermqtt.status({"status": "STOPPED"})
+mastermqtt.status({"status": "STOPPED"})
