@@ -2,8 +2,8 @@
 
 # run / setup for the Dueling podium RPi
 WHOAMI=$(hostname)
-PACKAGES="mqtt megagame rfid-mifare"
-MQTTHOST="localhost"
+PACKAGES="mqtt megagame audio rfid-mifare"
+MQTTHOST="mqtt.thegame.folly.site"
 CONFIGFILE=
 
 

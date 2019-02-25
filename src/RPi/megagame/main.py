@@ -16,7 +16,7 @@ sys.path.append('./mqtt/')
 import config
 import mqtt
 
-DEVICENAME="healthpixels"
+DEVICENAME="megagame"
 
 mqttHost = config.getValue("mqtthostname", "mqtt.local")
 myHostname = config.getValue("hostname", socket.gethostname())

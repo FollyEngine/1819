@@ -3,7 +3,7 @@
 # run / setup for the Cauldron RPi
 WHOAMI="cauldron"
 PACKAGES="audio mqtt neopixels rfid-ThinkMagic"
-MQTTHOST="mqtt.local"
+MQTTHOST="mqtt.thegame.folly.site"
 CONFIGFILE=
 
 
