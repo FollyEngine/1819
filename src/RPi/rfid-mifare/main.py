@@ -5,6 +5,7 @@ from __future__ import print_function
 from time import sleep
 
 import sys
+import logging
 
 import smartcard.System
 
@@ -53,15 +54,15 @@ class PrintObserver(CardObserver):
         (addedcards, removedcards) = actions
         for card in addedcards:
             info = toHexString(card.atr).replace(' ','')
-            print("+Inserted: ", info)
+            logging.info("+Inserted: ", info)
             
 
             connection = card.createConnection()
             connection.connect( CardConnection.T1_protocol )
             response, sw1, sw2 = connection.transmit(GETUID)
-            print ('response: ', response, ' status words: ', "%x %x" % (sw1, sw2))
+            logging.info('response: ', response, ' status words: ', "%x %x" % (sw1, sw2))
             tagid = toHexString(response).replace(' ','')
-            print ("tagid ",tagid)
+            logging.info ("tagid ",tagid)
 
             hostmqtt.publish("scan", {
                     'atr': info,
@@ -71,7 +72,7 @@ class PrintObserver(CardObserver):
 
         for card in removedcards:
             info = toHexString(card.atr).replace(' ','')
-            print("+Removed: ", info)
+            logging.info("+Removed: ", info)
             hostmqtt.publish("removed", {"atr": info, 'event': 'removed'})
 
 
@@ -82,13 +83,13 @@ if __name__ == '__main__':
     readers = smartcard.System.readers()
     sleep(1)
     if len(readers) < 1:
-        print("No RFID readers found, EXITING")
+        logging.info("No RFID readers found, EXITING")
         exit()
 
-    print(readers)
+    logging.info(readers)
 
-    print("Waiting for smartcard or RFID.")
-    print("")
+    logging.info("Waiting for smartcard or RFID.")
+    logging.info("")
     cardmonitor = CardMonitor()
     cardobserver = PrintObserver()
     cardmonitor.addObserver(cardobserver)
@@ -108,12 +109,12 @@ if __name__ == '__main__':
             # this stops pcscd from maxing out too
             sleep(1)
         except CardRequestTimeoutException:
-            print("retry:")
+            logging.info("retry:")
             sleep(1)
         except Exception as ex:
-            traceback.print_exc()
+            logging.error("Exception occurred", exc_info=True)
         except KeyboardInterrupt:
-            print("exit")
+            logging.info("exit")
             break
 
     hostmqtt.status({"status": "STOPPED"})
@@ -124,5 +125,5 @@ if __name__ == '__main__':
 
     import sys
     if 'win32' == sys.platform:
-        print('press Enter to continue')
+        logging.info('press Enter to continue')
         sys.stdin.read(1)

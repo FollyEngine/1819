@@ -6,7 +6,7 @@
 import yaml
 import time
 import argparse
-import traceback
+import logging
 
 # the config and mqtt modules are in a bad place atm :/
 import sys

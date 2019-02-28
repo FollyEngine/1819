@@ -8,7 +8,7 @@ import paho.mqtt.publish as publish
 import time
 import sys
 import threading
-import traceback
+import logging
 import socket
 from time import sleep
 
@@ -25,23 +25,23 @@ import time
 try:
   mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB0")
 except:
-    print("DMX failed on USB0")  
+    logging.info("DMX failed on USB0")  
     try:
       mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB1")
     except:
-	print("DMX failed on USB1")  
+	logging.info("DMX failed on USB1")  
 	try:
 	  mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB2")
 	except:
-	    print("DMX failed on USB2")  
+	    logging.info("DMX failed on USB2")  
 	    try:
 	      mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB3")
 	    except:
-		print("DMX failed on USB3")  
+		logging.info("DMX failed on USB3")  
 		try:
 		  mydmx = pysimpledmx.DMXConnection("/dev/ttyUSB4")
 		except:
-		    print("DMX failed on USB4")  
+		    logging.info("DMX failed on USB4")  
 
 mqttHost = config.getValue("mqtthostname", "localmqttforsure")
 myHostname = config.getValue("hostname", socket.gethostname())
@@ -54,24 +54,24 @@ hostmqtt = mqtt.MQTT(mqttHost, myHostname, "relay_from")
 
 
 def stopthathorribleflashing():
-    print("stoppit")
+    logging.info("stoppit")
     for i in range(2,500):
       mydmx.setChannel(i, 0)
     mydmx.render()
 
 def stopthatdmxthing(dmxChannel):
-    print("stop %s" % (dmxChannel))
+    logging.info("stop %s" % (dmxChannel))
     mydmx.setChannel(dmxChannel, 0)
     mydmx.render()
 
 
 def smokeyflashy(DMXadjustment, spellDMXcode):
-    print("smokeyflashy %s %s" % (DMXadjustment, spellDMXcode))
+    logging.info("smokeyflashy %s %s" % (DMXadjustment, spellDMXcode))
 
     thisDMX = spellDMXcodes[spellDMXcode]
-    print(thisDMX)
+    logging.info(thisDMX)
     for dmx in thisDMX:
-      print(dmx+DMXadjustment)
+      logging.info(dmx+DMXadjustment)
       mydmx.setChannel(dmx+DMXadjustment, 255)     
     mydmx.render()
       
@@ -81,7 +81,7 @@ def smokeyflashy(DMXadjustment, spellDMXcode):
 
 def attack(topic, payload):
       hostmqtt.status({"status": "attacked!"})
-      print("attacked!  spell %s from %s" % (payload["Spell"],payload["From"]))
+      logging.info("attacked!  spell %s from %s" % (payload["Spell"],payload["From"]))
       # decode the json, it should look like this, where the podium is the one sending the spell
   #podium2/dmx/play {'from': 'podium2', 'spell':'Air'}
   #podium1/dmx/play {'from': 'podium1', 'spell':'Electricity'}
@@ -137,9 +137,9 @@ try:
 #        sleep(1)
     hostmqtt.loop_forever()   # use the foreground thread
 except Exception as ex:
-    traceback.print_exc()
+    logging.error("Exception occurred", exc_info=True)
 except KeyboardInterrupt:
-    print("exit")
+    logging.info("exit")
 
 hostmqtt.status({"status": "STOPPED"})
 #mastermqtt.status({"status": "STOPPED"})

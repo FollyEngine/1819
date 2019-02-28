@@ -3,7 +3,7 @@
 import paho.mqtt.client as mqttclient
 import datetime
 import json
-import traceback
+import logging
 
 class MQTT:
     def __init__(self, mqtthostname, myhostname, devicename, username="", password="", port=1883, transport="tcp"):
@@ -41,7 +41,7 @@ class MQTT:
     def relay(self, verb, obj):
         retain = False
         if self.topic_matches_sub("+/+/status", verb):
-            print("Retain: %s" % verb)
+            logging.debug("Retain: %s" % verb)
             retain = True
         mqinfo = self.client.publish(verb, json.dumps(obj), retain=retain)
         if self.background_loop:
@@ -50,7 +50,7 @@ class MQTT:
     def subscribeL(self, host, device, verb, function=""):
         sub_topic = "%s/%s/%s" % (host, device, verb)
         self.client.subscribe(sub_topic)
-        print("Subscribed to %s" % sub_topic)
+        logging.info("Subscribed to %s" % sub_topic)
         self.sub[sub_topic] = function
 
     def subscribe(self, verb, function=""):
@@ -73,7 +73,7 @@ class MQTT:
         self.client.on_disconnect = self.on_disconnect
         self.client.on_connect = self.on_connect
         self.set_on_message(self.on_message)
-        print("Connecting to MQTT as %s at: %s" % (clientname, self.mqtthostname))
+        logging.info("Connecting to MQTT as %s at: %s" % (clientname, self.mqtthostname))
         self.client.connect(self.mqtthostname, self.port)
 
     def set_on_message(self, on_message):
@@ -94,11 +94,11 @@ class MQTT:
         return json.loads(raw)
 
     def on_connect(self, client, userdata, flags, rc):
-        print("Connection returned result: ")  #+self.client.connack_string(rc))
+        logging.debug("Connection returned result: ")  #+self.client.connack_string(rc))
 
     #TODO: this happens when a message failed to be sent - need to resend it..
     def on_disconnect(self, innerclient, userdata,rc=0):
-        print("DisConnected result code "+str(rc))
+        logging.debug("DisConnected result code "+str(rc))
         self.client.reconnect()
         obj =  {"status": "reconnecting"}
         mqinfo = self.client.publish("%s/%s/%s" % (self.myhostname, self.devicename, 'status'), payload=json.dumps(obj), retain=True)
@@ -114,36 +114,35 @@ class MQTT:
     def on_message(self, client, userdata, message):
         message_func = ""
         try:
-            print("on_message %s" % message.topic)
-            #print("message received " ,payload)
-            #print("message topic=",message.topic)
-            #print("message qos=",message.qos)
-            #print("message retain flag=",message.retain)
+            logging.debug("on_message %s" % message.topic)
+            #logging.debug("message received " ,payload)
+            #logging.debug("message topic=",message.topic)
+            #logging.debug("message qos=",message.qos)
+            #logging.debug("message retain flag=",message.retain)
             if message.topic in self.sub:
                 message_func = self.sub[message.topic]
-                #print("direct")
+                #logging.debug("direct")
             else:
                 for t in self.sub:
-                    #print("topic_matches_sub(%s, %s)" % (t, message.topic))
+                    #logging.debug("topic_matches_sub(%s, %s)" % (t, message.topic))
                     if self.topic_matches_sub(t, message.topic):
                         message_func = self.sub[t]
-                        #print("match")
+                        #logging.debug("match")
                         break
 
-            #print(message_func)
+            #logging.debug(message_func)
             if message_func == "":
-                print("No message_func found for %s" % message.topic)
+                logging.error("No message_func found for %s" % message.topic)
                 return
 
             raw_payload=str(message.payload.decode("utf-8"))
-            #print("HHRAW: "+message.topic+": "+raw_payload)
+            #logging.debug("HHRAW: "+message.topic+": "+raw_payload)
 
             if raw_payload == "" or raw_payload == "REMOVED" or raw_payload == "(null)":
                 return
 
             payload = self.decode(raw_payload)
-            #print("DECODED: "+message.topic+": "+str(payload))
+            #logging.debug("DECODED: "+message.topic+": "+str(payload))
             message_func(message.topic, payload)
         except Exception as e:
-            print("exception:")
-            traceback.print_exc()
+            logging.error("Exception occurred", exc_info=True)

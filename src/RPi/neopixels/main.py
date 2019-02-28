@@ -8,7 +8,7 @@ import yaml
 import time
 from neopixel import *
 import argparse
-import traceback
+import logging
 
 # the config and mqtt modules are in a bad place atm :/
 import sys
@@ -27,11 +27,11 @@ hostmqtt.loop_start()   # use the background thread
 hostsConfig = config.getValue("hosts", {})
 deployments = config.getValue("deployments", {})
 
-print(deployments)
+logging.info(deployments)
 
 settings = deployments[deploymenttype][DEVICENAME]
 
-print(settings)
+logging.info(settings)
 
 # uses https://github.com/jgarff/rpi_ws281x
 # LED strip configuration:
@@ -53,7 +53,7 @@ if LED_PIN in {13, 19, 41, 45, 53}:
 # solder to GPIOs 13, 18, 19, 21: driving 19 will light up 2 of the arrays, but driving 13, 18, 21 and 12 gets the 4 different arrays
 
 
-print(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
+logging.info(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
 # Create NeoPixel object with appropriate configuration.
 strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
 # Intialize the library (must be called once before other functions).
@@ -164,7 +164,7 @@ def magic_item(strip, payload):
     water = payload['Water'] / 10
     earth = payload['Earth'] / 10
     fire = payload['Fire'] / 10
-    print("fire: %d, earth %d, water %d, air %d" % (fire, earth, water, air))
+    logging.info("fire: %d, earth %d, water %d, air %d" % (fire, earth, water, air))
 
     #TODO: should default the 4 values
     #do one (A, B first)
@@ -221,7 +221,7 @@ operations = {
 def play(payload = {}):
     operationname = get(payload, 'operation', 'colourwipe')
     operation = get(operations, operationname, operations['colourwipe'])
-    print("playing %s" % operationname)
+    logging.info("playing %s" % operationname)
 
     if operationname == 'magic_item':
         operation(strip, payload)
@@ -246,10 +246,10 @@ def play(payload = {}):
 def msg_play(topic, payload):
     if mqtt.MQTT.topic_matches_sub(hostmqtt, "all/neopixel/play", topic):
         # everyone
-        #print("everyone plays "+payload)
+        #logging.info("everyone plays "+payload)
         play(payload)
     elif mqtt.MQTT.topic_matches_sub(hostmqtt, myHostname+"/neopixel/play", topic):
-        #print(myHostname+" got "+payload+" SPARKLES!!")
+        #logging.info(myHostname+" got "+payload+" SPARKLES!!")
         play(payload)
 def msg_test(topic, payload):
     play({'operation': 'colourwipe', 'colour': 'yellow'})
@@ -276,8 +276,8 @@ try:
     while True:
         time.sleep(1)
 except Exception as ex:
-    traceback.print_exc()
+    logging.error("Exception occurred", exc_info=True)
 except KeyboardInterrupt:
-    print("exit")
+    logging.info("exit")
 
 hostmqtt.status({"status": "STOPPED"})

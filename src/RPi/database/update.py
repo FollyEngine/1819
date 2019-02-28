@@ -11,6 +11,7 @@ from peewee import *
 from playhouse.shortcuts import model_to_dict, dict_to_model
 import json
 import datetime
+import logging
 
 # the config and mqtt modules are in a bad place atm :/
 import sys
@@ -42,15 +43,15 @@ def scan_nfc(topic, payload):
     else:
         if currentNFC == payload['tag'] and \
                 currentUHF != "":
-            print("SET: nfc = %s, uhf = %s" % (currentNFC, currentUHF))
+            logging.info("SET: nfc = %s, uhf = %s" % (currentNFC, currentUHF))
             item, create = MagicItem.get_or_create(nfc=currentNFC, uhf=currentUHF)
             item.uhc = currentUHF
             item.save()
             i = model_to_dict(item)
-            print("Foo: %s" % i)
+            logging.info("Foo: %s" % i)
             hostmqtt.publishL('all', DEVICENAME, 'magic-item', i)
         else:
-            print("ERROR: different nfc tag '%s', '%s'" % (currentNFC, payload['tag']))
+            logging.info("ERROR: different nfc tag '%s', '%s'" % (currentNFC, payload['tag']))
         currentNFC = ""
         currentUHF = ""
 
@@ -60,14 +61,14 @@ def scan_uhf(topic, payload):
     if currentUHF == "":
         currentUHF = payload['tag']
         if currentNFC == "":
-            print("UHF: %s" % currentUHF)
+            logging.info("UHF: %s" % currentUHF)
             magicitem = None
             try:
                 magicitem = MagicItem.get(uhf=currentUHF)
             except:
-                print("ok")
+                logging.info("ok")
             if magicitem != None:
-                print("UHF %s is a magic item" % currentUHF)
+                logging.info("UHF %s is a magic item" % currentUHF)
                 IngredientItem.delete().where(IngredientItem.uhf == currentUHF).execute()
                 currentUHF = ""
                 return
@@ -77,7 +78,7 @@ def scan_uhf(topic, payload):
             #     item = IngredientItem.get(uhf=currentUHF)
             item, create = IngredientItem.get_or_create(uhf=currentUHF)
             i = model_to_dict(item)
-            print("Foo: %s" % i)
+            logging.info("Foo: %s" % i)
             hostmqtt.publishL('all', DEVICENAME, 'ingredient-item', i)
     else:
         currentUHF = ""
@@ -92,8 +93,8 @@ hostmqtt.status({"status": "listening"})
 try:
     hostmqtt.loop_forever()
 except Exception as ex:
-    traceback.print_exc()
+    logging.error("Exception occurred", exc_info=True)
 except KeyboardInterrupt:
-    print("exit")
+    logging.info("exit")
 
 hostmqtt.status({"status": "STOPPED"})
