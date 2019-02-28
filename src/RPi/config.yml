@@ -5,5 +5,31 @@
 #hostmqtt.loop_start()   # use the background thread
 #master_mqtt_host = config.getValue("mqttmaster", "mqtt.thegame.folly.site")
 
+# set hostname to override the automatic setting from host
+#hostname: onceler
+
 mqtthostname: "localhost"
 mqttmaster: "mqtt.thegame.folly.site"
+
+deployments:
+  megagame:
+    relay_from:
+      type: mqtt
+    audio:
+      type: audio
+    rfid-nfc:
+      type: rfid-mifare
+    neopixel-status:
+      type: neopixels
+      led-count: 1
+      led-pin: 18
+    neopixel-level:
+      type: neopixels
+      led-count: 16
+      led-pin: 21
+hosts:
+  one:
+    type: megagame
+  yoga260:
+    type: megagame
+

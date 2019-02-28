@@ -12,10 +12,11 @@ sys.path.append('./mqtt/')
 import config
 import mqtt
 
-DEVICENAME="audio"
+myHostname = config.getHostname()
+deploymenttype=config.getDeploymentType()
+DEVICENAME=config.getDevicename()
 
-mqttHost = config.getValue("mqtthostname", "mqtt.local")
-myHostname = config.getValue("hostname", socket.gethostname())
+mqttHost = config.getValue("mqtthostname", "localhost")
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 #hostmqtt.loop_start()   # use the background thread
 

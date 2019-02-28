@@ -16,11 +16,11 @@ import config
 import mqtt
 from database import *
 
-DEVICENAME="db_lookup"
+myHostname = config.getHostname()
+deploymenttype=config.getDeploymentType()
+DEVICENAME=config.getDevicename()
 
-mqttHost = config.getValue("mqtthostname", "mqtt.local")
-import socket    #TODO: extract!
-myHostname = config.getValue("hostname", socket.gethostname())
+mqttHost = config.getValue("mqtthostname", "localhost")
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 
 # update.py is for updating the database

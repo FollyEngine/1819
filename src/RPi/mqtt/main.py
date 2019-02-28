@@ -17,7 +17,6 @@ from time import sleep
 allMuted = False
 repeats = {}
 
-
 # the config and mqtt modules are in a bad place atm :/
 import sys
 sys.path.append('./mqtt/')
@@ -26,9 +25,12 @@ import config
 
 sleep(5)
 
+myHostname = config.getHostname()
+deploymenttype=config.getDeploymentType()
+DEVICENAME=config.getDevicename()
+
 mqttHost = config.getValue("mqtthostname", "localhost")
-myHostname = config.getValue("hostname", socket.gethostname())
-hostmqtt = mqtt.MQTT(mqttHost, myHostname, "relay_from")
+hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 hostmqtt.loop_start()   # use the background thread
 
 master_mqtt_host = config.getValue("mqttmaster", "mqtt.thegame.folly.site")
