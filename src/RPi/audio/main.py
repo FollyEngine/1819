@@ -4,7 +4,7 @@ import time
 import sys
 import socket
 import pygame
-import traceback
+import logging
 
 # the config and mqtt modules are in a bad place atm :/
 import sys
@@ -35,7 +35,7 @@ isMuted = False
 ############
 def play(audiofile):
     if isMuted:
-        print(myHostname+" is muted, not playing "+audiofile)
+        logging.info(myHostname+" is muted, not playing "+audiofile)
         return
     # if we're already playing something then ignore new play command
     if pygame.mixer.music.get_busy():
@@ -54,14 +54,14 @@ def play(audiofile):
             pygame.time.Clock().tick(10)
         hostmqtt.publish("played", {"status": "played", "sound": audiofile})
     except Exception as e:
-        print("Failed to play %s" % audioPath)
-        traceback.print_exc()
+        logging.info("Failed to play %s" % audioPath)
+        logging.error("Exception occurred", exc_info=True)
 
 ########################################
 # on_message subscription functions
 def msg_play(topic, payload):
     sound = payload["sound"]
-    print("everyone plays "+sound)
+    logging.info("everyone plays "+sound)
     play(sound)
 
 hostmqtt.subscribe("play", msg_play)
@@ -69,7 +69,7 @@ hostmqtt.subscribeL("all", DEVICENAME, "play", msg_play)
 
 
 def msg_test(topic, payload):
-    print("everyone plays test.wav")
+    logging.info("everyone plays test.wav")
     play(testsound)
 
 hostmqtt.subscribe("test", msg_test)
@@ -79,7 +79,7 @@ hostmqtt.subscribeL("all", DEVICENAME, "test", msg_test)
 def msg_mute(topic, payload):
     global isMuted
     isMuted = True
-    print("muted")
+    logging.info("muted")
     pygame.mixer.fadeout(100)
 
 hostmqtt.subscribe("mute", msg_mute)
@@ -88,7 +88,7 @@ hostmqtt.subscribeL("all", DEVICENAME, "mute", msg_mute)
 def msg_unmute(topic, payload):
     global isMuted
     isMuted = False
-    print("unmuted")
+    logging.info("unmuted")
 
 hostmqtt.subscribe("unmute", msg_unmute)
 hostmqtt.subscribeL("all", DEVICENAME, "unmute", msg_unmute)
@@ -104,8 +104,8 @@ try:
     #    time.sleep(1)
     hostmqtt.loop_forever()
 except Exception as ex:
-    traceback.print_exc()
+    logging.error("Exception occurred", exc_info=True)
 except KeyboardInterrupt:
-    print("exit")
+    logging.info("exit")
 
 hostmqtt.status({"status": "STOPPED"})

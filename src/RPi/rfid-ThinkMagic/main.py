@@ -8,8 +8,7 @@ import paho.mqtt.publish as publish
 import time
 import sys
 import socket
-import traceback
-
+import logging
 
 allMuted = False
 repeats = {}
@@ -54,13 +53,13 @@ def rfidTagDataCallback(rfid):
         }
         hostmqtt.publish("scan", event)
 
-        print("EPC: %s RSSI: %s\n" % (rfid.epc, rfid.rssi))
-        #print("     epc_mem_data: %s" % rfid.epc_mem_data)
-        #print("     tid_mem_data: %s" % rfid.tid_mem_data)
-        #print("     user_mem_data: %s" % rfid.user_mem_data)
-        #print("     reserved_mem_data: %s" % rfid.reserved_mem_data)
+        logging.info("EPC: %s RSSI: %s\n" % (rfid.epc, rfid.rssi))
+        #logging.info("     epc_mem_data: %s" % rfid.epc_mem_data)
+        #logging.info("     tid_mem_data: %s" % rfid.tid_mem_data)
+        #logging.info("     user_mem_data: %s" % rfid.user_mem_data)
+        #logging.info("     reserved_mem_data: %s" % rfid.reserved_mem_data)
     except Exception as ex:
-        traceback.print_exc()
+        logging.error("Exception occurred", exc_info=True)
 
 
 ########################################
@@ -99,14 +98,13 @@ while True:
         lastStatus = datetime.datetime.now()
     try:
         time.sleep(1)
-        print(".")
-        #print(reader.read())
+        logging.info(".")
+        #logging.info(reader.read())
     except KeyboardInterrupt:
-        print("exit")
+        logging.info("exit")
         break
     except Exception as ex:
-        traceback.print_exc()
-
+        logging.error("Exception occurred", exc_info=True)
 
 reader.stop_reading()
 

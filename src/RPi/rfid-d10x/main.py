@@ -3,8 +3,7 @@
 import serial
 from time import sleep
 import socket
-import traceback
-
+import logging
 
 # for UHF RFID reader - the yellow one...
 # D-10X
@@ -33,13 +32,13 @@ def readreply(ser):
     p = ser.read(1)
     # assert(packet_type == 0xA0)
     packet_type = int.from_bytes(p, byteorder="big")
-    #print(packet_type)
+    #logging.info(packet_type)
     if packet_type != 0:
-        #print("type == %s" % format(packet_type, '#04x'))
+        #logging.info("type == %s" % format(packet_type, '#04x'))
 
         l = ser.read(1)
         length = int.from_bytes(l, byteorder="big")
-        #print("length == %u (0x%x)" % (length, length))
+        #logging.info("length == %u (0x%x)" % (length, length))
 
         if length > 0:
             a = ser.read(1)
@@ -48,7 +47,7 @@ def readreply(ser):
             address = int.from_bytes(a, byteorder="big")
             data = int.from_bytes(d, byteorder="big")
             crc = int.from_bytes(c, byteorder="big")
-            #print("READ: address = %s data == %s" % (format(address, '#04x'), format(data, '#04x')))
+            #logging.info("READ: address = %s data == %s" % (format(address, '#04x'), format(data, '#04x')))
 
             return length, packet_type, data
     return 0, 0, "nothing"
@@ -117,10 +116,10 @@ def sendRemoved(EPC, diff):
 def CheckSum(uBuff, uBuffLen):
     s=bytearray(1)
     s=sum(uBuff[0:uBuffLen])
-    print(bytearray([s]))
+    logging.info(bytearray([s]))
 
     crc=((~sum(uBuff[0:uBuffLen])) & 0xFF)
-    print(crc)
+    logging.info(crc)
     return crc
 
 def rs232_checksum(the_bytes):
@@ -137,10 +136,10 @@ def writeReset(ser, address, cmd, data_len=0, data=0x00):
     #works t = bytearray([0xA0, 0x03, 0xff, 0x70, 0xee])
     #works t = bytearray([0xA0, 0x03, 0x01, 0x70, 0xec])
 
-    print(t)
+    logging.info(t)
 
     crc = (1 << 8) - sum(bytearray([0xA0, 0x03, address, cmd])) & 0xff
-    print(hex( crc ))
+    logging.info(hex( crc ))
 
     ser.write(t)
     return
@@ -155,14 +154,14 @@ def writeCommand(ser, address, cmd, data_len=0, data=0x00):
     packet[2] = address
     packet[3] = cmd
     if data_len > 0:
-        print("data: %x" % data)
+        logging.info("data: %x" % data)
         packet[4] = data
     crc = (1 << 8) - sum(bytearray([0xA0, 0x03, address, cmd])) & 0xff
-    print("crc: 0x%02x" % crc)
+    logging.info("crc: 0x%02x" % crc)
     packet[length+1] = crc
-    print("packet %s" %packet)
+    logging.info("packet %s" %packet)
     ser.write(packet)
-    print("after ser.write")
+    logging.info("after ser.write")
 
 cmd_reset = 0x70
 cmd_set_uart_baudrate = 0x71
@@ -208,19 +207,19 @@ def status(ser_connection):
     global version, power, region
     # get version
     if version == "":
-        print("get version")
+        logging.info("get version")
         writeCommand(ser_connection, publicAddress, cmd_get_firmware_version)
         l, t, version = readreply(ser_connection)
 
     # get the current antenna power
     if power == "":
-        print("get power")
+        logging.info("get power")
         writeCommand(ser_connection, publicAddress, cmd_get_output_power)
         power = readreply(ser_connection)  # 4 bytes - range 0 to 0x21 in dBm
 
     # get the frequency region
     if region == "":
-        print("get region")
+        logging.info("get region")
         writeCommand(ser_connection, publicAddress, cmd_get_frequency_region)
         region = readreply(ser_connection) # can be 3 bytes if region based, or 7 bytes if user defined.
 
@@ -254,70 +253,70 @@ with serial.Serial(
         ) as ser_connection:
     try:
             # reset.
-            print("Send Reset")
+            logging.info("Send Reset")
             #writeCommand(ser_connection, publicAddress, cmd_reset)
             writeReset(ser_connection, publicAddress, cmd_reset)
             sleep(1)
 
             # get version
-            print("get Version")
+            logging.info("get Version")
             writeCommand(ser_connection, publicAddress, cmd_get_firmware_version)
             l, t, v = readreply(ser_connection)
-            print(v)
+            logging.info(v)
 
-    #        print("get antenna")
+    #        logging.info("get antenna")
     #        # get the current working antenna
     #        writeCommand(ser_connection, publicAddress, cmd_get_work_antenna)
     #        a = readreply(ser_connection)
-    #        print(a)   # one byte
+    #        logging.info(a)   # one byte
 
-            #print("set cmd_set_output_power")
+            #logging.info("set cmd_set_output_power")
             # set the current antenna power
             #writeCommand(ser_connection, publicAddress, cmd_set_output_power, 1, 0x17)
             #writeCommand(ser_connection, publicAddress, cmd_set_temporary_output_power, 1, 0x17)
             #p = readreply(ser_connection)
-            #print(p)   # 4 bytes - range 0 to 0x21 in dBm
+            #logging.info(p)   # 4 bytes - range 0 to 0x21 in dBm
 
-            print("get cmd_get_output_power")
+            logging.info("get cmd_get_output_power")
             # get the current antenna power
             writeCommand(ser_connection, publicAddress, cmd_get_output_power)
             p = readreply(ser_connection)
-            print(p)   # 4 bytes - range 0 to 0x21 in dBm
+            logging.info(p)   # 4 bytes - range 0 to 0x21 in dBm
 
-            print("get cmd_get_frequency_region")
+            logging.info("get cmd_get_frequency_region")
             # get the frequency region
             writeCommand(ser_connection, publicAddress, cmd_get_frequency_region)
             f = readreply(ser_connection)
-            print(f)   # can be 3 bytes if region based, or 7 bytes if user defined.
+            logging.info(f)   # can be 3 bytes if region based, or 7 bytes if user defined.
 
-            # print("get cmd_get_reader_temperature")
+            # logging.info("get cmd_get_reader_temperature")
             # # get reader temperature
             # writeCommand(ser_connection, publicAddress, cmd_get_reader_temperature)
             # t = readreply(ser_connection)
-            # print(t)   # 2 bytes first is plus/minus, second is value in c
+            # logging.info(t)   # 2 bytes first is plus/minus, second is value in c
 
-            # print(" get reader id")
+            # logging.info(" get reader id")
             # # get reader id
             # writeCommand(ser_connection, publicAddress, cmd_get_reader_identifier)
             # id = readreply(ser_connection)
-            # print(id)   # 12 bytes
+            # logging.info(id)   # 12 bytes
 
             # # get reader rf link profile
             # writeCommand(ser_connection, publicAddress, cmd_get_rf_link_profile)
             # rf_link_profile = readreply(ser_connection)
-            # print(rf_link_profile)   # 1 byte
+            # logging.info(rf_link_profile)   # 1 byte
 
             # set buzzer off
-            # print("set beeper_mode == 0x00")
+            # logging.info("set beeper_mode == 0x00")
             # writeCommand(ser_connection, publicAddress, cmd_set_beeper_mode, 4, 0x00)
             # buzzer_off_status = readreply(ser_connection)
-            # print(buzzer_off_status)   # 1 byte
+            # logging.info(buzzer_off_status)   # 1 byte
 
 
             lastStatus = datetime.datetime.now()
             status(ser_connection)
 
-            print("------------------------------------- cmd_real_time_inventory")
+            logging.info("------------------------------------- cmd_real_time_inventory")
             writeCommand(ser_connection, publicAddress, cmd_real_time_inventory, 1, 0xff)
 
             while True:
@@ -333,7 +332,7 @@ with serial.Serial(
                     for EPC in lastKeys:
                         if lastTimeRead[EPC] != 0:
                             diff = now-lastTimeRead[EPC]
-                            print("%s : %d microseconds" % (EPC, diff.microseconds))
+                            logging.info("%s : %d microseconds" % (EPC, diff.microseconds))
                             if diff.microseconds > 200000:
                                 lastTimeRead[EPC] = 0
                                 sendRemoved(EPC, diff.microseconds)
@@ -342,25 +341,25 @@ with serial.Serial(
                     # note that there are at least 2 different replies
                     ## the response packet, and the tag info..
                     if length > 0:
-                        print("read %d bytes: 0x%x" % (length, data))
+                        logging.info("read %d bytes: 0x%x" % (length, data))
 
                     # TODO: will get a 10 byte length response code after the timeout
                     # presumably, you then set go again...
                     if length == 10:
                         thereisnofunction()
                 except Exception as ex:
-                    traceback.print_exc()
-                    print("Send Reset")
+                    logging.error("Exception occurred", exc_info=True)
+                    logging.info("Send Reset")
                     #writeCommand(ser_connection, publicAddress, cmd_reset)
                     writeReset(ser_connection, publicAddress, cmd_reset)
                     sleep(1)
-                    print("------------------------------------- cmd_real_time_inventory")
+                    logging.info("------------------------------------- cmd_real_time_inventory")
                     writeCommand(ser_connection, publicAddress, cmd_real_time_inventory, 1, 0xff)
     except Exception as ex:
-        traceback.print_exc()
+        logging.error("Exception occurred", exc_info=True)
     except KeyboardInterrupt:
-        print("exit")
-        print("Send Reset")
+        logging.info("exit")
+        logging.info("Send Reset")
         #writeCommand(ser_connection, publicAddress, cmd_reset)
         writeReset(ser_connection, publicAddress, cmd_reset)
         sleep(1)

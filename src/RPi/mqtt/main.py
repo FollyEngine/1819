@@ -11,7 +11,7 @@ import paho.mqtt.publish as publish
 import time
 import sys
 import socket
-import traceback
+import logging
 from time import sleep
 
 allMuted = False
@@ -50,14 +50,14 @@ def relay_message_to_master(topic, payload):
     try:
         # Only relay messages from our local mqtt to the global one if they havn't already been relayed
         if "relay_from" in payload:
-            #print("relayed before "+payload["relay_from"])
+            #logging.info("relayed before "+payload["relay_from"])
             return
 
         payload["relay_from"] = myHostname
-        print("Relaying to master: %s, %s" % (topic, payload))
+        logging.info("Relaying to master: %s, %s" % (topic, payload))
         mastermqtt.relay(topic, payload)
     except Exception as ex:
-        traceback.print_exc()
+        logging.error("Exception occurred", exc_info=True)
 
 
 def relay_message_from_master(topic, payload):
@@ -70,16 +70,16 @@ def relay_message_from_master(topic, payload):
                 # don't relay a message that originated with us...
                 return
 
-        print("Relaying from master: %s, %s" % (topic, payload))
+        logging.info("Relaying from master: %s, %s" % (topic, payload))
         hostmqtt.relay(topic, payload)
     except Exception as ex:
-        traceback.print_exc()
+        logging.error("Exception occurred", exc_info=True)
 
 ########################################
 
 
 hostmqtt.subscribeL("+", "+", "+", relay_message_to_master)
-print(hostmqtt.sub)
+logging.info(hostmqtt.sub)
 mastermqtt.subscribeL("+", "+", "+", relay_message_from_master)
 
 hostmqtt.status({"status": "listening"})
@@ -90,9 +90,9 @@ try:
     #    sleep(1)
     mastermqtt.loop_forever()
 except Exception as ex:
-    traceback.print_exc()
+    logging.error("Exception occurred", exc_info=True)
 except KeyboardInterrupt:
-    print("exit")
+    logging.info("exit")
 
 hostmqtt.status({"status": "STOPPED"})
 mastermqtt.status({"status": "STOPPED"})

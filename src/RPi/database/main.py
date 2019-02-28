@@ -8,6 +8,8 @@ from peewee import *
 from playhouse.shortcuts import model_to_dict, dict_to_model
 import json
 import datetime
+import logging
+
 # this is the main database updater.  it listens for 
 # the config and mqtt modules are in a bad place atm :/
 import sys
@@ -28,26 +30,26 @@ hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 def scan_nfc(topic, payload):
     item = MagicItem.get(nfc=payload['tag'])
     i = model_to_dict(item)
-    print("Foo: %s" % i)
+    logging.info("Foo: %s" % i)
     hostmqtt.publishL('all', DEVICENAME, 'magic-item', i)
 
 def scan_uhf(topic, payload):
     try:
         magicitem = MagicItem.get(uhf=payload['tag'])
         i = model_to_dict(item)
-        print("Foo: %s" % i)
+        logging.info("Foo: %s" % i)
         hostmqtt.publishL('all', DEVICENAME, 'magic-item', i)
         return
     except:
-        print("not a magic item")
+        logging.info("not a magic item")
     try:
         item = IngredientItem.get(uhf=payload['tag'])
         i = model_to_dict(item)
-        print("Foo: %s" % i)
+        logging.info("Foo: %s" % i)
         hostmqtt.publishL('all', DEVICENAME, 'ingredient-item', i)
         return
     except:
-        print("not an ingredient item")
+        logging.info("not an ingredient item")
 
 database_init()
 hostmqtt.subscribeL('+', 'rfid-nfc', "scan", scan_nfc)
@@ -58,8 +60,8 @@ hostmqtt.status({"status": "listening"})
 try:
     hostmqtt.loop_forever()
 except Exception as ex:
-    traceback.print_exc()
+    logging.error("Exception occurred", exc_info=True)
 except KeyboardInterrupt:
-    print("exit")
+    logging.info("exit")
 
 hostmqtt.status({"status": "STOPPED"})
