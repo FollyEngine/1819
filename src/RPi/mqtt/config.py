@@ -10,12 +10,13 @@ configFile = "config.yml"
 cfg = {}
 
 
-if len(sys.argv) > 1:
-    configFile = sys.argv[1]
+#if len(sys.argv) > 1:
+#    configFile = sys.argv[1]
 
 if os.path.isfile(configFile):
     with open(configFile, 'r') as ymlfile:
         cfg = yaml.load(ymlfile)
+        print(cfg)
 
 
 def getValue(name, default):
