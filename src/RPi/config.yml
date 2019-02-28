@@ -22,11 +22,11 @@ deployments:
     neopixel-status:
       type: neopixels
       led-count: 1
-      led-pin: 18
+      led-pin: 21
     neopixel-level:
       type: neopixels
       led-count: 16
-      led-pin: 21
+      led-pin: 18
 hosts:
   one:
     type: megagame
