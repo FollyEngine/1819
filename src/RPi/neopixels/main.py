@@ -16,17 +16,24 @@ sys.path.append('./mqtt/')
 import config
 import mqtt
 
-DEVICENAME="neopixel"
+myHostname = config.getHostname()
+deploymenttype=config.getDeploymentType()
+DEVICENAME=config.getDevicename()
 
-mqttHost = config.getValue("mqtthostname", "mqtt.local")
-myHostname = config.getValue("hostname", socket.gethostname())
+mqttHost = config.getValue("mqtthostname", "localhost")
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 hostmqtt.loop_start()   # use the background thread
 
+hostsConfig = config.getValue("hosts", {})
+deployments = config.getValue("deployments", {})
+settings = deployments[deploymenttype][DEVICENAME]
+
+print(settings)
+
 # uses https://github.com/jgarff/rpi_ws281x
 # LED strip configuration:
-LED_COUNT      = 16      # Number of LED pixels.
-LED_PIN        = 12      # GPIO pin connected to the pixels (18 uses PWM!).
+LED_COUNT      = settings["led-count"]      # Number of LED pixels.
+LED_PIN        = settings["led-pin"]      # GPIO pin connected to the pixels (18 uses PWM!).
 # when _not_ using the pHAT DAC, you can use all sorts of pins :)
 # GPIO12, GPIO18, GPIO21, and GPIO19 on DMA 1
 #LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
@@ -121,7 +128,7 @@ def theaterChaseRainbow(strip, wait_ms=50):
 
 # health will be a setting of 10 pixels, and the number will be out of 100
 def health(strip, color, health, tip = 'off', wait_ms=50):
-    count = health/10
+    count = health/100
 
     if count > strip.numPixels():
         count = strip.numPixels()
@@ -133,35 +140,6 @@ def health(strip, color, health, tip = 'off', wait_ms=50):
     strip.setPixelColor(strip.numPixels()-1, colours[tip])
     strip.show()
 
-def magic_item(strip, payload):
-    wait_ms = 0
-    index = 0
-    total = payload['A'] + payload['B'] + payload['C'] + payload['D']
-    A = int(round(payload['A'] * strip.numPixels() / total))
-    B = int(round(payload['B'] * strip.numPixels() / total))
-    C = int(round(payload['C'] * strip.numPixels() / total))
-    D = int(round(payload['D'] * strip.numPixels() / total))
-    print("A: %d, B: %d, C: %d, D: %d" % (A, B, C, D))
-    for i in range(A):
-        strip.setPixelColor(index, colours['red'])
-        index = index + 1
-        strip.show()
-        time.sleep(wait_ms/1000.0)
-    for i in range(B):
-        strip.setPixelColor(index, colours['green'])
-        index = index + 1
-        strip.show()
-        time.sleep(wait_ms/1000.0)
-    for i in range(C):
-        strip.setPixelColor(index, colours['blue'])
-        index = index + 1
-        strip.show()
-        time.sleep(wait_ms/1000.0)
-    for i in range(D):
-        strip.setPixelColor(index, colours['yellow'])
-        index = index + 1
-        strip.show()
-        time.sleep(wait_ms/1000.0)
 
 ############
 def get(obj, name, default):
@@ -170,7 +148,59 @@ def get(obj, name, default):
         result = obj[name]
     return result
 
-############
+##############
+
+#Fire	Earth	Water	Air
+#RED	GREEN	BLUE	WHITE
+
+def magic_item(strip, payload):
+    length = 16
+
+    air = payload['Air'] / 10
+    water = payload['Water'] / 10
+    earth = payload['Earth'] / 10
+    fire = payload['Fire'] / 10
+    print("fire: %d, earth %d, water %d, air %d" % (fire, earth, water, air))
+
+    #TODO: should default the 4 values
+    #do one (A, B first)
+    index = 0
+    blank = length - fire
+    for i in range(blank):
+        one.setPixelColor(index, colours['off'])
+        index = index + 1
+    for i in range(fire):
+        one.setPixelColor(index, colours['red'])
+        index = index + 1
+    blank = length - water
+    for i in range(water):
+        one.setPixelColor(index, colours['blue'])
+        index = index + 1
+    for i in range(blank):
+        one.setPixelColor(index, colours['off'])
+        index = index + 1
+
+    #do two (C, D first)
+    index = 0
+    blank = length - earth
+    for i in range(blank):
+        two.setPixelColor(index, colours['off'])
+        index = index + 1
+    for i in range(earth):
+        two.setPixelColor(index, colours['green'])
+        index = index + 1
+    blank = length - air
+    for i in range(air):
+        two.setPixelColor(index, colours['white'])
+        index = index + 1
+    for i in range(blank):
+        two.setPixelColor(index, colours['off'])
+        index = index + 1
+
+    one.show()
+    two.show()
+
+##############
 operations = {
     # custom = has A, B, C, D
     'magic_item': magic_item,
@@ -183,6 +213,7 @@ operations = {
     'rainbow': rainbow,
     'rainbow_cycle': rainbowCycle,
 }
+###############
 def play(payload = {}):
     operationname = get(payload, 'operation', 'colourwipe')
     operation = get(operations, operationname, operations['colourwipe'])
@@ -203,13 +234,8 @@ def play(payload = {}):
         operation(strip, colour)
         return
 
-    if operationname == 'health':
-        # this is the health display
-        count = get(payload, 'count', 16)
-        tip = get(payload, 'tip', 'off')
-        operation(strip, colour, count, tip)
-        return
-    print("unknown operation")
+    count = get(payload, 'count', 10)
+    operation(strip, colour, count)
 
 ########################################
 # on_message subscription functions

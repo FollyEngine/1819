@@ -6,6 +6,7 @@ PACKAGES="mqtt megagame audio rfid-mifare"
 MQTTHOST="mqtt.thegame.folly.site"
 CONFIGFILE=
 
+DATE=$(date "+%Y/%m/%d-%T")
 
 # Auto start by adding the following to the RPi pi user crontab
 # @reboot cd 1819; ./deployments/megagame/run.sh > megagame.log 2>&1
@@ -60,7 +61,7 @@ for pkg in $PACKAGES; do
 	sudo ./$pkg/main.py > $pkg-${DATE}.log 2>&1 &
 done
 
-./../../deployments/megagame/main.py $CONFIGFILE > controller-${DATE}.log 2>&1 &
+./../../deployments/megagame/main.py $CONFIGFILE> controller-${DATE}.log 2>&1 &
 
 echo "DONE"
 exit

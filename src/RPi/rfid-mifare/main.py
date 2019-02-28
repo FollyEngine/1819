@@ -34,9 +34,12 @@ import mqtt
 
 GETUID = [0xFF, 0xCA, 0x00, 0x00, 0x00]
 
-mqttHost = config.getValue("mqtthostname", "mqtt.local")
-myHostname = config.getValue("hostname", socket.gethostname())
-hostmqtt = mqtt.MQTT(mqttHost, myHostname, "rfid-nfc")
+myHostname = config.getHostname()
+deploymenttype=config.getDeploymentType()
+DEVICENAME=config.getDevicename()
+
+mqttHost = config.getValue("mqtthostname", "localhost")
+hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 hostmqtt.loop_start()   # use the background thread
 
 # a simple card observer that prints inserted/removed cards
