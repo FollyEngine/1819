@@ -35,6 +35,6 @@ for devicename in deployments[deploymentType]:
     hostmqtt.status({"starting": t})
 
     cmd = './'+t+'/main.py'
-    #process = subprocess.Popen(['sudo', cmd, myHostname, deploymentType, devicename])
+    process = subprocess.Popen(['sudo', cmd, myHostname, deploymentType, devicename])
 
 hostmqtt.status({"status": "STOPPED"})
