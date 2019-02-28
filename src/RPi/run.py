@@ -3,7 +3,6 @@
 # run.py reads the config.yml, 
 # and uses that to decide what services to start
 
-import socket
 import yaml
 import time
 import argparse
@@ -13,12 +12,13 @@ import traceback
 import sys
 sys.path.append('./mqtt/')
 import config
+import mqtt
 import subprocess
 
 DEVICENAME="deployment"
+myHostname = config.getHostname(False)
 
 mqttHost = config.getValue("mqtthostname", "localhost")
-myHostname = config.getValue("hostname", socket.gethostname())
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 hostmqtt.loop_start()   # use the background thread
 
@@ -27,9 +27,14 @@ hostConfig = hostsConfig[myHostname]
 deploymentType = hostConfig["type"]
 deployments = config.getValue("deployments", {})
 
+hostmqtt.status({"status": "STARTING"})
+
+
 for devicename in deployments[deploymentType]:
-    print(devicename)
     t=deployments[deploymentType][devicename]["type"]
+    hostmqtt.status({"starting": t})
 
     cmd = './'+t+'/main.py'
-    process = subprocess.Popen(['sudo', cmd, myHostname, deploymentType, devicename])
+    #process = subprocess.Popen(['sudo', cmd, myHostname, deploymentType, devicename])
+
+hostmqtt.status({"status": "STOPPED"})
