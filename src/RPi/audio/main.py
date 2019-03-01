@@ -39,6 +39,7 @@ def play(audiofile):
         return
     # if we're already playing something then ignore new play command
     if pygame.mixer.music.get_busy():
+        logging.info("audio mixer is busy")
         return
 
     audioPath = audiofile
@@ -53,6 +54,7 @@ def play(audiofile):
         while pygame.mixer.music.get_busy():
             pygame.time.Clock().tick(10)
         hostmqtt.publish("played", {"status": "played", "sound": audiofile})
+        logging.info("played %s" % audioPath)
     except Exception as e:
         logging.info("Failed to play %s" % audioPath)
         logging.error("Exception occurred", exc_info=True)

@@ -54,15 +54,15 @@ class PrintObserver(CardObserver):
         (addedcards, removedcards) = actions
         for card in addedcards:
             info = toHexString(card.atr).replace(' ','')
-            logging.info("+Inserted: ", info)
+            logging.info("+Inserted: %s"% info)
             
 
             connection = card.createConnection()
             connection.connect( CardConnection.T1_protocol )
             response, sw1, sw2 = connection.transmit(GETUID)
-            logging.info('response: ', response, ' status words: ', "%x %x" % (sw1, sw2))
+            #logging.info('response: ', response, ' status words: ', "%x %x" % (sw1, sw2))
             tagid = toHexString(response).replace(' ','')
-            logging.info ("tagid ",tagid)
+            logging.info("tagid %s"%tagid)
 
             hostmqtt.publish("scan", {
                     'atr': info,
