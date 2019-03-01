@@ -72,7 +72,7 @@ class PrintObserver(CardObserver):
 
         for card in removedcards:
             info = toHexString(card.atr).replace(' ','')
-            logging.info("+Removed: ", info)
+            logging.info("+Removed: %s"% info)
             hostmqtt.publish("removed", {"atr": info, 'event': 'removed'})
 
 
