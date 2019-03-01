@@ -115,34 +115,34 @@ class MQTT:
         message_func = ""
         try:
             logging.debug("on_message %s" % message.topic)
-            #logging.debug("message received " ,payload)
-            #logging.debug("message topic=",message.topic)
-            #logging.debug("message qos=",message.qos)
+            #logging.debug("message received %s" % payload)
+            #logging.debug("message topic=%s" % message.topic)
+            #logging.debug("message qos=%s"%message.qos)
             #logging.debug("message retain flag=",message.retain)
             if message.topic in self.sub:
                 message_func = self.sub[message.topic]
-                #logging.debug("direct")
+                logging.debug("direct")
             else:
                 for t in self.sub:
-                    #logging.debug("topic_matches_sub(%s, %s)" % (t, message.topic))
+                    logging.debug("topic_matches_sub(%s, %s)" % (t, message.topic))
                     if self.topic_matches_sub(t, message.topic):
                         message_func = self.sub[t]
-                        #logging.debug("match")
+                        logging.debug("match")
                         break
 
-            #logging.debug(message_func)
+            logging.debug(message_func)
             if message_func == "":
                 logging.error("No message_func found for %s" % message.topic)
                 return
 
             raw_payload=str(message.payload.decode("utf-8"))
-            #logging.debug("HHRAW: "+message.topic+": "+raw_payload)
+            logging.debug("HHRAW: "+message.topic+": "+raw_payload)
 
             if raw_payload == "" or raw_payload == "REMOVED" or raw_payload == "(null)":
                 return
 
             payload = self.decode(raw_payload)
-            #logging.debug("DECODED: "+message.topic+": "+str(payload))
+            logging.debug("DECODED: "+message.topic+": "+str(payload))
             message_func(message.topic, payload)
         except Exception as e:
             logging.error("Exception occurred", exc_info=True)

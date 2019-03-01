@@ -53,7 +53,7 @@ if LED_PIN in {13, 19, 41, 45, 53}:
 # solder to GPIOs 13, 18, 19, 21: driving 19 will light up 2 of the arrays, but driving 13, 18, 21 and 12 gets the 4 different arrays
 
 
-logging.info(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
+#logging.info(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
 # Create NeoPixel object with appropriate configuration.
 strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
 # Intialize the library (must be called once before other functions).
