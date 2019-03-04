@@ -33,7 +33,12 @@ sys.path.append('./mqtt/')
 import config
 import mqtt
 
-GETUID = [0xFF, 0xCA, 0x00, 0x00, 0x00]
+cmdMap = {
+	"mute":[0xFF, 0x00, 0x52, 0x00, 0x00],
+	"unmute":[0xFF, 0x00, 0x52, 0xFF, 0x00],
+	"getuid":[0xFF, 0xCA, 0x00, 0x00, 0x00],
+	"firmver":[0xFF, 0x00, 0x48, 0x00, 0x00],
+}
 
 myHostname = config.getHostname()
 deploymenttype=config.getDeploymentType()
@@ -58,8 +63,12 @@ class PrintObserver(CardObserver):
             
 
             connection = card.createConnection()
-            connection.connect( CardConnection.T1_protocol )
-            response, sw1, sw2 = connection.transmit(GETUID)
+            connection.connect()# CardConnection.T1_protocol )
+
+            response, sw1, sw2 = connection.transmit(cmdMap["mute"])
+            #logging.info('response: ', response, ' status words: ', "%x %x" % (sw1, sw2))
+
+            response, sw1, sw2 = connection.transmit(cmdMap["getuid"])
             #logging.info('response: ', response, ' status words: ', "%x %x" % (sw1, sw2))
             tagid = toHexString(response).replace(' ','')
             logging.info("tagid %s"%tagid)
@@ -81,12 +90,20 @@ if __name__ == '__main__':
     call(['/usr/sbin/pcscd'])
     # TODO: detect if there isn't a reader pluigged in, and exit...
     readers = smartcard.System.readers()
+
     sleep(1)
     if len(readers) < 1:
         logging.info("No RFID readers found, EXITING")
         exit()
 
     logging.info(readers)
+
+    # reader = readers[0]
+    # connection = reader.createConnection()
+    # #connection.connect()# CardConnection.T1_protocol )
+    # response, sw1, sw2 = connection.transmit(cmdMap["mute"])
+    # logging.info('response: ', response, ' status words: ', "%x %x" % (sw1, sw2))
+
 
     logging.info("Waiting for smartcard or RFID.")
     logging.info("")
@@ -110,7 +127,11 @@ if __name__ == '__main__':
             sleep(1)
         except CardRequestTimeoutException:
             logging.info("retry:")
-            sleep(1)
+            #cardmonitor = CardMonitor()
+            cardmonitor.deleteObserver(cardobserver)
+            cardobserver = PrintObserver()
+            cardmonitor.addObserver(cardobserver)
+            #sleep(1)
         except Exception as ex:
             logging.error("Exception occurred", exc_info=True)
         except KeyboardInterrupt:
