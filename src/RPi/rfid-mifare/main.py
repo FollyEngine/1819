@@ -56,33 +56,35 @@ class PrintObserver(CardObserver):
     """
 
     def update(self, observable, actions):
-        (addedcards, removedcards) = actions
-        for card in addedcards:
-            info = toHexString(card.atr).replace(' ','')
-            logging.info("+Inserted: %s"% info)
-            
+        try:
+            (addedcards, removedcards) = actions
+            for card in addedcards:
+                info = toHexString(card.atr).replace(' ','')
+                logging.info("+Inserted: %s"% info)
 
-            connection = card.createConnection()
-            connection.connect()# CardConnection.T1_protocol )
+                connection = card.createConnection()
+                connection.connect()# CardConnection.T1_protocol )
 
-            response, sw1, sw2 = connection.transmit(cmdMap["mute"])
-            #logging.info('response: ', response, ' status words: ', "%x %x" % (sw1, sw2))
+                response, sw1, sw2 = connection.transmit(cmdMap["mute"])
+                #logging.info('response: ', response, ' status words: ', "%x %x" % (sw1, sw2))
 
-            response, sw1, sw2 = connection.transmit(cmdMap["getuid"])
-            #logging.info('response: ', response, ' status words: ', "%x %x" % (sw1, sw2))
-            tagid = toHexString(response).replace(' ','')
-            logging.info("tagid %s"%tagid)
+                response, sw1, sw2 = connection.transmit(cmdMap["getuid"])
+                #logging.info('response: ', response, ' status words: ', "%x %x" % (sw1, sw2))
+                tagid = toHexString(response).replace(' ','')
+                logging.info("tagid %s"%tagid)
 
-            hostmqtt.publish("scan", {
-                    'atr': info,
-                    'tag': tagid,
-                    'event': 'inserted'
-                })
+                hostmqtt.publish("scan", {
+                        'atr': info,
+                        'tag': tagid,
+                        'event': 'inserted'
+                    })
 
-        for card in removedcards:
-            info = toHexString(card.atr).replace(' ','')
-            logging.info("+Removed: %s"% info)
-            hostmqtt.publish("removed", {"atr": info, 'event': 'removed'})
+            for card in removedcards:
+                info = toHexString(card.atr).replace(' ','')
+                logging.info("+Removed: %s"% info)
+                hostmqtt.publish("removed", {"atr": info, 'event': 'removed'})
+        except Exception as ex:
+            logging.error("Exception occurred", exc_info=True)
 
 
 ###########################################
@@ -127,10 +129,9 @@ if __name__ == '__main__':
             sleep(1)
         except CardRequestTimeoutException:
             logging.info("retry:")
-            #cardmonitor = CardMonitor()
-            cardmonitor.deleteObserver(cardobserver)
-            cardobserver = PrintObserver()
-            cardmonitor.addObserver(cardobserver)
+            # cardmonitor.deleteObserver(cardobserver)
+            # cardobserver = PrintObserver()
+            # cardmonitor.addObserver(cardobserver)
             #sleep(1)
         except Exception as ex:
             logging.error("Exception occurred", exc_info=True)
