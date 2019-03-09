@@ -15,9 +15,10 @@ deployments:
   megagame:
     relay_from:
       type: mqtt
-    audio:
-      type: audio
-      pins: [18, 19, 21]
+    # not yet (causes perf issues)
+    #audio:
+    #  type: audio
+    #  pins: [18, 19, 21]
     rfid-nfc:
       type: rfid-mifare
     neopixel-status:
