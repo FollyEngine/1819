@@ -14,11 +14,11 @@ else
 fi
 
 
-sudo apt-get install scons
+sudo apt-get install scons gcc
 scons
 
 cd python
-sudo apt-get install python3-dev swig python-dev
+sudo apt-get install -yq python3-dev swig python-dev
 python ./setup.py build
 sudo python ./setup.py install
 
