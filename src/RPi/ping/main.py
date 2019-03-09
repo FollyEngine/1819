@@ -57,6 +57,7 @@ try:
         STATUS="red"
         hostmqtt.publishL("node-red", "status", "ping", {
             "ping": "hello",
+            "from": myHostname,
         })
         time.sleep(1)
         hostmqtt.publishL(myHostname, "neopixel-status", "play", {
