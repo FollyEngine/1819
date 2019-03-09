@@ -250,10 +250,10 @@ def play(payload = {}):
 def msg_play(topic, payload):
     if mqtt.MQTT.topic_matches_sub(hostmqtt, "all/"+DEVICENAME+"/play", topic):
         # everyone
-        logging.info("everyone plays "+payload)
+        #logging.info("everyone plays "+payload)
         play(payload)
     elif mqtt.MQTT.topic_matches_sub(hostmqtt, myHostname+"/"+DEVICENAME+"/play", topic):
-        logging.info(myHostname+" got "+payload+" SPARKLES!!")
+        #logging.info(myHostname+" got "+payload+" SPARKLES!!")
         play(payload)
 
 def msg_test(topic, payload):
