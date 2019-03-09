@@ -36,7 +36,7 @@ configFile = "config.yml"
 cfg = {}
 
 logFile = sys.argv[0].replace("/", "-").replace(".py", ".log").replace(".-", "")
-if len(sys.argv) != 4:
+if len(sys.argv) == 4:
     logFile = getDeploymentType()+"-"+getDevicename()+".log"
 logging.basicConfig(
      level=getValue("loglevel", logging.DEBUG),
