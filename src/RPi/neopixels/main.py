@@ -133,6 +133,7 @@ def theaterChaseRainbow(strip, wait_ms=50):
 def set_neopixels(strip, color, count):
     if count > strip.numPixels():
         count = strip.numPixels()
+    logging.info("setting %d pixesl to %s" % (count, color))
     for i in range(0, strip.numPixels()):
         if i <= count:
             strip.setPixelColor(i, color)
@@ -247,13 +248,14 @@ def play(payload = {}):
 ########################################
 # on_message subscription functions
 def msg_play(topic, payload):
-    if mqtt.MQTT.topic_matches_sub(hostmqtt, "all/neopixel/play", topic):
+    if mqtt.MQTT.topic_matches_sub(hostmqtt, "all/"+DEVICENAME+"/play", topic):
         # everyone
-        #logging.info("everyone plays "+payload)
+        logging.info("everyone plays "+payload)
         play(payload)
-    elif mqtt.MQTT.topic_matches_sub(hostmqtt, myHostname+"/neopixel/play", topic):
-        #logging.info(myHostname+" got "+payload+" SPARKLES!!")
+    elif mqtt.MQTT.topic_matches_sub(hostmqtt, myHostname+"/"+DEVICENAME+"/play", topic):
+        logging.info(myHostname+" got "+payload+" SPARKLES!!")
         play(payload)
+
 def msg_test(topic, payload):
     play({'operation': 'colourwipe', 'colour': 'yellow'})
 
