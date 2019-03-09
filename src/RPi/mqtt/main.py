@@ -30,7 +30,10 @@ deploymenttype=config.getDeploymentType()
 DEVICENAME=config.getDevicename()
 
 mqttHost = config.getValue("mqtthostname", "localhost")
-hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
+if mqttHost == "mqtt.thegame.folly.site":
+    hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME, "everyone", "S4C7Tzjc2gD92y9", 8883)
+else:
+    hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 hostmqtt.loop_start()   # use the background thread
 
 master_mqtt_host = config.getValue("mqttmaster", "mqtt.thegame.folly.site")
