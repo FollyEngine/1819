@@ -31,10 +31,10 @@ mqttMasterHost = config.getValue("mqttmaster", "")
 if mqttMasterHost != "":
     for i in range(0, 25):
         time.sleep(1)
-        response = os.system("ping -c 1 " + mqttHost)
+        response = os.system("ping -c 1 " + mqttMasterHost)
         if response == 0:
             break
-        logging.info("Waiting for %s: attempt %s"% (mqttHost, i))
+        logging.info("Waiting for %s: attempt %s"% (mqttMasterHost, i))
 
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 hostmqtt.loop_start()   # use the background thread
