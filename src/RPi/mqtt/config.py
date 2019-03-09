@@ -35,7 +35,7 @@ def getDevicename():
 configFile = "config.yml"
 cfg = {}
 
-logFile = sys.argv[0].replace("/", "-").replace(".py", ".log").replace(".-", "")
+logFile = getDeploymentType()+"-"+getDevicename()+".log"
 logging.basicConfig(
      level=getValue("loglevel", logging.DEBUG),
  )
