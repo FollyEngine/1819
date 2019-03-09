@@ -56,9 +56,9 @@ class PrintObserver(CardObserver):
     """
 
     def update(self, observable, actions):
-        try:
-            (addedcards, removedcards) = actions
-            for card in addedcards:
+        (addedcards, removedcards) = actions
+        for card in addedcards:
+            try:
                 info = toHexString(card.atr).replace(' ','')
                 logging.info("+Inserted: %s"% info)
 
@@ -78,13 +78,16 @@ class PrintObserver(CardObserver):
                         'tag': tagid,
                         'event': 'inserted'
                     })
+            except Exception as ex:
+                logging.error("Exception occurred", exc_info=True)
 
-            for card in removedcards:
+        for card in removedcards:
+            try:
                 info = toHexString(card.atr).replace(' ','')
                 logging.info("+Removed: %s"% info)
                 hostmqtt.publish("removed", {"atr": info, 'event': 'removed'})
-        except Exception as ex:
-            logging.error("Exception occurred", exc_info=True)
+            except Exception as ex:
+                logging.error("Exception occurred", exc_info=True)
 
 
 ###########################################
@@ -121,18 +124,8 @@ if __name__ == '__main__':
     cardtype = AnyCardType()
 
     while True:
-        cardrequest = CardRequest(timeout=10, cardType=cardtype)
         try:
-            cardservice = cardrequest.waitforcard()
-            # stop the loop from spinning the cpu when the rfid tag is left on the reader
-            # this stops pcscd from maxing out too
             sleep(1)
-        except CardRequestTimeoutException:
-            logging.info("retry:")
-            # cardmonitor.deleteObserver(cardobserver)
-            # cardobserver = PrintObserver()
-            # cardmonitor.addObserver(cardobserver)
-            #sleep(1)
         except Exception as ex:
             logging.error("Exception occurred", exc_info=True)
         except KeyboardInterrupt:
