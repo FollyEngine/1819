@@ -37,11 +37,11 @@ logging.info(settings)
 # on_message subscription functions
 def msg_play(topic, payload):
     global STATUS
-    if mqtt.MQTT.topic_matches_sub(hostmqtt, myHostname+"/"+DEVICENAME+"/play", topic):
+    if mqtt.MQTT.topic_matches_sub(hostmqtt, myHostname+"/"+DEVICENAME+"/reply", topic):
         STATUS=payload.status
 
 STATUS="red"
-hostmqtt.subscribe("ping", msg_play)
+hostmqtt.subscribe("reply", msg_play)
 hostmqtt.status({"status": "listening"})
 
 try:
