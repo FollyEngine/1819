@@ -33,12 +33,20 @@ settings = deployments[deploymenttype][DEVICENAME]
 
 logging.info(settings)
 
+############
+def get(obj, name, default):
+    result = default
+    if name in obj:
+        result = obj[name]
+    return result
+
 ########################################
 # on_message subscription functions
 def msg_play(topic, payload):
     global STATUS
     if mqtt.MQTT.topic_matches_sub(hostmqtt, myHostname+"/"+DEVICENAME+"/reply", topic):
-        STATUS=payload.status
+        STATUS = get(payload, 'status', 'red')
+
 
 STATUS="red"
 hostmqtt.subscribe("reply", msg_play)
