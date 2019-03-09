@@ -9,18 +9,18 @@
 #hostname: onceler
 
 # use this setting if things need to work with bad internet connectivity
-#mqtthostname: "localhost"
-#mqttmaster: "mqtt.thegame.folly.site"
+mqtthostname: "localhost"
+mqttmaster: "mqtt.thegame.folly.site"
 
 #good internet connectivity
-mqtthostname: "mqtt.thegame.folly.site"
-mqttmaster: ""
+#mqtthostname: "mqtt.thegame.folly.site"
+#mqttmaster: ""
 
 deployments:
   megagame:
     # relay only needed if using poor internet
-    # relay_from:
-    #   type: mqtt
+    relay_from:
+      type: mqtt
     # not yet (causes perf issues)
     #audio:
     #  type: audio
