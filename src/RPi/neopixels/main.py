@@ -130,10 +130,7 @@ def theaterChaseRainbow(strip, wait_ms=50):
             for i in range(0, strip.numPixels(), 3):
                 strip.setPixelColor(i+q, 0)
 
-# health will be a setting of 10 pixels, and the number will be out of 100
-def health(strip, color, health, tip = 'off', wait_ms=50):
-    count = health/100
-
+def set_neopixels(strip, color, count):
     if count > strip.numPixels():
         count = strip.numPixels()
     for i in range(0, strip.numPixels()):
@@ -141,9 +138,14 @@ def health(strip, color, health, tip = 'off', wait_ms=50):
             strip.setPixelColor(i, color)
         else:
             strip.setPixelColor(i, colours['off'])
-    strip.setPixelColor(strip.numPixels()-1, colours[tip])
     strip.show()
 
+# health will be a setting of 10 pixels, and the number will be out of 100
+def health(strip, color, health, tip = 'off', wait_ms=50):
+    count = health/100
+    set_neopixels(strip, color, health)
+    strip.setPixelColor(strip.numPixels()-1, colours[tip])
+    strip.show()
 
 ############
 def get(obj, name, default):
@@ -209,6 +211,7 @@ operations = {
     # custom = has A, B, C, D
     'magic_item': magic_item,
     # needs colour and count
+    'set': set_neopixels,
     'health': health,
     #needs colour
     'colourwipe': colorWipe,
