@@ -134,8 +134,8 @@ def set_neopixels(strip, color, count):
     if count > strip.numPixels():
         count = strip.numPixels()
     logging.info("setting %d pixesl to %s" % (count, color))
-    for i in range(0, strip.numPixels()-1):
-        if i <= count:
+    for i in range(0, strip.numPixels()):
+        if i < count:
             strip.setPixelColor(i, color)
         else:
             strip.setPixelColor(i, colours['off'])
