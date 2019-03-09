@@ -21,6 +21,8 @@ deployments:
     # relay only needed if using poor internet
     relay_from:
       type: mqtt
+    ping:
+      type: ping
     # not yet (causes perf issues)
     #audio:
     #  type: audio
