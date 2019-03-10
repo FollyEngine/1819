@@ -42,6 +42,8 @@ deployments:
 hosts:
   one:
     type: megagame
+  two:
+    type: megagame
   yoga260:
     type: megagame
 

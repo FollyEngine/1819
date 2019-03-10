@@ -8,12 +8,14 @@ sudo apt-get update
 sudo apt-get upgrade -yq
 sudo apt-get install -yq python3-pyscard python3-pip pcsc-tools pcscd git python3-setuptools libpcsclite-dev python3-dev \
 			mosquitto-clients mosquitto scratch python-pygame \
-			python3-serial python-serial python-pip python-pyscard
+			python3-serial python-serial python-pip python-pyscard \
+			vim
 
 git pull
 
 for pkg in $PACKAGES; do
 	if [[ -f "./src/RPi/$pkg/requirements.txt" ]]; then
+		sudo pip install --no-cache-dir -r ./src/RPi/$pkg/requirements.txt
 		sudo pip3 install --no-cache-dir -r ./src/RPi/$pkg/requirements.txt
 	fi
 	if [[ -f "./src/RPi/$pkg/setup.sh" ]]; then
