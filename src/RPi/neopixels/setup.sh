@@ -14,7 +14,7 @@ else
 fi
 
 
-sudo apt-get install scons gcc
+sudo apt-get install -yq scons gcc
 scons
 
 cd python
@@ -25,3 +25,19 @@ sudo python ./setup.py install
 python3 ./setup.py build
 sudo python3 ./setup.py install
 
+
+# configure mosquitto to relay to mqtt.thegame.folly.site
+mosquitto_conf=$(cat <<'END_HEREDOC'
+connection folly
+address mqtt.thegame.folly.site:8883
+topic +/+/+ both
+remote_username everyone
+remote_password S4C7Tzjc2gD92y9
+bridge_insecure true
+END_HEREDOC
+)
+
+sudo bash -c "echo \"$mosquitto_conf\" > /etc/mosquitto/conf.d/relay.conf"
+
+sudo systemctl stop mosquitto
+sudo systemctl start mosquitto
