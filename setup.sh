@@ -32,5 +32,4 @@ if grep "Raspberry Pi" /proc/device-tree/model; then
 fi
 exit
 
-echo "@reboot sleep 5 ; cd 1819/src/RPi; ./run.py > run.log 2>&1" >> cron.load
 crontab cron.load

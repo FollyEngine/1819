@@ -1,0 +1,2 @@
+
+@reboot sleep 5 ; cd 1819/src/RPi; ./run.py > run.log 2>&1
