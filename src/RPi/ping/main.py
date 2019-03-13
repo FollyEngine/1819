@@ -9,6 +9,7 @@ import time
 from neopixel import *
 import argparse
 import logging
+import socket
 
 # the config and mqtt modules are in a bad place atm :/
 import sys
@@ -55,9 +56,20 @@ hostmqtt.status({"status": "listening"})
 try:
     while True:
         STATUS="red"
+
+        # get IP address
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(("8.8.8.8", 80))
+            address = s.getsockname()[0]
+            s.close()
+        except:
+            address = "unknown"
+
         hostmqtt.publishL("node-red", "status", "ping", {
             "ping": "hello",
             "from": myHostname,
+            "ip": address,
         })
         time.sleep(1)
         hostmqtt.publishL(myHostname, "neopixel-status", "play", {
