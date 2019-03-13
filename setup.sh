@@ -33,3 +33,21 @@ fi
 exit
 
 crontab cron.load
+
+
+# configure mosquitto to relay to mqtt.thegame.folly.site
+mosquitto_conf=$(cat <<'END_HEREDOC'
+connection folly
+address mqtt.thegame.folly.site:8883
+topic +/+/+ both
+remote_username EDITME
+remote_password EDITME
+bridge_insecure true
+END_HEREDOC
+)
+
+sudo bash -c "echo \"$mosquitto_conf\" > /etc/mosquitto/conf.d/relay.conf"
+
+sudo systemctl stop mosquitto
+sudo systemctl start mosquitto
+
