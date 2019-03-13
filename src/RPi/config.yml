@@ -44,6 +44,8 @@ hosts:
     type: megagame
   two:
     type: megagame
+  zero-1:
+    type: megagame
   yoga260:
     type: megagame
 
