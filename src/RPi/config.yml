@@ -27,6 +27,9 @@ deployments:
     #audio:
     #  type: audio
     #  pins: [18, 19, 21]
+    #speakerphat:
+    #  type: speakerphat
+    #  pins: [2, 3, 18, 19, 21]
     rfid-nfc:
       type: rfid-mifare
     neopixel-status:
