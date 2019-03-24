@@ -23,15 +23,6 @@ for pkg in $PACKAGES; do
 	fi
 done
 
-cat /proc/device-tree/model
-if grep "Raspberry Pi" /proc/device-tree/model; then
-	if ! lsmod | grep hifiberry; then
-		echo "installing drivers for pHAT"
-		curl https://get.pimoroni.com/phatdac | bash
-	fi
-fi
-exit
-
 crontab cron.load
 
 
@@ -51,3 +42,12 @@ sudo bash -c "echo \"$mosquitto_conf\" > /etc/mosquitto/conf.d/relay.conf"
 sudo systemctl stop mosquitto
 sudo systemctl start mosquitto
 
+# this needs to be last - it wants to reboot
+cat /proc/device-tree/model
+if grep "Raspberry Pi" /proc/device-tree/model; then
+	if ! lsmod | grep hifiberry; then
+		echo "installing drivers for pHAT"
+		curl https://get.pimoroni.com/phatdac | bash
+	fi
+fi
+exit
