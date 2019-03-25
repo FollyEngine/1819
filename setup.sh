@@ -9,7 +9,17 @@ sudo apt-get upgrade -yq
 sudo apt-get install -yq python3-pyscard python3-pip pcsc-tools pcscd git python3-setuptools libpcsclite-dev python3-dev \
 			mosquitto-clients mosquitto scratch python-pygame \
 			python3-serial python-serial python-pip python-pyscard \
-			vim comitup
+			vim
+
+# comitup...
+# need to remove this for comitup
+sudo mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.bak
+wget https://davesteele.github.io/comitup/deb/comitup_1.3.1-1_all.deb
+wget https://davesteele.github.io/comitup/deb/python3-networkmanager_2.0.1-4_all.deb
+wget https://davesteele.github.io/comitup/deb/python3-dnslib_0.9.7+hg20170303-1_all.deb
+sudo apt-get -fyq python3-jinja2 python3-networkmanager python3-flask python3-click python3-itsdangerous python3-werkzeug python3-blinker python3-markupsafe
+sudo dpkg --install *.deb
+
 
 git pull
 
