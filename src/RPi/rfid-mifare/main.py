@@ -64,6 +64,8 @@ class PrintObserver(CardObserver):
 
                 connection = card.createConnection()
                 connection.connect()# CardConnection.T1_protocol )
+                reader = connection.getReader()
+                logging.info("connection: %s" % reader)
 
                 response, sw1, sw2 = connection.transmit(cmdMap["mute"])
                 #logging.info('response: ', response, ' status words: ', "%x %x" % (sw1, sw2))
@@ -76,6 +78,7 @@ class PrintObserver(CardObserver):
                 hostmqtt.publish("scan", {
                         'atr': info,
                         'tag': tagid,
+                        'reader': reader,
                         'event': 'inserted'
                     })
             except Exception as ex:
@@ -126,6 +129,7 @@ if __name__ == '__main__':
     while True:
         try:
             sleep(1)
+            #hostmqtt.status({"status": "listening", "devices": devices})
         except Exception as ex:
             logging.error("Exception occurred", exc_info=True)
         except KeyboardInterrupt:
