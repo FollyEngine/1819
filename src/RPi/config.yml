@@ -47,8 +47,20 @@ hosts:
     type: megagame
   two:
     type: megagame
+  yoga260:
+    type: megagame
   zero-1:
     type: megagame
-  yoga260:
+  zero-2:
+    type: megagame
+  zero-3:
+    type: megagame
+  zero-4:
+    type: megagame
+  node1:
+    type: megagame
+  node2:
+    type: megagame
+  nodeA1:
     type: megagame
 
