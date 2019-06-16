@@ -24,9 +24,9 @@ deployments:
     ping:
       type: ping
     # not yet (causes perf issues)
-    #audio:
-    #  type: audio
-    #  pins: [18, 19, 21]
+    audio:
+      type: audio
+      pins: [18, 19, 21]
     #speakerphat:
     #  type: speakerphat
     #  pins: [2, 3, 18, 19, 21]
