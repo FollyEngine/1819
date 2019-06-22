@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #
 # run.py reads the config.yml, 
 # and uses that to decide what services to start
@@ -39,22 +39,62 @@ if mqttMasterHost != "":
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
 hostmqtt.loop_start()   # use the background thread
 
-hostsConfig = config.getValue("hosts", {})
-hostConfig = hostsConfig[myHostname]
-deploymentType = hostConfig["type"]
-deployments = config.getValue("deployments", {})
+########################################
+def startServices():
+    if myHostname not in hostsConfig:
+        logging.log("%s not in hosts config" % (myHostname))
+        return
+    hostConfig = hostsConfig[myHostname]
+    deploymentType = hostConfig["type"]
+    deployments = config.getValue("deployments", {})
+    for devicename in deployments[deploymentType]:
+        t=deployments[deploymentType][devicename]["type"]
+        hostmqtt.status({"starting": t})
+
+        cmd = './'+t+'/main.py'
+        process = subprocess.Popen(
+            ['sudo', cmd, myHostname, deploymentType, devicename],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        )
+
+
+########################################
+# on_message subscription functions
+def msg_update_config(topic, payload):
+    logging.info("Received config: %s" % (payload))
+    global config
+    global hostsConfig
+    if mqtt.MQTT.topic_matches_sub(hostmqtt, myHostname+"/"+DEVICENAME+"/update_config", topic):
+        logging.info("Setting config")
+        # TODO: OMG ew!
+        config.cfg = mqtt.get(payload, 'config', {})
+        hostsConfig = config.getValue("hosts", {})
+
+hostmqtt.subscribe("update_config", msg_update_config)
 
 hostmqtt.status({"status": "STARTING"})
+hostsConfig = config.getValue("hosts", {})
+while myHostname not in hostsConfig:
+    # request a config from the server
+    logging.info("Requesting config")
+    hostmqtt.publish("requestconfig", {
+        #host type, ip, other things
+    })
+    time.sleep(5)
 
+logging.info("Starting services")
 
-for devicename in deployments[deploymentType]:
-    t=deployments[deploymentType][devicename]["type"]
-    hostmqtt.status({"starting": t})
+startServices()
 
-    cmd = './'+t+'/main.py'
-    process = subprocess.Popen(['sudo', cmd, myHostname, deploymentType, devicename],
-    stdout=subprocess.PIPE,
-    stderr=subprocess.STDOUT,
-    )
+hostmqtt.status({"status": "listening"})
+
+try:
+    while True:
+        time.sleep(1)
+except Exception as ex:
+    logging.error("Exception occurred", exc_info=True)
+except KeyboardInterrupt:
+    logging.info("exit")
 
 hostmqtt.status({"status": "STOPPED"})
