@@ -24,9 +24,12 @@ deployments:
     ping:
       type: ping
     # not yet (causes perf issues)
-    #audio:
-    #  type: audio
-    #  pins: [18, 19, 21]
+    audio:
+      type: audio
+      pins: [18, 19, 21]
+    #speakerphat:
+    #  type: speakerphat
+    #  pins: [2, 3, 18, 19, 21]
     rfid-nfc:
       type: rfid-mifare
     neopixel-status:
@@ -44,8 +47,20 @@ hosts:
     type: megagame
   two:
     type: megagame
+  yoga260:
+    type: megagame
   zero-1:
     type: megagame
-  yoga260:
+  zero-2:
+    type: megagame
+  zero-3:
+    type: megagame
+  zero-4:
+    type: megagame
+  node1:
+    type: megagame
+  node2:
+    type: megagame
+  nodeA1:
     type: megagame
 

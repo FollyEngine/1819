@@ -58,13 +58,14 @@ try:
         STATUS="red"
 
         # get IP address
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             s.connect(("8.8.8.8", 80))
             address = s.getsockname()[0]
-            s.close()
         except:
             address = "unknown"
+        finally:
+            s.close()
 
         hostmqtt.publishL("node-red", "status", "ping", {
             "ping": "hello",

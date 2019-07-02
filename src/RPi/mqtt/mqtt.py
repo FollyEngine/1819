@@ -5,6 +5,13 @@ import datetime
 import json
 import logging
 
+############
+def get(obj, name, default):
+    result = default
+    if name in obj:
+        result = obj[name]
+    return result
+
 class MQTT:
     def __init__(self, mqtthostname, myhostname, devicename, username="", password="", port=1883, transport="tcp"):
         self.mqtthostname = mqtthostname
