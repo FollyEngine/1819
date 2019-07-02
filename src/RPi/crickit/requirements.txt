@@ -1,0 +1,6 @@
+#RPI.GPIO
+#adafruit-blinka
+adafruit-circuitpython-crickit
+adafruit-circuitpython-neopixel
+paho-mqtt
+pyyaml
