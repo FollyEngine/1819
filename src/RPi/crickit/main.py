@@ -7,7 +7,7 @@ import socket
 import yaml
 import time
 #from neopixel import *
-#from adafruit_crickit import crickit
+from adafruit_crickit import crickit
 #from adafruit_seesaw.neopixel import NeoPixel
 import argparse
 import logging
@@ -81,9 +81,32 @@ hostmqtt.status({"status": "listening"})
 msg_combat_end('one/two/three', {'colour': 'red', 'count': 1})
 hostmqtt.publish('combat-end', {'colour': 'yellow', 'count': 1})
 
+touch = (
+    crickit.touch_1.value,
+    crickit.touch_2.value,
+    crickit.touch_3.value,
+    crickit.touch_4.value,
+)
+
 try:
     while True:
-        time.sleep(1)
+        newtouch = (
+            crickit.touch_1.value,
+            crickit.touch_2.value,
+            crickit.touch_3.value,
+            crickit.touch_4.value,
+        )
+        if newtouch[0] != touch[0]:
+            hostmqtt.publish('touch1', {'value': newtouch[0], 'raw': crickit.touch_1.raw_value})
+        if newtouch[1] != touch[1]:
+            hostmqtt.publish('touch2', {'value': newtouch[1], 'raw': crickit.touch_2.raw_value})
+        if newtouch[2] != touch[2]:
+            hostmqtt.publish('touch3', {'value': newtouch[2], 'raw': crickit.touch_3.raw_value})
+        if newtouch[3] != touch[3]:
+            hostmqtt.publish('touch4', {'value': newtouch[3], 'raw': crickit.touch_4.raw_value})
+        touch = newtouch
+
+        time.sleep(0.01)
 except Exception as ex:
     logging.error("Exception occurred", exc_info=True)
 except KeyboardInterrupt:
