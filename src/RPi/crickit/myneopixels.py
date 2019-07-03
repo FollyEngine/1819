@@ -13,7 +13,9 @@ colors = {
     'red': (255,0,0),
     'green': (0,255,0),
     'blue': (0,0,255),
-    'yellow': (255,255,0)
+    'yellow': (255, 150, 0),
+    'cyan': (0, 255,255),
+    'purple': (180, 0, 255)
 }
 
 ############
@@ -110,8 +112,8 @@ class MyNeoPixels:
 
     # health will be a setting of 10 pixels, and the number will be out of 100
     def health(self, color, health, tip = 'off', wait_ms=50):
-        count = health/100
         self.set_neopixels(color, health)
+        time.sleep(0.002)
         self.setPixelColor(self.numPixels-1, colors[tip])
         self.show()
 
