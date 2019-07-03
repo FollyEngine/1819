@@ -7,7 +7,7 @@ from adafruit_seesaw.neopixel import NeoPixel
 
 
 
-colours = {
+colors = {
     'off': (0,0,0),
     'white': (180,180,180),
     'green': (255,0,0),
@@ -36,12 +36,15 @@ def wheel(pos):
 
 class MyNeoPixels:
     def __init__(self, n, seesaw=crickit.seesaw, pin=20, bpp=3, brightness=1.0, auto_write=True, pixel_order=None):
-        self.pixels = NeoPixel(seesaw, pin, n, bpp, brightness, auto_write, pixel_order)
+        self.numPixels=n
+        self.pixels= NeoPixel(seesaw, pin, n, auto_write=False)#, bpp, brightness, auto_write, pixel_order)
+        self.pixels.brightness = 0.5
 
     def setPixelColor(self, idx, color):
         self.pixels[idx] = color
 
     def show(self):
+        self.pixels.show()
         return
 
     def fill(self, color):
@@ -50,9 +53,9 @@ class MyNeoPixels:
     # Define functions which animate LEDs in various ways.
     def colorWipe(self, color, wait_ms=50):
         """Wipe color across display a pixel at a time."""
-        for i in range(self.pixels.numPixels()):
-            self.pixels.setPixelColor(i, color)
-            self.pixels.show()
+        for i in range(self.numPixels):
+            self.setPixelColor(i, color)
+            self.show()
             time.sleep(wait_ms/1000.0)
 
 
@@ -60,57 +63,57 @@ class MyNeoPixels:
         """Movie theater light style chaser animation."""
         for j in range(iterations):
             for q in range(3):
-                for i in range(0, self.pixels.numPixels(), 3):
-                    self.pixels.setPixelColor(i+q, color)
-                self.pixels.show()
+                for i in range(0, self.numPixels, 3):
+                    self.setPixelColor(i+q, color)
+                self.show()
                 time.sleep(wait_ms/1000.0)
-                for i in range(0, self.pixels.numPixels(), 3):
-                    self.pixels.setPixelColor(i+q, 0)
+                for i in range(0, self.numPixels, 3):
+                    self.setPixelColor(i+q, 0)
 
     def rainbow(self, wait_ms=20, iterations=1):
         """Draw rainbow that fades across all pixels at once."""
         for j in range(256*iterations):
-            for i in range(self.pixels.numPixels()):
-                self.pixels.setPixelColor(i, wheel((i+j) & 255))
-            self.pixels.show()
+            for i in range(self.numPixels):
+                self.setPixelColor(i, wheel((i+j) & 255))
+            self.show()
             time.sleep(wait_ms/1000.0)
 
     def rainbowCycle(self, wait_ms=20, iterations=5):
         """Draw rainbow that uniformly distributes itself across all pixels."""
         for j in range(256*iterations):
-            for i in range(self.pixels.numPixels()):
-                self.pixels.setPixelColor(i, wheel((int(i * 256 / self.pixels.numPixels()) + j) & 255))
-            self.pixels.show()
+            for i in range(self.numPixels):
+                self.setPixelColor(i, wheel((int(i * 256 / self.numPixels) + j) & 255))
+            self.show()
             time.sleep(wait_ms/1000.0)
 
     def theaterChaseRainbow(self, wait_ms=50):
         """Rainbow movie theater light style chaser animation."""
         for j in range(256):
             for q in range(3):
-                for i in range(0, self.pixels.numPixels(), 3):
-                    self.pixels.setPixelColor(i+q, wheel((i+j) % 255))
-                self.pixels.show()
+                for i in range(0, self.numPixels, 3):
+                    self.setPixelColor(i+q, wheel((i+j) % 255))
+                self.show()
                 time.sleep(wait_ms/1000.0)
-                for i in range(0, self.pixels.numPixels(), 3):
-                    self.pixels.setPixelColor(i+q, 0)
+                for i in range(0, self.numPixels, 3):
+                    self.setPixelColor(i+q, 0)
 
     def set_neopixels(self, color, count):
-        if count > self.pixels.numPixels():
-            count = self.pixels.numPixels()
+        if count > self.numPixels:
+            count = self.numPixels
         logging.info("setting %d pixesl to %s" % (count, color))
-        for i in range(0, self.pixels.numPixels()):
+        for i in range(0, self.numPixels):
             if i < count:
-                self.pixels.setPixelColor(i, color)
+                self.setPixelColor(i, color)
             else:
-                self.pixels.setPixelColor(i, colours['off'])
-        self.pixels.show()
+                self.setPixelColor(i, colors['off'])
+        self.show()
 
     # health will be a setting of 10 pixels, and the number will be out of 100
     def health(self, color, health, tip = 'off', wait_ms=50):
         count = health/100
         self.set_neopixels(color, health)
-        self.pixels.setPixelColor(self.pixels.numPixels()-1, colours[tip])
-        self.pixels.show()
+        self.setPixelColor(self.numPixels-1, colors[tip])
+        self.show()
 
     ##############
     operations = {
@@ -129,7 +132,7 @@ class MyNeoPixels:
     ###############
     def play(self, payload = {}):
         operationname = get(payload, 'operation', 'colourwipe')
-        operation = get(self.operations, operationname, operations['colourwipe'])
+        operation = get(MyNeoPixels.operations, operationname, MyNeoPixels.operations['colourwipe'])
         logging.info("playing %s" % operationname)
 
         if operationname == 'magic_item':
@@ -141,8 +144,8 @@ class MyNeoPixels:
             return
 
         colourname = get(payload, 'colour', 'off')
-        colour = get(colours, colourname, colours['off'])
-        # TODO: maybe change to using HTML colours #000000 style?
+        colour = get(colors, colourname, colors['off'])
+        # TODO: maybe change to using HTML colors #000000 style?
         if operationname == 'colourwipe' or operationname == 'theatrechase':
             operation(self, colour)
             return

@@ -42,7 +42,7 @@ logging.info(settings)
 #num_pixels = 64  # Number of pixels driven from Crickit NeoPixel terminal
 #pixels = NeoPixel(crickit.seesaw, 20, num_pixels)
 pixels = myneopixels.MyNeoPixels(64)
-pixels.fill(neopixels.colors.off)
+pixels.fill(myneopixels.colors['off'])
 
 # can do things like:
 #  mosquitto_pub -h mqtt -t two/neopixel/play -m '{"operation": "theatrechase", "colour": "green"}'
@@ -64,8 +64,8 @@ def msg_test(topic, payload):
     pixels.play({'operation': 'colourwipe', 'colour': 'yellow'})
 
 def msg_combat_end(topic, payload):
-    colourname = get(payload, 'colour', 'yellow')
-    count = get(payload, 'count', 1)
+    colourname = myneopixels.get(payload, 'colour', 'yellow')
+    count = myneopixels.get(payload, 'count', 1)
     for i in range(0, count):
         pixels.play({'operation': 'colourwipe', 'colour': colourname})
         pixels.play({'operation': 'colourwipe', 'colour': 'off'})
@@ -89,5 +89,5 @@ except Exception as ex:
 except KeyboardInterrupt:
     logging.info("exit")
 
-pixels.fill(myneopixels.colors.off)
+pixels.fill(myneopixels.colors['off'])
 hostmqtt.status({"status": "STOPPED"})

@@ -42,6 +42,7 @@ deployments:
       led-count: 16
       led-pin: 13
       pins: [13]
+    crickit:
 hosts:
   one:
     type: megagame
@@ -62,5 +63,7 @@ hosts:
   node2:
     type: megagame
   nodeA1:
+    type: megagame
+  crickit-1:
     type: megagame
 
