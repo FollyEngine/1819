@@ -13,6 +13,6 @@ sudo i2cdetect -y 1
 sudo apt-get install -y python3 git python3-pip
 #sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.5 2
-sudo update-alternatives --config python
+#sudo update-alternatives --config python
 
 sudo pip3 install --no-cache-dir -r ./src/RPi/crickit/requirements.txt
