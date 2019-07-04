@@ -84,26 +84,43 @@ msg_combat_end('one/two/three', {'colour': 'red', 'count': 1})
 ################################################
 ## servos (can be continuous or positional)
 # {
+#     servo: 1 (default), 2, 3, 4 (which crickit servo)
 #     throttle: -1.0 to 1.0,
 #     angle: 0 to 180,
 #     stop: true or false (ignores the other settings)
 # }
+servos = (
+    crickit.servo_1,
+    crickit.servo_2,
+    crickit.servo_3,
+    crickit.servo_4,
+)
+continuous_servos = (
+    crickit.continuous_servo_1,
+    crickit.continuous_servo_2,
+    crickit.continuous_servo_3,
+    crickit.continuous_servo_4,
+)
+
 def msg_servo(topic, payload):
     #if mqtt.MQTT.topic_matches_sub(hostmqtt, "all/"+DEVICENAME+"/servo", topic):
+    servo_idx = myneopixels.get(payload, 'servo', 1)
+    servo = servos[servo_idx]
+
     stop = myneopixels.get(payload, 'stop', False)
     if stop:
-        crickit.servo_1._pwm_out.duty_cycle = 0
+        servo._pwm_out.duty_cycle = 0
         return
     continuous_throttle = myneopixels.get(payload, 'throttle', 999)
     if continuous_throttle != 999:
         if continuous_throttle == 0:
-            crickit.servo_1._pwm_out.duty_cycle = 0
+            servo._pwm_out.duty_cycle = 0
         else:
-            crickit.continuous_servo_1.throttle = continuous_throttle
+            continuous_servos[servo_idx].throttle = continuous_throttle
 
     angle = myneopixels.get(payload, 'angle', 999)
     if angle != 999:
-        crickit.servo_1.angle = angle
+        servo.angle = angle
 
 hostmqtt.subscribe("servo", msg_servo)
 
