@@ -50,7 +50,7 @@ pixels.fill(myneopixels.colors['off'])
 ############
 
 ########################################
-# on_message subscription functions
+# neopixel play
 def msg_play(topic, payload):
     if mqtt.MQTT.topic_matches_sub(hostmqtt, "all/"+DEVICENAME+"/play", topic):
         # everyone
@@ -79,8 +79,36 @@ hostmqtt.subscribeL(myHostname, DEVICENAME, "combat-end", msg_combat_end)
 
 hostmqtt.status({"status": "listening"})
 msg_combat_end('one/two/three', {'colour': 'red', 'count': 1})
-hostmqtt.publish('combat-end', {'colour': 'yellow', 'count': 1})
+#hostmqtt.publish('combat-end', {'colour': 'yellow', 'count': 1})
 
+################################################
+## servos (can be continuous or positional)
+# {
+#     throttle: -1.0 to 1.0,
+#     angle: 0 to 180,
+#     stop: true or false (ignores the other settings)
+# }
+def msg_servo(topic, payload):
+    #if mqtt.MQTT.topic_matches_sub(hostmqtt, "all/"+DEVICENAME+"/servo", topic):
+    stop = myneopixels.get(payload, 'stop', False)
+    if stop:
+        crickit.servo_1._pwm_out.duty_cycle = 0
+        return
+    continuous_throttle = myneopixels.get(payload, 'throttle', 999)
+    if continuous_throttle != 999:
+        if continuous_throttle == 0:
+            crickit.servo_1._pwm_out.duty_cycle = 0
+        crickit.continuous_servo_1.throttle = continuous_throttle
+
+    angle = myneopixels.get(payload, 'angle', 999)
+    if angle != 999:
+        crickit.servo_1.angle = angle
+
+hostmqtt.subscribe("servo", msg_servo)
+
+
+################################################
+## touch sensors
 touch = (
     crickit.touch_1.raw_value,
     crickit.touch_2.raw_value,
