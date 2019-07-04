@@ -98,7 +98,8 @@ def msg_servo(topic, payload):
     if continuous_throttle != 999:
         if continuous_throttle == 0:
             crickit.servo_1._pwm_out.duty_cycle = 0
-        crickit.continuous_servo_1.throttle = continuous_throttle
+        else:
+            crickit.continuous_servo_1.throttle = continuous_throttle
 
     angle = myneopixels.get(payload, 'angle', 999)
     if angle != 999:
