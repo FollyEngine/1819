@@ -98,11 +98,11 @@ try:
         )
         if abs(newtouch[0]-touch[0]) > 160:
             hostmqtt.publish('touch1', {'value': newtouch[0], 'raw': crickit.touch_1.raw_value})
-        if abs(newtouch[1]-touch[2]) > 160:
+        if abs(newtouch[1]-touch[1]) > 160:
             hostmqtt.publish('touch2', {'value': newtouch[1], 'raw': crickit.touch_2.raw_value})
-        if abs(newtouch[2]-touch[3]) > 160:
+        if abs(newtouch[2]-touch[2]) > 160:
             hostmqtt.publish('touch3', {'value': newtouch[2], 'raw': crickit.touch_3.raw_value})
-        if abs(newtouch[3]-touch[4]) > 160:
+        if abs(newtouch[3]-touch[3]) > 160:
             hostmqtt.publish('touch4', {'value': newtouch[3], 'raw': crickit.touch_4.raw_value})
         touch = newtouch
 
