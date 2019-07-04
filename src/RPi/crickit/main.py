@@ -105,7 +105,7 @@ continuous_servos = (
 def msg_servo(topic, payload):
     #if mqtt.MQTT.topic_matches_sub(hostmqtt, "all/"+DEVICENAME+"/servo", topic):
     servo_idx = myneopixels.get(payload, 'servo', 1)
-    servo = servos[servo_idx]
+    servo = servos[servo_idx-1]
 
     stop = myneopixels.get(payload, 'stop', False)
     if stop:
@@ -116,7 +116,7 @@ def msg_servo(topic, payload):
         if continuous_throttle == 0:
             servo._pwm_out.duty_cycle = 0
         else:
-            continuous_servos[servo_idx].throttle = continuous_throttle
+            continuous_servos[servo_idx-1].throttle = continuous_throttle
 
     angle = myneopixels.get(payload, 'angle', 999)
     if angle != 999:
