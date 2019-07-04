@@ -82,27 +82,27 @@ msg_combat_end('one/two/three', {'colour': 'red', 'count': 1})
 hostmqtt.publish('combat-end', {'colour': 'yellow', 'count': 1})
 
 touch = (
-    crickit.touch_1.value,
-    crickit.touch_2.value,
-    crickit.touch_3.value,
-    crickit.touch_4.value,
+    crickit.touch_1.raw_value,
+    crickit.touch_2.raw_value,
+    crickit.touch_3.raw_value,
+    crickit.touch_4.raw_value,
 )
 
 try:
     while True:
         newtouch = (
-            crickit.touch_1.value,
-            crickit.touch_2.value,
-            crickit.touch_3.value,
-            crickit.touch_4.value,
+            crickit.touch_1.raw_value,
+            crickit.touch_2.raw_value,
+            crickit.touch_3.raw_value,
+            crickit.touch_4.raw_value,
         )
-        if newtouch[0] != touch[0]:
+        if abs(newtouch[0]-touch[0]) > 160:
             hostmqtt.publish('touch1', {'value': newtouch[0], 'raw': crickit.touch_1.raw_value})
-        if newtouch[1] != touch[1]:
+        if abs(newtouch[1]-touch[2]) > 160:
             hostmqtt.publish('touch2', {'value': newtouch[1], 'raw': crickit.touch_2.raw_value})
-        if newtouch[2] != touch[2]:
+        if abs(newtouch[2]-touch[3]) > 160:
             hostmqtt.publish('touch3', {'value': newtouch[2], 'raw': crickit.touch_3.raw_value})
-        if newtouch[3] != touch[3]:
+        if abs(newtouch[3]-touch[4]) > 160:
             hostmqtt.publish('touch4', {'value': newtouch[3], 'raw': crickit.touch_4.raw_value})
         touch = newtouch
 
