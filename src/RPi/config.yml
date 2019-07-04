@@ -43,6 +43,7 @@ deployments:
       led-pin: 13
       pins: [13]
     crickit:
+      type: crickit
 hosts:
   one:
     type: megagame
