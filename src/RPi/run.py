@@ -37,7 +37,7 @@ if mqttMasterHost != "":
         logging.info("Waiting for %s: attempt %s"% (mqttMasterHost, i))
 
 hostmqtt = mqtt.MQTT(mqttHost, myHostname, DEVICENAME)
-hostmqtt.loop_start()   # use the background thread
+#hostmqtt.loop_start()   # don't use the background thread (can't publish results from the background?)
 
 ########################################
 def startServices():
@@ -58,9 +58,54 @@ def startServices():
             stderr=subprocess.STDOUT,
         )
 
+########################################
+# on update git message
+def msg_git(topic, payload):
+    gitcmd = mqtt.get(payload, 'cmd', 'done')
+    if gitcmd == 'done':
+        # the reply? - ignore it
+        return
+    if not gitcmd in ('pull', 'log', 'status'):
+        logging.info("git %s not permitted" % gitcmd)
+        hostmqtt.publish("git", {
+            "ran": gitcmd,
+            "result": "error",
+            "exception": "not permitted"
+        })
+        return
+    params = ''
+    if gitcmd == 'status':
+        params = '-sb'
+    if gitcmd == 'log':
+        params = '--oneline -1'
+    logging.info("git %s" % gitcmd)
+    try:
+        # TODO: send the output back to the mqtt server?
+        result = subprocess.check_output(
+            "git %s %s" % (gitcmd, params), 
+            stderr=subprocess.STDOUT,
+            universal_newlines=True,
+            shell=True
+            )
+        logging.info("git %s\n%s\n" % (gitcmd, result))
+        hostmqtt.publish("git", {
+            "ran": gitcmd,
+            "result": result
+        })
+        logging.info("git DONE")
+    except Exception as ex:
+        logging.error("git %s: Exception occurred" % gitcmd, exc_info=True)
+        hostmqtt.publish("git", {
+            "ran": gitcmd,
+            "result": "error",
+            "exception": ex
+        })
+
+hostmqtt.subscribe("git", msg_git)
+
 
 ########################################
-# on_message subscription functions
+# on update config message
 def msg_update_config(topic, payload):
     logging.info("Received config: %s" % (payload))
     global config
@@ -73,6 +118,7 @@ def msg_update_config(topic, payload):
 
 hostmqtt.subscribe("update_config", msg_update_config)
 
+########################################
 hostmqtt.status({"status": "STARTING"})
 hostsConfig = config.getValue("hosts", {})
 while myHostname not in hostsConfig:
@@ -90,8 +136,7 @@ startServices()
 hostmqtt.status({"status": "listening"})
 
 try:
-    while True:
-        time.sleep(1)
+    hostmqtt.loop_forever()
 except Exception as ex:
     logging.error("Exception occurred", exc_info=True)
 except KeyboardInterrupt:
