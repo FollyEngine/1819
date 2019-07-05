@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import time
 import sys
@@ -6,6 +6,8 @@ import socket
 import time
 import logging
 import socket
+import subprocess
+
 
 # the config and mqtt modules are in a bad place atm :/
 import sys
@@ -50,6 +52,12 @@ hostmqtt.subscribe("reply", msg_play)
 hostmqtt.status({"status": "listening"})
 
 try:
+    git_commit = subprocess.check_output(
+        "git log --oneline -1",
+        stderr=subprocess.STDOUT,
+        universal_newlines=True,
+        shell=True
+        )
     while True:
         STATUS="red"
 
@@ -67,6 +75,7 @@ try:
             "ping": "hello",
             "from": myHostname,
             "ip": address,
+            "git_commit": git_commit
         })
         time.sleep(1)
         hostmqtt.publishL(myHostname, "neopixel-status", "play", {
