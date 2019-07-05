@@ -69,4 +69,6 @@ hosts:
     type: megagame
   crickit-1:
     type: megagame
+  crickit-2:
+    type: megagame
 
