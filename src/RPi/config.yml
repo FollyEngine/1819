@@ -65,6 +65,8 @@ hosts:
     type: megagame
   nodeA1:
     type: megagame
+  newhost:
+    type: megagame
   crickit-1:
     type: megagame
 
