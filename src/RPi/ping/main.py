@@ -3,11 +3,7 @@
 import time
 import sys
 import socket
-#from subprocess import call
-import yaml
 import time
-from neopixel import *
-import argparse
 import logging
 import socket
 
