@@ -15,8 +15,9 @@ char deviceType[] = "neopixel";
 //and make it twinkle for a length of time (using the specified colour as the background
 
 // Listen to mqtt messages and change LEDs in response.  Test with a message like
-// mosquitto_pub -h "mqtt" -t "all/neopixel/twinkle" -m "twinkle"
-// mosquitto_pub -t "all/neopixel/twinkle" -m "twinkle"
+// mosquitto_pub -h "mqtt" -t "all/neopixel/twinkle" -m '{"operation": "set"}'
+// mosquitto_pub -h "mqtt" -t "all/neopixel/twinkle" -m '{"operation": "twinkle", "duration": 1000}'
+
 // GO READ https://www.tweaking4all.com/hardware/arduino/adruino-led-strip-effects/
 
 //BUILD with "LOLIN(WEMOS) D1 R2 & mini"
@@ -45,11 +46,24 @@ void mqtt_callback_fn(const char* topic, const byte* raw_payload, unsigned int l
   payload[length] = 0;
   Serial.printf("Callback: %s: %s\n", topic, payload);
 
-  if (strcmp(payload, "twinkle") == 0) {
-    twinkleUntil = millis() + 1000; // twinkle for a second
+  // 10 elements in the json payload?
+  DynamicJsonBuffer jb(JSON_OBJECT_SIZE(10));
+  JsonObject& obj = jb.parseObject(payload);
+  if (!obj.success()) {
+    Serial.printf("Failed to parse JSON\n");
+    return;
   }
-  if (strcmp(payload, "colour") == 0) {
-    updateColour();
+
+  const char* operation = obj["operation"];
+  if (operation != NULL) {
+    if (strcmp(operation, "set") == 0) {
+      //const char* colour = obj["colour"];
+      updateColour();
+    }
+    if (strcmp(operation, "twinkle") == 0) {
+      unsigned long duration = obj["duration"] | 1000; // default to one second
+      twinkleUntil = millis() + duration;
+    }
   }
 }
 
