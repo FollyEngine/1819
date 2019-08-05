@@ -6,13 +6,21 @@
 
 char orbName[] = "neopixel1";
 
+
+
+breif:
+change all pixels to a specified colour
+length of transition from one colour to another
+and make it twinkle for a length of time (using the specified colour as the background
+
 // Listen to mqtt messages and change LEDs in response.  Test with a message like
 // mosquitto_pub -h "mqtt" -t "all/orbX/twinkle" -m "twinkle"
+// mosquitto_pub -t "all/neopixel1/twinkle" -m "twinkle"
 // GO READ https://www.tweaking4all.com/hardware/arduino/adruino-led-strip-effects/
 
 //BUILD with "LOLIN(WEMOS) D1 R2 & mini"
 //Mqtt mqtt = Mqtt("ASUS", "MEGA SHED", "mqtt.local", 1883, orbName);
- Mqtt mqtt = Mqtt("uhome", "WhatTheHe11", "10.10.10.94", 1883, orbName);
+ Mqtt mqtt = Mqtt("Folly", "Fight the Dull, you fools!", "10.10.11.150", 1883, orbName);
 
 // constants won't change. They're used here to set pin numbers:
 // D3 is the LOLIN Wemos 1-Button Shield: https://wiki.wemos.cc/products:d1_mini_shields:1-button_shield
