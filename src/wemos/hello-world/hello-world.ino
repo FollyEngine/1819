@@ -43,8 +43,8 @@ void sendStatus() {
   // Using ArduinoJson 5
   StaticJsonBuffer<200> jsonBuffer;
   JsonObject& root = jsonBuffer.createObject();
-  mqtt.loop();
+  mqtt.loop();  // Note - this sends a regular status:listening message - every 5minutes
 
   root["info"] = "Something";
-  mqtt.publish(deviceType, "status", root);
+  mqtt.publish(deviceType, "something", root);
 }
