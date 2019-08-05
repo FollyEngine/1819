@@ -25,6 +25,8 @@ void setup() {
   mqtt.setup();
 }
 
+// Looks like the small wemos board PIR shield isn't very good at motion detection (not a huge surprise)
+
 int motionState = LOW;
 unsigned long nextStatusMessage = 0;
 void loop() {
@@ -32,6 +34,7 @@ void loop() {
 
   // PIR sensor is on pin D3
   int val = digitalRead(D3);
+  //Serial.printf("read %d\n", val);
   //low = no motion, high = motion
   if (val != motionState) {
     motionState = val;
@@ -43,6 +46,5 @@ void loop() {
       root["pir"] = "motion detected";
     }
     mqtt.publish(deviceType, "motion", root);
-    
   }
 }
