@@ -57,8 +57,8 @@ void mqtt_callback_fn(const char* topic, const byte* raw_payload, unsigned int l
   const char* operation = obj["operation"];
   if (operation != NULL) {
     if (strcmp(operation, "set") == 0) {
-      //const char* colour = obj["colour"];
-      updateColour();
+      const char* colour = obj["colour"] | "off";
+      updateColour(colour);
     }
     if (strcmp(operation, "twinkle") == 0) {
       unsigned long duration = obj["duration"] | 1000; // default to one second
@@ -101,29 +101,47 @@ void leds_set(Adafruit_NeoPixel &leds, uint8 R, uint8 G, uint8 B) {
 }
 
 
-
+typedef struct {
+  char* name;
+  uint8_t colours[3];
+} colour_def;
 // from https://learn.adafruit.com/sparkle-skirt/code-battery
 // Here is where you can put in your favorite colors that will appear!
 // just add new {nnn, nnn, nnn}, lines.
-uint8_t myFavoriteColors[][3] = {
-  {255,   222,  30},   // Pixie GOLD
-  {50, 255, 255},    // Alchemy BLUE
-  {255, 100, 0},     // Animal Orange
-  {242,    90, 255},   // Garden PINK
-  {0,    255, 40},   // Tinker GREEN
+colour_def myFavoriteColors[] = {
+  {"gold", {255,   222,  30}},   // Pixie GOLD
+  {"blue", {50, 255, 255}},    // Alchemy BLUE
+  {"orange", {255, 100, 0}},     // Animal Orange
+  {"purple", {242,    90, 255}},   // Garden PINK
+  {"green", {0,    255, 40}},   // Tinker GREEN
+  {"off", {0, 0, 0}},
+  {"white", {180, 180, 180}},
+  {"red", {255, 0, 0}},
+  {"green", {0, 255, 0}},
+  {"blue", {0, 0, 255}},
+  {"yellow", {255, 255, 0}},
 };
-// don't edit the line below
-#define FAVCOLORS sizeof(myFavoriteColors) / 3
+#define FAVCOLORS 11u
+
 int dim = 20;
 int moredim = 50;
 int colour = 3;
 
-void updateColour() {
-  colour++;
-  if (colour > FAVCOLORS) {
-    colour = 0;
+void updateColour(const char * colourName) {
+  for (int i = 0; i < FAVCOLORS; i++) {
+    if (strcmp(colourName, myFavoriteColors[i].name) == 0) {
+      colour = i;
+      break;
+    }
   }
-  leds_set(left_leds, myFavoriteColors[colour][0] / moredim, myFavoriteColors[colour][1] / moredim, myFavoriteColors[colour][2] / moredim);
+  Serial.printf("Asked for %s, got %s\n", colourName, myFavoriteColors[colour].name);
+  //  if (colour > FAVCOLORS) {
+  //    colour = 0;
+  //  }
+  leds_set(left_leds,
+           myFavoriteColors[colour].colours[0] / moredim,
+           myFavoriteColors[colour].colours[1] / moredim,
+           myFavoriteColors[colour].colours[2] / moredim);
 
 }
 
@@ -142,7 +160,10 @@ void loop() {
     initialised = mqtt.subscribe("all", deviceType, "twinkle");
     Serial.printf("loop Subscription returned: %s\n", initialised ? "true" : "false");
 
-    leds_set(left_leds, myFavoriteColors[colour][0] / moredim, myFavoriteColors[colour][1] / moredim, myFavoriteColors[colour][2] / moredim);
+    leds_set(left_leds,
+             myFavoriteColors[colour].colours[0] / moredim,
+             myFavoriteColors[colour].colours[1] / moredim,
+             myFavoriteColors[colour].colours[2] / moredim);
 
     for (int i = 0; i < 2 * LED_NUM; i++) {
       pixie_dust(left_leds, colour);
@@ -167,11 +188,11 @@ void loop() {
 
 bool oldState = HIGH; //sets the initial variable for counting touch sensor button pushes
 
-void pixie_dust(Adafruit_NeoPixel &leds, int showColor) {
+void pixie_dust(Adafruit_NeoPixel & leds, int showColor) {
   //color (0-255) values to be set by cycling touch switch, initially GOLD
-  uint8 red = myFavoriteColors[colour][0];
-  uint8 green = myFavoriteColors[colour][1];
-  uint8 blue = myFavoriteColors[colour][2];
+  uint8 red = myFavoriteColors[colour].colours[0];
+  uint8 green = myFavoriteColors[colour].colours[1];
+  uint8 blue = myFavoriteColors[colour].colours[2];
 
   //sparkling
   int p = random(LED_NUM); //select a random pixel
@@ -206,7 +227,7 @@ void pixie_dust(Adafruit_NeoPixel &leds, int showColor) {
 
 
 // Fadeout... starts at bright white and fades to almost zero
-void fadeout(Adafruit_NeoPixel &leds) {
+void fadeout(Adafruit_NeoPixel & leds) {
   // swap these two loops to spin around the LEDs
   for (uint16_t fade = 255; fade > 0; fade = fade - 17) {
     for (uint16_t i = 0; i < LED_NUM; i++) {
@@ -229,14 +250,14 @@ void fadeout(Adafruit_NeoPixel &leds) {
 // first number is 'wait' delay, shorter num == shorter twinkle
 // second number is how many neopixels to simultaneously light up
 // THIS FUNCTION IS NOT USED AND PROBABLY DOESN'T WORK
-void flashRandom(Adafruit_NeoPixel &leds, int wait, uint8_t howmany) {
+void flashRandom(Adafruit_NeoPixel & leds, int wait, uint8_t howmany) {
 
   for (uint16_t i = 0; i < howmany; i++) {
     // pick a random favorite color!
     int c = random(FAVCOLORS);
-    int red = myFavoriteColors[c][0];
-    int green = myFavoriteColors[c][1];
-    int blue = myFavoriteColors[c][2];
+    int red = myFavoriteColors[c].colours[0];
+    int green = myFavoriteColors[c].colours[1];
+    int blue = myFavoriteColors[c].colours[2];
 
     // get a random pixel from the list
     int j = random(leds.numPixels());
