@@ -7,6 +7,7 @@ import time
 import logging
 import socket
 import subprocess
+import datetime
 
 
 # the config and mqtt modules are in a bad place atm :/
@@ -58,6 +59,7 @@ try:
         universal_newlines=True,
         shell=True
         )
+    lastStatus = datetime.datetime.min
     while True:
         STATUS="red"
 
@@ -71,18 +73,22 @@ try:
         finally:
             s.close()
 
-        hostmqtt.publishL("node-red", "status", "ping", {
-            "ping": "hello",
-            "from": myHostname,
-            "ip": address,
-            "git_commit": git_commit
-        })
-        time.sleep(1)
-        hostmqtt.publishL(myHostname, "neopixel-status", "play", {
-            "operation": "set",
-            "count": 1,
-            "colour": STATUS,
-        })
+        now = datetime.datetime.now()
+        diff = now-lastStatus
+        if diff.seconds > (60):
+             lastStatus = now
+             hostmqtt.publishL("node-red", "status", "ping", {
+                 "ping": "hello",
+                 "from": myHostname,
+                 "ip": address,
+                 "git_commit": git_commit
+             })
+             time.sleep(1)
+             hostmqtt.publishL(myHostname, "neopixel-status", "play", {
+                 "operation": "set",
+                 "count": 1,
+                 "colour": STATUS,
+             })
 except Exception as ex:
     logging.error("Exception occurred", exc_info=True)
 except KeyboardInterrupt:
